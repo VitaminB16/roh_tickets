@@ -5,6 +5,7 @@ ZONE_HIERARCHY = {
     "Stalls Circle": 1,
     "Donald Gordon Grand Tier": 2,
     "Balcony": 3,
+    "Amphitheatre": 4,
 }
 
 SEATS_BASE_URL = f"https://www.roh.org.uk/api/proxy/TXN/Performances/{os.environ['PERFORMANCE_ID']}/Seats"

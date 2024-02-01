@@ -2,3 +2,4 @@ secrets.txt
 **__pycache__/
 *.DS_Store
 *src_secret.py
+testing.ipynb
