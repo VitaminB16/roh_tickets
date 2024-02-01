@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "python-roh"
+name = "python_roh"
 version = "0.1.0"
 description = "Ticket Helper for ROH"
 authors = ["Artem Nosov <artemiy.nosov@gmail.com>"]

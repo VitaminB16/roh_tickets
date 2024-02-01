@@ -3,11 +3,10 @@ import sys
 import plotly.express as px
 
 from set_secrets import set_secrets
-from src.src import get_query_dict, query_all_data
+from python_roh.src.src import get_query_dict, query_all_data
 
-if "src_secret.py" in os.listdir("src"):
-    from src.src_secret import secret_function
-
+if "src_secret.py" in os.listdir("python_roh/src"):
+    from python_roh.src.src_secret import secret_function
 
 def hall_plot(seats_price_df):
     seats_price_df["Size"] = 1  # Dummy constant size for scatter plot

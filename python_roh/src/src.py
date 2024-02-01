@@ -112,12 +112,19 @@ def post_process_all_data(data):
     seats_price_df.drop_duplicates(
         subset=["SeatId", "SectionId", "PerformanceId"], inplace=True
     )
+    seats_price_df = seats_price_df.assign(
+        seat_available=(~seats_price_df.SeatStatusId.isin(TAKEN_SEAT_STATUS_IDS))
+    )
+    seats_price_df.Price = seats_price_df.Price.where(
+        seats_price_df.seat_available, None
+    )
     data = {
         "seats_price": seats_price_df,
         "prices": prices_df,
         "zones": zones_df,
         "price_types": price_types_df,
     }
+
     return data
 
 
