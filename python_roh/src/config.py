@@ -15,4 +15,4 @@ ZONE_ID_BASE_URL = (
     f"https://www.roh.org.uk/api/proxy/TXN/Performances/ZoneAvailabilities"
 )
 
-TAKEN_SEAT_STATUS_IDS = [3, 4, 6, 13]
+TAKEN_SEAT_STATUS_IDS = [3, 4, 6, 7, 8, 13]
