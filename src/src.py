@@ -159,6 +159,9 @@ def notify(title, text, n_times=1000):
 
 
 def fix_y_positions(df):
+    """
+    Fix the YPosition so that it follows the zone hierarchy
+    """
     df = df.assign(zone_hierarchy=df.ZoneName.map(ZONE_HIERARCHY).astype(int))
     max_y_positions = df.groupby(["zone_hierarchy"]).YPosition.max().reset_index()
     # Calculate cumulative sum of seats in each zone
