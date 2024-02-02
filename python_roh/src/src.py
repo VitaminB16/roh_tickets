@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 
 from .config import *
-from .api import get_query_dict
+from .utils import force_list
 
 
 def pre_process_zone_df(input_json):
@@ -38,20 +38,66 @@ def pre_process_price_types_df(input_json):
     return price_types_df
 
 
+def pre_process_events_df(input_json):
+    data = input_json
+    events_df = pd.DataFrame(data["data"])
+    included_df = pd.DataFrame(data["included"])
+    events_attrs = events_df.attributes.apply(pd.Series)
+    events_attrs.drop(
+        columns=[
+            "description",
+            "dateFieldOverride",
+            "imageResult",
+            "imageTray",
+            "productionPageUrl",
+            "helpInformation",
+        ],
+        inplace=True,
+    )
+    events_rels = events_df.relationships.apply(pd.Series)
+    events_df = pd.concat([events_df, events_attrs, events_rels], axis=1)
+    events_df.query("isCancelled != True", inplace=True)
+    events_df.drop(
+        columns=[
+            "attributes",
+            "relationships",
+            "isCancelled",
+            "ctaBehaviour",
+            "cinemaBroadcastLink",
+        ],
+        inplace=True,
+    )
+    # remove events with no listed performances
+    events_df.query("performances not in [[]]", inplace=True)
+    events_df.reset_index(drop=True, inplace=True)
+    events_df = events_df.explode("performances", ignore_index=True)
+    events_df.locations = events_df.locations.apply(lambda x: x["data"])
+    events_df = events_df.explode("locations", ignore_index=True)
+    events_df.locations = events_df.locations.apply(lambda x: x["id"])
+    events_df.rename(columns={"locations": "locationId"}, inplace=True)
+    return events_df, included_df
+
+
+def do_nothing(input_json):
+    return input_json
+
+
 def pre_process_df(input_json, df_type):
     pre_process_fun = {
         "seats": pre_process_seats_df,
         "prices": pre_process_prices_df,
         "zone_ids": pre_process_zone_df,
         "price_types": pre_process_price_types_df,
+        "events": pre_process_events_df,
     }
-    return pre_process_fun[df_type](input_json)
+    return pre_process_fun.get(df_type, do_nothing)(input_json)
 
 
-def post_process_all_data(data):
+def post_process_all_data(data, data_types=None):
     """
     Merge the different dataframes together and do some post-processing
     """
+
     seats_df, prices_df, zones_df, price_types_df = (
         data["seats"],
         data["prices"],
@@ -89,40 +135,30 @@ def post_process_all_data(data):
 
 
 def query_one_data(query_dict, data_type):
+    """
+    Query one type of data from the query_dict
+    """
+
     url = query_dict[data_type]["url"]
     params = query_dict[data_type]["params"]
     json_response = requests.get(url, params=params).json()
-    df = pre_process_df(json_response, data_type)
-    return df
+    return pre_process_df(json_response, data_type)
 
 
-def query_all_data(query_dict, data_types=None):
+def query_all_data(query_dict, data_types=None, post_process=False):
+    """
+    Query all data from the query_dict
+    """
     if data_types is None:
         data_types = query_dict.keys()
     data = {}
-    for data_type in data_types:
+    for data_type in force_list(data_types):
         data[data_type] = query_one_data(query_dict, data_type)
         time.sleep(1)
-    print(f"Queried data keys: {data.keys()}")
-    data = post_process_all_data(data)
+    print(f"Queried the following from the API: {list(data.keys())}")
+    if post_process:
+        data = post_process_all_data(data)
     return data
-
-
-def notify(title, text, n_times=1000):
-    """
-    Send a notification to the user using AppleScript
-    """
-    print(f"Notification: {title} - {text}", end="\r")
-    os.system(
-        """
-        osascript -e 'display notification "{}" with title "{}"'
-        """.format(
-            text, title
-        )
-    )
-    for i in range(n_times):
-        time.sleep(5)
-        os.system(f'say "{text}"')
 
 
 def fix_y_positions(df):

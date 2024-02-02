@@ -38,5 +38,9 @@ def get_query_dict(performance_id, constituent_id, mode_of_sale_id, source_id):
                 "sourceId": source_id,
             },
         },
+        "events": {
+            "url": ALL_EVENTS_URL,
+            "params": {},
+        },
     }
     return query_dict

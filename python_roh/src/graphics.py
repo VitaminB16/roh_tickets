@@ -1,7 +1,8 @@
+import pandas as pd
 import plotly.express as px
 
 
-def hall_plot(seats_price_df):
+def plot_hall(seats_price_df):
     """
     Plot the hall with the seats and their prices and availability
     """
@@ -102,10 +103,11 @@ def hall_plot(seats_price_df):
     # fig.write_image("output/ROH_hall.png", scale=3)
 
 
-def plot_events(events_df, today):
+def plot_events(events_df):
     """
     Plot the timeline of the upcoming events on the Main Stage
     """
+    today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
     events_df_sub = events_df.query(
         "location == 'Main Stage' & date >= @today.date()"
     ).reset_index(drop=True)
