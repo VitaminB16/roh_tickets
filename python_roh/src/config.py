@@ -14,5 +14,7 @@ PRICE_TYPES_BASE_URL = "https://www.roh.org.uk/api/proxy/TXN/PriceTypes/Details"
 ZONE_ID_BASE_URL = (
     f"https://www.roh.org.uk/api/proxy/TXN/Performances/ZoneAvailabilities"
 )
+ALL_EVENTS_URL = "https://www.roh.org.uk/api/events"
+TICKETS_AND_EVENTS_URL = "https://www.roh.org.uk/tickets-and-events"
 
 TAKEN_SEAT_STATUS_IDS = [3, 4, 6, 7, 8, 13]
