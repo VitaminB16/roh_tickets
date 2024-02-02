@@ -18,9 +18,7 @@ def plot_hall(seats_price_df):
         x="XPosition",
         y="YPosition",
         color="Price",
-        size="Size",
         custom_data=["Price_print", "ZoneName", "SeatRow", "SeatNumber"],
-        size_max=8.5,
         color_continuous_scale=[
             [0.0, "rgb(136,204,39)"],
             [0.5, "rgb(253,149,45)"],
@@ -96,14 +94,20 @@ def plot_hall(seats_price_df):
                 "Seat %{customdata[2]}%{customdata[3]}",
             ],
         ),
+        # change shape to square
+        marker=dict(
+            symbol="square",
+            size=8.9,
+            opacity=0.8,
+            line=dict(width=0.5, color="DarkSlateGrey"),
+        ),
     )
-    # Set the legend horizontally at the bottom
     fig.update_layout()
     fig.show()
     # fig.write_image("output/ROH_hall.png", scale=3)
 
 
-def plot_events(events_df):
+def plot_events(events_df, colour1="T10", colour2="Dark24"):
     """
     Plot the timeline of the upcoming events on the Main Stage
     """
@@ -111,18 +115,30 @@ def plot_events(events_df):
     events_df_sub = events_df.query(
         "location == 'Main Stage' & date >= @today.date()"
     ).reset_index(drop=True)
-    events_df_sub["Size"] = 1  # set the size of the dots
-    fig = px.scatter(
+    # Start time: 1:00, End time: 23:00 of the event date
+    events_df_sub["timestamp_start"] = events_df_sub.timestamp.dt.floor(
+        "D"
+    ) + pd.Timedelta(hours=1)
+    events_df_sub["timestamp_end"] = events_df_sub.timestamp.dt.ceil(
+        "D"
+    ) - pd.Timedelta(hours=1)
+
+    events_df_sub["date_str"] = events_df_sub.timestamp.dt.strftime("%b %-d, %Y")
+
+    colour1_list = getattr(px.colors.qualitative, colour1)
+    colour2_list = getattr(px.colors.qualitative, colour2)
+    combined = colour1_list + colour2_list
+    fig = px.timeline(
         events_df_sub,
-        custom_data=["title", "url"],
-        x="date",
+        x_start="timestamp_start",
+        x_end="timestamp_end",
         y="time",
+        custom_data=["title", "url", "date_str"],
         color="title",
-        size="Size",
-        size_max=7,
         title="Royal Opera House Events",
         template="simple_white",
         hover_name="url",
+        color_discrete_sequence=combined,
     )
     # Keep first 5 characters of the y axis marks
     fig.update_yaxes(
@@ -139,13 +155,11 @@ def plot_events(events_df):
         gridcolor="LightGray",
     )
     fig.update_layout(
+        hovermode="closest",
+        hoverdistance=1000,
         width=1700,
         height=500,
         margin=dict(l=0, r=0, b=0, t=40, pad=0),
-    )
-    fig.update_traces(
-        marker=dict(line=dict(width=1, color="DarkSlateGrey")),
-        selector=dict(mode="markers"),
     )
     fig.update_layout(
         hoverlabel=dict(
@@ -155,22 +169,24 @@ def plot_events(events_df):
             bgcolor="#C7102E",
         ),
         legend=dict(
-            title="Title",
+            title="",
             title_font=dict(size=15, family="Gotham"),
             font=dict(size=13, family="Gotham"),
+            orientation="h",
         ),
         title=None,
     )
     fig.layout.font.family = "Gotham"
-    # Remove Size from the hover data
     fig.update_traces(
         hovertemplate="<br>".join(
             [
                 "%{customdata[0]}",
-                "%{x}",
+                "%{customdata[2]}",
                 "%{y}",
             ],
         )
         + "<extra></extra>",
+        marker=dict(opacity=1, line=dict(width=0.5, color="Black")),
     )
     fig.show()
+    # fig.write_image(f"output/ROH_events.png", scale=3)
