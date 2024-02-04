@@ -3,3 +3,5 @@ secrets.txt
 *.DS_Store
 *src_secret.py
 testing.ipynb
+*.ipynb
+*.csv

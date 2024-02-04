@@ -71,7 +71,7 @@ def enrich_events_df(events_df):
         subset=["type", "id", "location", "timestamp"], inplace=True, ignore_index=True
     )
     events_df["url"] = events_df.slug.apply(
-        lambda x: f"{TICKETS_AND_EVENTS_URL}/{x}-details"
+        lambda x: f"{TICKETS_AND_EVENTS_URL}/{x}-dates"
     )
     return events_df
 
@@ -90,3 +90,24 @@ def get_next_weeks_events(events_df, today):
         drop=True
     )
     return today_tomorrow_events_df, next_week_events_df
+
+
+def query_soonest_performance_id():
+    """
+    Query the soonest performance id
+    """
+    query_dict = {
+        "events": {
+            "url": ALL_EVENTS_URL,
+            "params": {},
+        },
+    }
+    events_df, _, _ = handle_upcoming_events(query_dict)
+    today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
+    events_df_sub = events_df.query(
+        "location == 'Main Stage' & date >= @today.date()"
+    ).reset_index(drop=True)
+    events_df_sub.to_csv("output/events_df_sub.csv", index=False)
+    print(events_df_sub)
+    exit()
+    return soonest_performance_id
