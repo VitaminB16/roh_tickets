@@ -175,6 +175,12 @@ def plot_events(events_df, colour1="T10", colour2="Dark24"):
             orientation="h",
         ),
         title=None,
+        xaxis=dict(
+            range=[
+                today,
+                events_df_sub.timestamp_end.max() + pd.Timedelta(days=1),
+            ]
+        ),
     )
     fig.layout.font.family = "Gotham"
     fig.update_traces(
