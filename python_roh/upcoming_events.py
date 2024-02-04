@@ -1,7 +1,7 @@
 import pandas as pd
 
 from .src.config import *
-from .src.src import query_all_data
+from .src.src import query_all_data, _query_soonest_performance_id
 
 """
 This module contains the functions to handle the data for the upcoming events.
@@ -107,7 +107,6 @@ def query_soonest_performance_id():
     events_df_sub = events_df.query(
         "location == 'Main Stage' & date >= @today.date()"
     ).reset_index(drop=True)
-    events_df_sub.to_csv("output/events_df_sub.csv", index=False)
-    print(events_df_sub)
-    exit()
+    soonest_production_url = events_df_sub.url.iloc[0]
+    soonest_performance_id = _query_soonest_performance_id(soonest_production_url)
     return soonest_performance_id

@@ -1,7 +1,10 @@
+import json
 import time
 import random
 import requests
 import pandas as pd
+from bs4 import BeautifulSoup
+from urllib.parse import unquote
 
 from .config import *
 from .utils import force_list
@@ -154,7 +157,7 @@ def query_all_data(query_dict, data_types=None, post_process=False):
     data = {}
     for data_type in force_list(data_types):
         data[data_type] = query_one_data(query_dict, data_type)
-        time.sleep(1)
+        time.sleep(0.1)
     print(f"Queried the following from the API: {list(data.keys())}")
     if post_process:
         data = post_process_all_data(data)
@@ -184,3 +187,39 @@ def fix_y_positions(df):
     df["YPosition"] = df["YPosition"] + df["y_absolute_shift"]
     df.drop(columns=["max_zone_y_position", "y_absolute_shift"], inplace=True)
     return df
+
+
+def query_production_activities(production_url):
+    """
+    production_url: str, e.g. "https://www.roh.org.uk/tickets-and-events/tosca-by-jonathan-kent-dates"
+    """
+    production_data = requests.get(production_url).text
+    soup = BeautifulSoup(production_data, "html.parser")
+
+    # __INTIIAL_STATE__ is a JSON object containing all the data we need
+    scripts = soup.find_all("script")
+    for script in scripts:
+        if "__INITIAL_STATE__" in script.string:
+            initial_state = script.string
+            break
+    initial_state = initial_state.replace("__INITIAL_STATE__=", "")[1:-1]
+    initial_state = unquote(initial_state)
+    initial_state = json.loads(initial_state)
+    activities_df = pd.DataFrame(initial_state["activities"])
+    return activities_df
+
+
+def _query_soonest_performance_id(production_url):
+    """
+    production_url: str, e.g. "https://www.roh.org.uk/tickets-and-events/tosca-by-jonathan-kent-dates"
+    """
+    activities_df = query_production_activities(production_url)
+    today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
+    activities_df.date = pd.to_datetime(activities_df.date, utc=True)
+    activities_df.date = activities_df.date.dt.tz_convert("Europe/London")
+    activities_df.sort_values(by=["date"], inplace=True)
+    activities_df.query("date >= @today", inplace=True)
+    activities_df.reset_index(drop=True, inplace=True)
+    soonest_performance_id = int(activities_df.id[0])
+    print(f"Soonest performance_id: {soonest_performance_id}")
+    return soonest_performance_id
