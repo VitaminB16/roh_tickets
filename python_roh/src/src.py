@@ -86,6 +86,9 @@ def do_nothing(input_json):
 
 
 def pre_process_df(input_json, df_type):
+    """
+    Function selector for pre-processing the different data types
+    """
     pre_process_fun = {
         "seats": pre_process_seats_df,
         "prices": pre_process_prices_df,
@@ -111,7 +114,7 @@ def post_process_all_data(data, data_types=None):
     seats_price_df = seats_price_df.merge(zones_df, on="ZoneId")
     seats_price_df.query("ZoneName in @ZONE_HIERARCHY.keys()", inplace=True)
     # Fix YPosition so that it follows the zone hierarchy
-    seats_price_df = fix_y_positions(seats_price_df)
+    seats_price_df = _fix_y_positions(seats_price_df)
     # Keep only the lowest price for each (SeatId, SectionId, PerformanceId)
     seats_price_df.sort_values(
         by=["SeatId", "SectionId", "PerformanceId", "Price"],
@@ -128,9 +131,9 @@ def post_process_all_data(data, data_types=None):
         seats_price_df.seat_available, None
     )
     data = {
-        "seats_price": seats_price_df,
+        "seats": seats_price_df,
         "prices": prices_df,
-        "zones": zones_df,
+        "zone_ids": zones_df,
         "price_types": price_types_df,
     }
 
@@ -141,30 +144,33 @@ def query_one_data(query_dict, data_type):
     """
     Query one type of data from the query_dict
     """
-
     url = query_dict[data_type]["url"]
     params = query_dict[data_type]["params"]
     json_response = requests.get(url, params=params).json()
     return pre_process_df(json_response, data_type)
 
 
-def query_all_data(query_dict, data_types=None, post_process=False):
+def query_all_data(query_dict, data_types=None, all_data={}, post_process=False):
     """
     Query all data from the query_dict
+    Args:
+    query_dict: dict, keys are data types and values are dicts with keys "url" and "params"
+    data_types: list, data types to query
+    post_process: bool, whether to post-process the data
+    all_data: dict, if not None, then this data will be used if it wasn't queried
     """
     if data_types is None:
         data_types = query_dict.keys()
-    data = {}
     for data_type in force_list(data_types):
-        data[data_type] = query_one_data(query_dict, data_type)
-        time.sleep(0.1)
-    print(f"Queried the following from the API: {list(data.keys())}")
+        all_data[data_type] = query_one_data(query_dict, data_type)
+        time.sleep(0.3)
+    print(f"Queried the following from the API: {data_types}")
     if post_process:
-        data = post_process_all_data(data)
-    return data
+        all_data = post_process_all_data(all_data)
+    return all_data
 
 
-def fix_y_positions(df):
+def _fix_y_positions(df):
     """
     Fix the YPosition so that it follows the zone hierarchy
     """

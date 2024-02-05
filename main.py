@@ -33,9 +33,9 @@ def seats_availability_entry(**kwargs):
     all_data = query_all_data(QUERY_DICT, post_process=True)
 
     seats_price_df, prices_df, zones_df, price_types_df = (
-        all_data["seats_price"],
+        all_data["seats"],
         all_data["prices"],
-        all_data["zones"],
+        all_data["zone_ids"],
         all_data["price_types"],
     )
 

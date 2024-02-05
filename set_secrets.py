@@ -14,4 +14,5 @@ def set_secrets():
             key, value = line.strip().split(" = ")
             os.environ[key] = value
 
+
 set_secrets()
