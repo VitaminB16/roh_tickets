@@ -122,14 +122,16 @@ def plot_hall(seats_price_df, prices_df):
     fig.write_image("output/ROH_hall.png", scale=3)
 
 
-def plot_events(events_df, colour1="T10", colour2="Dark24"):
+def plot_events(events_df, colour1="T10", colour2="Dark24", filter_recent=True):
     """
     Plot the timeline of the upcoming events on the Main Stage
     """
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
-    events_df_sub = events_df.query(
-        "location == 'Main Stage' & date >= @today.date()"
-    ).reset_index(drop=True)
+    if filter_recent:
+        sub_query = "location == 'Main Stage' & date >= @today.date()"
+    else:
+        sub_query = "location == 'Main Stage'"
+    events_df_sub = events_df.query(sub_query).reset_index(drop=True)
     # Start time: 1:00, End time: 23:00 of the event date
     events_df_sub["timestamp_start"] = events_df_sub.timestamp.dt.floor(
         "D"
@@ -210,4 +212,4 @@ def plot_events(events_df, colour1="T10", colour2="Dark24"):
         marker=dict(opacity=1, line=dict(width=0.5, color="Black")),
     )
     fig.show()
-    # fig.write_image(f"output/ROH_events.png", scale=3)
+    fig.write_image(f"output/ROH_events.png", scale=3)

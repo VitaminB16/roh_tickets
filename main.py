@@ -1,7 +1,8 @@
 import os
 import sys
-import argparse
-import plotly.express as px
+import pyarrow as pa
+import pyarrow.parquet as pq
+
 
 from set_secrets import set_secrets
 from python_roh.src.config import parse_args
@@ -23,6 +24,15 @@ def upcoming_events_entry(**kwargs):
         QUERY_DICT
     )
     plot_events(events_df)
+
+    # Save the data for posterity
+    pq.write_to_dataset(
+        table=pa.Table.from_pandas(events_df),
+        root_path="output/roh_events.parquet",
+        partition_cols=["location", "date", "title"],
+        basename_template="{i}.parquet",
+        use_threads=True,
+    )
 
 
 def seats_availability_entry(**kwargs):
