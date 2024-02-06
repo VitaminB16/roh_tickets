@@ -11,6 +11,8 @@ from python_roh.src.src import query_all_data
 from python_roh.src.graphics import plot_hall, plot_events
 from python_roh.upcoming_events import handle_upcoming_events
 
+from tools.parquet import Parquet
+
 
 if "src_secret.py" in os.listdir("python_roh/src"):
     from python_roh.src.src_secret import secret_function
@@ -26,13 +28,10 @@ def upcoming_events_entry(**kwargs):
     plot_events(events_df)
 
     # Save the data for posterity
-    pq.write_to_dataset(
-        table=pa.Table.from_pandas(events_df),
-        root_path="output/roh_events.parquet",
-        partition_cols=["location", "date", "title"],
-        basename_template="{i}.parquet",
-        use_threads=True,
+    Parquet("output/roh_events.parquet").write(
+        events_df, partition_cols=["location", "date", "title"]
     )
+    return events_df, today_tomorrow_events_df, next_week_events_df
 
 
 def seats_availability_entry(**kwargs):
@@ -50,6 +49,7 @@ def seats_availability_entry(**kwargs):
     )
 
     plot_hall(seats_price_df, prices_df)
+    return seats_price_df, prices_df, zones_df, price_types_df
 
 
 def main(task_name, **kwargs):
