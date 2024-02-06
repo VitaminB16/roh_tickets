@@ -19,3 +19,11 @@ def jprint(x):
     Pretty print a json object
     """
     print(json.dumps(x, indent=3))
+
+
+def load_json(path):
+    """
+    Load a json file
+    """
+    with open(path, "r") as f:
+        return json.load(f)

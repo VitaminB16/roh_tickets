@@ -3,10 +3,24 @@ from .config import *
 from python_roh.upcoming_events import query_soonest_performance_id
 
 
-def get_query_dict(performance_id, constituent_id, mode_of_sale_id, source_id):
+def get_query_dict(
+    performance_id=None,
+    constituent_id=None,
+    mode_of_sale_id=None,
+    source_id=None,
+    **kwargs
+):
     """
     Return the query dictionary for the API requests
     """
+    if mode_of_sale_id is None:
+        mode_of_sale_id = os.environ["MODE_OF_SALE_ID"]
+    if constituent_id is None:
+        constituent_id = os.environ["CONSTITUENT_ID"]
+    if source_id is None:
+        source_id = os.environ["SOURCE_ID"]
+    if performance_id is None:
+        performance_id = os.environ["PERFORMANCE_ID"]
 
     if performance_id == "soonest":
         performance_id = query_soonest_performance_id()

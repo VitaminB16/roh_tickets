@@ -1,6 +1,9 @@
 secrets.txt
 **__pycache__/
+**ignore/
 *.DS_Store
 *src_secret.py
 *.ipynb
 *.csv
+*.jpg
+*.gif

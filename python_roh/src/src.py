@@ -27,6 +27,7 @@ def pre_process_zone_df(input_json):
 def pre_process_seats_df(input_json):
     seats_df = pd.DataFrame(input_json)
     seats_df.rename(columns={"Id": "SeatId"}, inplace=True)
+    seats_df = seats_df.assign(SeatName=seats_df.SeatRow + seats_df.SeatNumber)
     return seats_df
 
 
@@ -114,7 +115,7 @@ def post_process_all_data(data, data_types=None):
     seats_price_df = seats_price_df.merge(zones_df, on="ZoneId")
     seats_price_df.query("ZoneName in @ZONE_HIERARCHY.keys()", inplace=True)
     # Fix YPosition so that it follows the zone hierarchy
-    seats_price_df = _fix_y_positions(seats_price_df)
+    seats_price_df = _fix_xy_positions(seats_price_df)
     # Keep only the lowest price for each (SeatId, SectionId, PerformanceId)
     seats_price_df.sort_values(
         by=["SeatId", "SectionId", "PerformanceId", "Price"],
@@ -140,7 +141,7 @@ def post_process_all_data(data, data_types=None):
     return data
 
 
-def query_one_data(query_dict, data_type):
+def query_one_data(query_dict, data_type=None):
     """
     Query one type of data from the query_dict
     """
@@ -170,29 +171,39 @@ def query_all_data(query_dict, data_types=None, all_data={}, post_process=False)
     return all_data
 
 
-def _fix_y_positions(df):
-    """
-    Fix the YPosition so that it follows the zone hierarchy
-    """
-    df = df.assign(zone_hierarchy=df.ZoneName.map(ZONE_HIERARCHY).astype(int))
-    max_y_positions = df.groupby(["zone_hierarchy"]).YPosition.max().reset_index()
-    # Calculate cumulative sum of seats in each zone
-    max_y_positions.sort_values(by=["zone_hierarchy"], inplace=True)
-    cum_sum = max_y_positions.YPosition.cumsum()[:-1]
-    cum_sum = pd.concat([pd.Series([0]), cum_sum], axis=0).reset_index(drop=True)
-    max_y_positions["y_absolute_shift"] = cum_sum
-    max_y_positions.rename(columns={"YPosition": "max_zone_y_position"}, inplace=True)
-    # Merge the max YPosition back into the df
-    df.drop(
-        columns=["max_zone_y_position", "y_absolute_shift"],
-        inplace=True,
-        errors="ignore",
-    )
-    df = df.merge(max_y_positions, on="zone_hierarchy")
-    df["YPosition"] = df["max_zone_y_position"] - df["YPosition"]
-    df["YPosition"] = df["YPosition"] + df["y_absolute_shift"]
-    df.drop(columns=["max_zone_y_position", "y_absolute_shift"], inplace=True)
+def _fix_xy_positions(df):
+    seat_positions = pd.read_csv("various/seat_map_positions/seat_positions.csv")
+    df_zones = df.ZoneName.unique()
+    seat_positions.query("ZoneName in @df_zones", inplace=True)
+    df.drop(columns=["x", "y"], inplace=True, errors="ignore")
+    df = df.merge(seat_positions, on=["SeatName", "ZoneName"], how="left")
+    df.query("x.notnull()", inplace=True)  # Remove seats with no position, e.g. aisles
     return df
+
+
+# def _fix_y_positions(df):
+#     """
+#     Fix the YPosition so that it follows the zone hierarchy
+#     """
+#     df = df.assign(zone_hierarchy=df.ZoneName.map(ZONE_HIERARCHY).astype(int))
+#     max_y_positions = df.groupby(["zone_hierarchy"]).YPosition.max().reset_index()
+#     # Calculate cumulative sum of seats in each zone
+#     max_y_positions.sort_values(by=["zone_hierarchy"], inplace=True)
+#     cum_sum = max_y_positions.YPosition.cumsum()[:-1]
+#     cum_sum = pd.concat([pd.Series([0]), cum_sum], axis=0).reset_index(drop=True)
+#     max_y_positions["y_absolute_shift"] = cum_sum
+#     max_y_positions.rename(columns={"YPosition": "max_zone_y_position"}, inplace=True)
+#     # Merge the max YPosition back into the df
+#     df.drop(
+#         columns=["max_zone_y_position", "y_absolute_shift"],
+#         inplace=True,
+#         errors="ignore",
+#     )
+#     df = df.merge(max_y_positions, on="zone_hierarchy")
+#     df["YPosition"] = df["max_zone_y_position"] - df["YPosition"]
+#     df["YPosition"] = df["YPosition"] + df["y_absolute_shift"]
+#     df.drop(columns=["max_zone_y_position", "y_absolute_shift"], inplace=True)
+#     return df
 
 
 def query_production_activities(production_url):

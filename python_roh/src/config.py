@@ -5,9 +5,15 @@ ZONE_HIERARCHY = {
     "Orchestra Stalls": 0,
     "Stalls Circle": 1,
     "Donald Gordon Grand Tier": 2,
+    "Donald Gordon Grand Tier Boxes": 2,
     "Balcony": 3,
+    "Balcony Boxes": 3,
     "Amphitheatre": 4,
+    "Slips": 5,
+    "WC Spaces": 6,
+    "Companion Seat": 6,
 }
+
 
 SEATS_BASE_URL = f"https://www.roh.org.uk/api/proxy/TXN/Performances/{os.environ['PERFORMANCE_ID']}/Seats"
 PRICE_BASE_URL = f"https://www.roh.org.uk/api/proxy/TXN/Performances/Prices"
@@ -18,7 +24,24 @@ ZONE_ID_BASE_URL = (
 ALL_EVENTS_URL = "https://www.roh.org.uk/api/events"
 TICKETS_AND_EVENTS_URL = "https://www.roh.org.uk/tickets-and-events"
 
-TAKEN_SEAT_STATUS_IDS = [3, 4, 6, 7, 8, 13]
+# TAKEN_SEAT_STATUS_IDS = [3, 4, 6, 7, 8, 13]
+TAKEN_SEAT_STATUS_IDS = [4, 5, 6, 7, 8, 13, 592]  # 3,
+
+PRICE_COLOR_LIST = [
+    "rgb(250,53,38)",  # Most expensive
+    "rgb(251,32,204)",
+    "rgb(47,249,254)",
+    "rgb(69,104,255)",
+    "rgb(253,149,46)",
+    "rgb(74,154,88)",
+    "rgb(237,168,249)",
+    "rgb(212,56,252)",
+    "rgb(31,182,244)",
+    "rgb(252,24,146)",
+    "rgb(0,68,136)",
+    "rgb(136,204,39)",  # Cheapest
+]
+NA_COLOR = "rgb(191,191,191)"
 
 
 def parse_args(args):
@@ -48,6 +71,9 @@ def parse_args(args):
     )
     parser.add_argument(
         "-mosid", help="Mode of sale id", type=int, dest="mode_of_sale_id"
+    )
+    parser.add_argument(
+        "--secret_function", help="Secret function", action="store_true", default=None
     )
     args = parser.parse_args(args)
 

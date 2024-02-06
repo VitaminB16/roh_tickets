@@ -39,7 +39,7 @@ def seats_availability_entry(**kwargs):
         all_data["price_types"],
     )
 
-    plot_hall(seats_price_df)
+    plot_hall(seats_price_df, prices_df)
 
 
 def main(task_name, **kwargs):
