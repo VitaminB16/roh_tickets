@@ -8,7 +8,6 @@ def plot_hall(seats_price_df, prices_df):
     """
     Plot the hall with the seats and their prices and availability
     """
-
     # Get the edge seats to determine the stage position
     edge_query = "ZoneName == 'Orchestra Stalls' and SeatName.isin(['A1', 'A29'])"
     edge_seats = seats_price_df.query(edge_query)

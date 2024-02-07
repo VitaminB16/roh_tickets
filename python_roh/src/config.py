@@ -54,6 +54,7 @@ def parse_args(args):
         --soonest: plot the hall seats for the soonest performance
         -pid: performance_id (int) or "soonest" (str)
         -mosid: mode_of_sale_id
+        --secret_function: option to use the secret function
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("task_name", help="Task name", choices=["upcoming", "seats"])

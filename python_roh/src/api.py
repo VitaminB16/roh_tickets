@@ -11,16 +11,12 @@ def get_query_dict(
     **kwargs
 ):
     """
-    Return the query dictionary for the API requests
+    Return the query dictionary for the API requests for use in requests.get()
     """
-    if mode_of_sale_id is None:
-        mode_of_sale_id = os.environ["MODE_OF_SALE_ID"]
-    if constituent_id is None:
-        constituent_id = os.environ["CONSTITUENT_ID"]
-    if source_id is None:
-        source_id = os.environ["SOURCE_ID"]
-    if performance_id is None:
-        performance_id = os.environ["PERFORMANCE_ID"]
+    mode_of_sale_id = mode_of_sale_id or os.environ["MODE_OF_SALE_ID"]
+    constituent_id = constituent_id or os.environ["CONSTITUENT_ID"]
+    source_id = source_id or os.environ["SOURCE_ID"]
+    performance_id = performance_id or os.environ["PERFORMANCE_ID"]
 
     if performance_id == "soonest":
         performance_id = query_soonest_performance_id()
