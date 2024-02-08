@@ -10,7 +10,7 @@ from .config import *
 from .utils import force_list
 
 
-def pre_process_zone_df(input_json):
+def _pre_process_zone_df(input_json):
     zones_df = pd.DataFrame(input_json)
     zones_df = zones_df["Zone"]
     zones_df = zones_df.apply(pd.Series)
@@ -24,14 +24,14 @@ def pre_process_zone_df(input_json):
     return zones_df
 
 
-def pre_process_seats_df(input_json):
+def _pre_process_seats_df(input_json):
     seats_df = pd.DataFrame(input_json)
     seats_df.rename(columns={"Id": "SeatId"}, inplace=True)
     seats_df = seats_df.assign(SeatName=seats_df.SeatRow + seats_df.SeatNumber)
     return seats_df
 
 
-def pre_process_prices_df(input_json):
+def _pre_process_prices_df(input_json):
     prices_df = pd.DataFrame(input_json)
     if prices_df.empty:
         raise ValueError("No prices available for this performance!")
@@ -39,12 +39,12 @@ def pre_process_prices_df(input_json):
     return prices_df
 
 
-def pre_process_price_types_df(input_json):
+def _pre_process_price_types_df(input_json):
     price_types_df = pd.DataFrame(input_json)
     return price_types_df
 
 
-def pre_process_events_df(input_json):
+def _pre_process_events_df(input_json):
     data = input_json
     events_df = pd.DataFrame(data["data"])
     included_df = pd.DataFrame(data["included"])
@@ -93,11 +93,11 @@ def pre_process_df(input_json, df_type):
     Function selector for pre-processing the different data types
     """
     pre_process_fun = {
-        "seats": pre_process_seats_df,
-        "prices": pre_process_prices_df,
-        "zone_ids": pre_process_zone_df,
-        "price_types": pre_process_price_types_df,
-        "events": pre_process_events_df,
+        "seats": _pre_process_seats_df,
+        "prices": _pre_process_prices_df,
+        "zone_ids": _pre_process_zone_df,
+        "price_types": _pre_process_price_types_df,
+        "events": _pre_process_events_df,
     }
     return pre_process_fun.get(df_type, do_nothing)(input_json)
 
@@ -106,7 +106,6 @@ def post_process_all_data(data, data_types=None):
     """
     Merge the different dataframes together and do some post-processing
     """
-
     seats_df, prices_df, zones_df, price_types_df = (
         data["seats"],
         data["prices"],
@@ -174,6 +173,9 @@ def query_all_data(query_dict, data_types=None, all_data={}, post_process=False)
 
 
 def _fix_xy_positions(df):
+    """
+    Map the seats to their positions according to the web layout
+    """
     seat_positions = pd.read_csv("various/seat_map_positions/seat_positions.csv")
     df_zones = df.ZoneName.unique()
     seat_positions.query("ZoneName in @df_zones", inplace=True)
