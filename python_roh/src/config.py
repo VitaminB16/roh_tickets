@@ -42,6 +42,10 @@ PRICE_COLOR_LIST = [
     "rgb(136,204,39)",  # Cheapest
 ]
 NA_COLOR = "rgb(191,191,191)"
+TITLE_COLOURS_LOCATION = "output/titles_colour.json"
+EVENTS_PARQUET_LOCATION = "output/events.parquet"
+HALL_IMAGE_LOCATION = "output/ROH_hall.png"
+EVENTS_IMAGE_LOCATION = "output/ROH_events.png"
 
 
 def parse_args(args):

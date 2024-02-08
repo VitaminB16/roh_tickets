@@ -5,7 +5,7 @@ import pyarrow.parquet as pq
 
 
 from set_secrets import set_secrets
-from python_roh.src.config import parse_args
+from python_roh.src.config import *
 from python_roh.src.api import get_query_dict
 from python_roh.src.src import query_all_data
 from python_roh.src.graphics import plot_hall, plot_events
@@ -28,7 +28,7 @@ def upcoming_events_entry(**kwargs):
     plot_events(events_df)
 
     # Save the data for posterity
-    Parquet("output/roh_events.parquet").write(
+    Parquet(EVENTS_PARQUET_LOCATION).write(
         events_df, partition_cols=["location", "date", "title"]
     )
     return events_df, today_tomorrow_events_df, next_week_events_df

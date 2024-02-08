@@ -2,8 +2,8 @@ import random
 import pandas as pd
 import plotly.express as px
 
-from python_roh.src.utils import write_json, load_json
-from python_roh.src.config import PRICE_COLOR_LIST, NA_COLOR
+from python_roh.src.config import *
+from python_roh.src.utils import JSON
 
 
 def plot_hall(seats_price_df, prices_df):
@@ -120,14 +120,14 @@ def plot_hall(seats_price_df, prices_df):
             trace.marker.size = 8
 
     fig.show()
-    fig.write_image("output/ROH_hall.png", scale=3)
+    fig.write_image(HALL_IMAGE_LOCATION, scale=3)
 
 
 def persist_colours(plot_df, all_colours):
     """
     Whenever new titles are added, persist the colours of the existing titles
     """
-    existing_titles_colour = load_json("output/titles_colour.json")
+    existing_titles_colour = JSON(TITLE_COLOURS_LOCATION).load()
     existing_titles = set(existing_titles_colour.keys())
     upcoming_titles = set(plot_df.title.unique())
     new_titles = upcoming_titles - existing_titles
@@ -141,7 +141,7 @@ def persist_colours(plot_df, all_colours):
     random.shuffle(unused_colours)  # Randomize the leftover colours
     new_titles_colours = dict(zip(new_titles, unused_colours))
     upcoming_titles_colour.update(new_titles_colours)
-    write_json("output/titles_colour.json", upcoming_titles_colour)
+    JSON(TITLE_COLOURS_LOCATION).write(upcoming_titles_colour)
     return upcoming_titles_colour
 
 
@@ -240,4 +240,4 @@ def plot_events(events_df, colour1="T10", colour2="Light24", filter_recent=True)
         trace.marker.line.width = 0.2
 
     fig.show()
-    fig.write_image(f"output/ROH_events.png", scale=3)
+    fig.write_image(EVENTS_IMAGE_LOCATION, scale=3)

@@ -22,19 +22,28 @@ def jprint(x):
     print(json.dumps(x, indent=3))
 
 
-def load_json(path):
+class JSON:
     """
-    Load a json file
+    Class for operating json files
     """
-    if not os.path.isfile(path):
-        return {}
-    with open(path, "r") as f:
-        return json.load(f)
 
+    def __init__(self, path):
+        self.path = path
 
-def write_json(path, data):
-    """
-    Write a json file
-    """
-    with open(path, "w") as f:
-        json.dump(data, f, indent=3)
+    def load(self):
+        """
+        Load a json file as a dict
+        """
+        if not os.path.isfile(self.path):
+            return {}
+        with open(self.path, "r") as f:
+            return json.load(f)
+
+    def write(self, data, **kwargs):
+        """
+        Write a json file
+        """
+        kwargs.setdefault("indent", 3)
+        kwargs.setdefault("sort_keys", True)
+        with open(self.path, "w") as f:
+            json.dump(data, f, **kwargs)
