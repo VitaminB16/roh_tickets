@@ -105,7 +105,7 @@ def query_soonest_performance_id():
     events_df, _, _ = handle_upcoming_events(query_dict)
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
     events_df_sub = events_df.query(
-        "location == 'Main Stage' & date >= @today.date()"
+        "location == 'Main Stage' & timestamp >= @today"
     ).reset_index(drop=True)
     soonest_production_url = events_df_sub.url.iloc[0]
     soonest_performance_id = _query_soonest_performance_id(soonest_production_url)
