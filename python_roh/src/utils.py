@@ -1,3 +1,4 @@
+import os
 import json
 import collections.abc
 
@@ -25,5 +26,15 @@ def load_json(path):
     """
     Load a json file
     """
+    if not os.path.isfile(path):
+        return {}
     with open(path, "r") as f:
         return json.load(f)
+
+
+def write_json(path, data):
+    """
+    Write a json file
+    """
+    with open(path, "w") as f:
+        json.dump(data, f, indent=3)

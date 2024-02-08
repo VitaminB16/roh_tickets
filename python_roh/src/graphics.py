@@ -1,6 +1,8 @@
+import random
 import pandas as pd
 import plotly.express as px
 
+from python_roh.src.utils import write_json, load_json
 from python_roh.src.config import PRICE_COLOR_LIST, NA_COLOR
 
 
@@ -121,7 +123,29 @@ def plot_hall(seats_price_df, prices_df):
     fig.write_image("output/ROH_hall.png", scale=3)
 
 
-def plot_events(events_df, colour1="T10", colour2="Dark24", filter_recent=True):
+def persist_colours(plot_df, all_colours):
+    """
+    Whenever new titles are added, persist the colours of the existing titles
+    """
+    existing_titles_colour = load_json("output/titles_colour.json")
+    existing_titles = set(existing_titles_colour.keys())
+    upcoming_titles = set(plot_df.title.unique())
+    new_titles = upcoming_titles - existing_titles
+    overlapping_titles = existing_titles & upcoming_titles
+    upcoming_titles_colour = {
+        title: existing_titles_colour[title] for title in overlapping_titles
+    }
+    used_colours = set(upcoming_titles_colour.values())
+    unused_colours = all_colours - used_colours
+    unused_colours = list(unused_colours)[: len(new_titles)]
+    random.shuffle(unused_colours)  # Randomize the leftover colours
+    new_titles_colours = dict(zip(new_titles, unused_colours))
+    upcoming_titles_colour.update(new_titles_colours)
+    write_json("output/titles_colour.json", upcoming_titles_colour)
+    return upcoming_titles_colour
+
+
+def plot_events(events_df, colour1="T10", colour2="Light24", filter_recent=True):
     """
     Plot the timeline of the upcoming events on the Main Stage
     """
@@ -130,22 +154,22 @@ def plot_events(events_df, colour1="T10", colour2="Dark24", filter_recent=True):
         sub_query = "location == 'Main Stage' & timestamp >= @today"
     else:
         sub_query = "location == 'Main Stage'"
-    events_df_sub = events_df.query(sub_query).reset_index(drop=True)
+    plot_df = events_df.query(sub_query).reset_index(drop=True)
     # Start time: 1:00, End time: 23:00 of the event date
-    events_df_sub["timestamp_start"] = events_df_sub.timestamp.dt.floor(
-        "D"
-    ) + pd.Timedelta(hours=1)
-    events_df_sub["timestamp_end"] = events_df_sub.timestamp.dt.ceil(
-        "D"
-    ) - pd.Timedelta(hours=1)
+    plot_df["timestamp_start"] = plot_df.timestamp.dt.floor("D") + pd.Timedelta(hours=1)
+    plot_df["timestamp_end"] = plot_df.timestamp.dt.ceil("D") - pd.Timedelta(hours=1)
 
-    events_df_sub["date_str"] = events_df_sub.timestamp.dt.strftime("%b %-d, %Y")
+    plot_df["date_str"] = plot_df.timestamp.dt.strftime("%b %-d, %Y")
 
     colour1_list = getattr(px.colors.qualitative, colour1)
     colour2_list = getattr(px.colors.qualitative, colour2)
-    combined = colour1_list + colour2_list
+    combined = set(colour1_list + colour2_list)
+
+    # Ensure persistence of the colours
+    upcoming_titles_colour = persist_colours(plot_df, combined)
+
     fig = px.timeline(
-        events_df_sub,
+        plot_df,
         x_start="timestamp_start",
         x_end="timestamp_end",
         y="time",
@@ -154,14 +178,16 @@ def plot_events(events_df, colour1="T10", colour2="Dark24", filter_recent=True):
         title="Royal Opera House Events",
         template="simple_white",
         hover_name="url",
-        color_discrete_sequence=combined,
+        color_discrete_map=upcoming_titles_colour,
+        # Sort the legend in the order of the x axis
+        category_orders={"title": plot_df.title.unique()},
     )
     # Keep first 5 characters of the y axis marks
     fig.update_yaxes(
         categoryorder="category ascending",
         showgrid=True,
-        tickvals=events_df_sub.time.unique(),
-        ticktext=[str(x)[:5] for x in events_df_sub.time.unique()],
+        tickvals=plot_df.time.unique(),
+        ticktext=[str(x)[:5] for x in plot_df.time.unique()],
         title="",
     )
     fig.update_xaxes(
@@ -194,7 +220,7 @@ def plot_events(events_df, colour1="T10", colour2="Dark24", filter_recent=True):
         xaxis=dict(
             range=[
                 today,
-                events_df_sub.timestamp_end.max() + pd.Timedelta(days=1),
+                plot_df.timestamp_end.max() + pd.Timedelta(days=1),
             ]
         ),
     )
@@ -208,7 +234,10 @@ def plot_events(events_df, colour1="T10", colour2="Dark24", filter_recent=True):
             ],
         )
         + "<extra></extra>",
-        marker=dict(opacity=1, line=dict(width=0.5, color="Black")),
     )
+    for trace in fig.data:
+        trace.marker.line.color = trace.marker.color
+        trace.marker.line.width = 0.2
+
     fig.show()
     fig.write_image(f"output/ROH_events.png", scale=3)
