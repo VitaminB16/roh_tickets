@@ -5,9 +5,10 @@ import pyarrow.parquet as pq
 
 
 from set_secrets import set_secrets
+
+from python_roh.src.src import API
 from python_roh.src.config import *
 from python_roh.src.api import get_query_dict
-from python_roh.src.src import query_all_data
 from python_roh.src.graphics import plot_hall, plot_events
 from python_roh.upcoming_events import handle_upcoming_events
 
@@ -39,7 +40,7 @@ def seats_availability_entry(**kwargs):
     Entry point for the seats availability task and the hall seats plot
     """
 
-    all_data = query_all_data(QUERY_DICT, post_process=True)
+    all_data = API(QUERY_DICT).query_all_data(post_process=True)
 
     seats_price_df, prices_df, zones_df, price_types_df = (
         all_data["seats"],

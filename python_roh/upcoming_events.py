@@ -1,7 +1,7 @@
 import pandas as pd
 
 from .src.config import *
-from .src.src import query_all_data, _query_soonest_performance_id
+from .src.src import API, _query_soonest_performance_id
 
 """
 This module contains the functions to handle the data for the upcoming events.
@@ -12,7 +12,7 @@ def handle_upcoming_events(query_dict):
     """
     Entry point for the upcoming events
     """
-    data = query_all_data(query_dict, "events")
+    data = API(query_dict).query_all_data("events")
     events_df, included_df = data["events"]
 
     locations_df = get_locations_df(included_df)

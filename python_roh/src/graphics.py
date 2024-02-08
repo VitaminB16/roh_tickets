@@ -127,6 +127,7 @@ def persist_colours(plot_df, all_colours):
     """
     Whenever new titles are added, persist the colours of the existing titles
     """
+    all_colours = set(all_colours)
     existing_titles_colour = JSON(TITLE_COLOURS_LOCATION).load()
     existing_titles = set(existing_titles_colour.keys())
     upcoming_titles = set(plot_df.title.unique())
@@ -145,7 +146,7 @@ def persist_colours(plot_df, all_colours):
     return upcoming_titles_colour
 
 
-def plot_events(events_df, colour1="T10", colour2="Light24", filter_recent=True):
+def plot_events(events_df, colours=["Plotly", "Dark2", "G10"], filter_recent=True):
     """
     Plot the timeline of the upcoming events on the Main Stage
     """
@@ -161,12 +162,12 @@ def plot_events(events_df, colour1="T10", colour2="Light24", filter_recent=True)
 
     plot_df["date_str"] = plot_df.timestamp.dt.strftime("%b %-d, %Y")
 
-    colour1_list = getattr(px.colors.qualitative, colour1)
-    colour2_list = getattr(px.colors.qualitative, colour2)
-    combined = set(colour1_list + colour2_list)
+    colour_list = []
+    for colour in colours:
+        colour_list.extend(getattr(px.colors.qualitative, colour))
 
     # Ensure persistence of the colours
-    upcoming_titles_colour = persist_colours(plot_df, combined)
+    upcoming_titles_colour = persist_colours(plot_df, set(colour_list))
 
     fig = px.timeline(
         plot_df,
@@ -218,7 +219,7 @@ def plot_events(events_df, colour1="T10", colour2="Light24", filter_recent=True)
         title=None,
         xaxis=dict(
             range=[
-                today,
+                today - pd.Timedelta(hours=5),
                 plot_df.timestamp_end.max() + pd.Timedelta(days=1),
             ]
         ),

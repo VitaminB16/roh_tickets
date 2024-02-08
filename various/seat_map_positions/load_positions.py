@@ -1,9 +1,10 @@
 import pandas as pd
 
 from set_secrets import set_secrets
+
+from python_roh.src.src import API
 from python_roh.src.utils import load_json
 from python_roh.src.api import get_query_dict
-from python_roh.src.src import query_one_data
 
 
 def load_positions():
@@ -14,7 +15,7 @@ def load_positions():
 
     # Get the seats data from the API
     query_dict = get_query_dict()
-    seats_df = query_one_data(query_dict, "seats")
+    seats_df = API(query_dict).query_one_data("seats")
     seats_df = seats_df.loc[:, ["SeatId", "SeatName"]]
 
     # Handle two type of seats in the seat map

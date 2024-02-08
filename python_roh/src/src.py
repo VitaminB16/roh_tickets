@@ -142,34 +142,38 @@ def post_process_all_data(data, data_types=None):
     return data
 
 
-def query_one_data(query_dict, data_type=None):
-    """
-    Query one type of data from the query_dict
-    """
-    url = query_dict[data_type]["url"]
-    params = query_dict[data_type]["params"]
-    json_response = requests.get(url, params=params).json()
-    return pre_process_df(json_response, data_type)
+class API:
+    def __init__(self, query_dict, all_data={}):
+        self.query_dict = query_dict
+        self.all_data = all_data
 
+    def query_all_data(self, data_types=None, post_process=False):
+        """
+        Query all data from the query_dict
+        Args:
+        query_dict: dict, keys are data types and values are dicts with keys "url" and "params"
+        data_types: list, data types to query
+        post_process: bool, whether to post-process the data
+        all_data: dict, if not None, then this data will be used if it wasn't queried
+        """
+        if data_types is None:
+            data_types = self.query_dict.keys()
+        for data_type in force_list(data_types):
+            self.all_data[data_type] = self.query_one_data(data_type)
+            time.sleep(0.3)
+        print(f"Queried the following from the API: {data_types}")
+        if post_process:
+            self.all_data = post_process_all_data(self.all_data)
+        return self.all_data
 
-def query_all_data(query_dict, data_types=None, all_data={}, post_process=False):
-    """
-    Query all data from the query_dict
-    Args:
-    query_dict: dict, keys are data types and values are dicts with keys "url" and "params"
-    data_types: list, data types to query
-    post_process: bool, whether to post-process the data
-    all_data: dict, if not None, then this data will be used if it wasn't queried
-    """
-    if data_types is None:
-        data_types = query_dict.keys()
-    for data_type in force_list(data_types):
-        all_data[data_type] = query_one_data(query_dict, data_type)
-        time.sleep(0.3)
-    print(f"Queried the following from the API: {data_types}")
-    if post_process:
-        all_data = post_process_all_data(all_data)
-    return all_data
+    def query_one_data(self, data_type=None):
+        """
+        Query one type of data from the query_dict
+        """
+        url = self.query_dict[data_type]["url"]
+        params = self.query_dict[data_type]["params"]
+        json_response = requests.get(url, params=params).json()
+        return pre_process_df(json_response, data_type)
 
 
 def _fix_xy_positions(df):
