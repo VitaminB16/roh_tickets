@@ -212,8 +212,7 @@ def plot_events(events_df, colour1="T10", colour2="Light24", filter_recent=True)
         ),
         legend=dict(
             title="",
-            title_font=dict(size=15, family="Gotham"),
-            font=dict(size=13, family="Gotham"),
+            font=dict(size=15, family="Gotham"),
             orientation="h",
         ),
         title=None,
@@ -225,6 +224,7 @@ def plot_events(events_df, colour1="T10", colour2="Light24", filter_recent=True)
         ),
     )
     fig.layout.font.family = "Gotham"
+    fig.layout.font.size = 15
     fig.update_traces(
         hovertemplate="<br>".join(
             [
