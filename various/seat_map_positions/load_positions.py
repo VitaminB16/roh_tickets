@@ -3,13 +3,18 @@ import pandas as pd
 from set_secrets import set_secrets
 
 from python_roh.src.src import API
-from python_roh.src.utils import load_json
+from python_roh.src.utils import JSON
 from python_roh.src.api import get_query_dict
 
 
 def load_positions():
     # JSON file with the seat map positions from the web page using extract_positions.js
-    seat_map_json = load_json("various/seat_map_positions/seat_positions.json")
+    seat_map_json = JSON("various/seat_map_positions/seat_positions.json").load()
+    if seat_map_json == {}:
+        print(
+            "various/seat_map_positions/seat_positions.json not found!\n"
+            + "Make sure to run extract_positions.js first."
+        )
     seat_map = pd.DataFrame(seat_map_json)
     seat_map.rename(columns={"cx": "x", "cy": "y"}, inplace=True)
 

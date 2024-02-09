@@ -108,5 +108,12 @@ def query_soonest_performance_id():
         "location == 'Main Stage' & timestamp >= @today"
     ).reset_index(drop=True)
     soonest_production_url = events_df_sub.url.iloc[0]
+    print(
+        f"""
+        Soonest performance: {events_df_sub.title.iloc[0]}
+        {events_df_sub.date.iloc[0].strftime('%b %-d, %Y')}
+        {events_df_sub.time.iloc[0]}
+        """
+    )
     soonest_performance_id = _query_soonest_performance_id(soonest_production_url)
     return soonest_performance_id
