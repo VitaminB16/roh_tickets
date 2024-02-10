@@ -107,6 +107,8 @@ def query_soonest_performance_id():
     events_df_sub = events_df.query(
         "location == 'Main Stage' & timestamp >= @today"
     ).reset_index(drop=True)
+    events_df_sub.sort_values(by=["timestamp"], inplace=True)
+
     soonest_production_url = events_df_sub.url.iloc[0]
     print(
         f"""

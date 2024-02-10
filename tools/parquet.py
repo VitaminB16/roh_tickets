@@ -109,7 +109,7 @@ class Parquet:
             file_filters.append((column, "in", value))
         return file_filters
 
-    def fix_column_types(self, df, filters):
+    def fix_column_types(self, df, filters, replace_underscore=True):
         """
         Ensure nothing strange happens with the column types of the df
         """
@@ -117,6 +117,8 @@ class Parquet:
             return df
         for c, c_type in [(x[0], type(x[1])) for x in filters]:
             df[c] = df[c].astype(c_type)
+            if replace_underscore and (c_type == str):
+                df[c] = df[c].str.replace("_", " ")
         return df
 
 
