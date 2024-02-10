@@ -4,8 +4,11 @@ import asyncio
 import pandas as pd
 import pyarrow as pa
 from retrying import retry
+import pyarrow.parquet as pq
 from typing import Any, List, Tuple, Dict
 from concurrent.futures import ThreadPoolExecutor
+
+from python_roh.src.utils import force_list
 
 
 class Parquet:
@@ -70,6 +73,51 @@ class Parquet:
             False,
             **kwargs,
         )
+
+    def read(
+        self,
+        allow_empty=True,
+        schema=None,
+        filters=None,
+        **kwargs,
+    ):
+        filters = self.generate_filters(filters)
+        self.log(filters)
+        df = pq.read_table(
+            self.path,
+            filters=filters,
+            schema=schema,
+            **kwargs,
+        ).to_pandas()
+
+        if df.empty and not allow_empty:
+            raise ValueError(f"File {self.path} is empty, and allow_empty is False")
+
+        df = self.fix_column_types(df, filters)
+        return df
+
+    def generate_filters(self, filters):
+        """Generate the filters"""
+        if filters is None:
+            return None
+        if isinstance(filters, list):
+            return filters
+
+        file_filters = []
+        for column, value in filters.items():
+            value = force_list(value)
+            file_filters.append((column, "in", value))
+        return file_filters
+
+    def fix_column_types(self, df, filters):
+        """
+        Ensure nothing strange happens with the column types of the df
+        """
+        if (not filters) or df.empty:
+            return df
+        for c, c_type in [(x[0], type(x[1])) for x in filters]:
+            df[c] = df[c].astype(c_type)
+        return df
 
 
 @retry(wait_fixed=0.1, stop_max_attempt_number=1000)
