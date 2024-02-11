@@ -74,3 +74,13 @@ def async_retry(wait_fixed=0.1, stop_max_attempt_number=3):
         return wrapper
 
     return decorator
+
+
+def ensure_types(df, types_dict):
+    """
+    Ensure the types of the columns of the df
+    """
+    for c, c_type in types_dict.items():
+        if c in df.columns:
+            df[c] = df[c].astype(c_type)
+    return df

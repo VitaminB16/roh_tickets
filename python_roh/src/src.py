@@ -80,7 +80,9 @@ def _pre_process_events_df(input_json):
     events_df.locations = events_df.locations.apply(lambda x: x["data"])
     events_df = events_df.explode("locations", ignore_index=True)
     events_df.locations = events_df.locations.apply(lambda x: x["id"])
-    events_df.rename(columns={"locations": "locationId"}, inplace=True)
+    events_df.rename(
+        columns={"locations": "locationId", "id": "productionId"}, inplace=True
+    )
     return events_df, included_df
 
 
@@ -239,11 +241,11 @@ def query_production_activities(production_url):
     production_url: str, e.g. "https://www.roh.org.uk/tickets-and-events/tosca-by-jonathan-kent-dates"
     """
     activities_df = _query_production_activities(production_url)
-    today = pd.Timestamp.today(tz="Europe/London") + pd.Timedelta(hours=1)
     activities_df.date = pd.to_datetime(activities_df.date, utc=True)
     activities_df.date = activities_df.date.dt.tz_convert("Europe/London")
     activities_df.sort_values(by=["date"], inplace=True, ignore_index=True)
     return activities_df
+
 
 def _query_soonest_performance_id(production_url):
     """

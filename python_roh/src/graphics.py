@@ -174,7 +174,7 @@ def plot_events(events_df, colours=["Plotly", "Dark2", "G10"], filter_recent=Tru
         x_start="timestamp_start",
         x_end="timestamp_end",
         y="time",
-        custom_data=["title", "url", "date_str"],
+        custom_data=["title", "url", "date_str", "performanceId"],
         color="title",
         title="Royal Opera House Events",
         template="simple_white",
@@ -232,6 +232,7 @@ def plot_events(events_df, colours=["Plotly", "Dark2", "G10"], filter_recent=Tru
                 "%{customdata[0]}",
                 "%{customdata[2]}",
                 "%{y}",
+                "ID: %{customdata[3]}",
             ],
         )
         + "<extra></extra>",

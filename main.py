@@ -27,10 +27,8 @@ def upcoming_events_entry(**kwargs):
         QUERY_DICT
     )
     plot_events(events_df)
-
-    # Save the data for posterity
     Parquet(EVENTS_PARQUET_LOCATION).write(
-        events_df, partition_cols=["location", "date", "title"]
+        events_df, partition_cols=["location", "date", "time", "title"]
     )
     return events_df, today_tomorrow_events_df, next_week_events_df
 

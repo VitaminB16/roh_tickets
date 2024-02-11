@@ -15,7 +15,7 @@ from python_roh.src.utils import force_list, async_retry
 class Parquet:
     """
     Writes a DataFrame to a parquet file using pyarrow and asyncio.
-    It allows for a better naming schema of the parquet partitions.
+    It allows for a better naming schema of the parquet partitions, handling special characters.
     """
 
     def __init__(self, path: str, **kwargs):
@@ -28,10 +28,10 @@ class Parquet:
         partition_cols: List[str] = None,
         add_uuid: bool = False,
         schema: pa.Schema = None,
+        use_threading: bool = False,
         **kwargs: Any,
     ) -> Tuple[Dict[str, str], Dict[str, bool]]:
-        if partition_cols:
-            # Create a new event loop explicitly
+        if partition_cols and use_threading:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
@@ -50,9 +50,17 @@ class Parquet:
                     )
                     tasks.append(task)
                 loop.run_until_complete(asyncio.gather(*tasks))
-
-            # Close the loop once done
             loop.close()
+
+        elif partition_cols:
+            pq.write_to_dataset(
+                table=pa.Table.from_pandas(df),
+                root_path=self.path,
+                partition_cols=partition_cols,
+                schema=schema,
+                basename_template="{i}.parquet",
+                **kwargs,
+            )
         else:
             df.to_parquet(
                 self.path,
@@ -72,12 +80,13 @@ class Parquet:
             grp = (grp,)
         path_parts = [self.path]
         for col, val in zip(partition_cols, grp):
-            path_parts.append(f"{col}={val}")
+            sanitized_val = self.sanitise_name(val)
+            path_parts.append(f"{col}={sanitized_val}")
         path = "/".join(path_parts)
         os.makedirs(path, exist_ok=True)
         path = path + "/" + self.partition_name_func(grp, add_uuid=add_uuid)
-        # Check if partition_cols are in the dataframe
         _df.drop(columns=partition_cols, errors="ignore", inplace=True)
+        import time
 
         await loop.run_in_executor(
             self.executor,
@@ -91,23 +100,17 @@ class Parquet:
             **kwargs,
         )
 
-    def _construct_partition_path(self, grp, partition_cols):
-        grp = (grp,) if not isinstance(grp, tuple) else grp
-        path_parts = [self.path] + [
-            f"{col}={val}" for col, val in zip(partition_cols, grp)
-        ]
-        filename = self.partition_name_func(grp)
-        full_path = os.path.join(*path_parts, filename)
-        os.makedirs(os.path.dirname(full_path), exist_ok=True)
-        return full_path
+    def sanitise_name(self, name):
+        # More selective sanitization to only target problematic characters
+        return name.replace("/", "%2F")
 
-    @staticmethod
-    def partition_name_func(keys, add_uuid: bool = False) -> str:
+    def partition_name_func(self, keys, add_uuid: bool = False) -> str:
         filename = (
             "_".join(map(str, keys))
             + (f"_{uuid.uuid4()}" if add_uuid else "")
             + ".parquet"
         )
+        filename = self.sanitise_name(filename)
         return filename
 
     def read(
@@ -118,15 +121,18 @@ class Parquet:
         **kwargs,
     ):
         filters = self.generate_filters(filters)
-        df = pq.read_table(
-            self.path,
-            filters=filters,
-            schema=schema,
-            **kwargs,
-        ).to_pandas()
+        try:
+            df = pq.read_table(
+                self.path,
+                filters=filters,
+                schema=schema,
+                **kwargs,
+            ).to_pandas()
+        except FileNotFoundError:
+            df = pd.DataFrame()
 
         if df.empty and not allow_empty:
-            raise ValueError(f"File {self.path} is empty, and allow_empty is False")
+            raise ValueError(f"File {self.path} is empty or not found, and allow_empty is False")
 
         df = self.fix_column_types(df, filters)
         return df
