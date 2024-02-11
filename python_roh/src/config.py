@@ -1,5 +1,6 @@
 import os
 import argparse
+import pandas as pd
 
 ZONE_HIERARCHY = {
     "Orchestra Stalls": 0,
@@ -88,3 +89,18 @@ def parse_args(args):
     # Remove unset arguments
     output = {k: v for k, v in output.items() if v is not None}
     return output
+
+
+EVENTS_PARQUET_SCHEMA = {
+    "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
+    "time": lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
+}
+PRODUCTIONS_PARQUET_SCHEMA = {
+    "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
+    "time": lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
+}
+
+PARQUET_SCHEMAS = {
+    EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
+    PRODUCTIONS_PARQUET_LOCATION: PRODUCTIONS_PARQUET_SCHEMA,
+}

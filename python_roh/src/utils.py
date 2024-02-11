@@ -84,3 +84,21 @@ def ensure_types(df, types_dict):
         if c in df.columns:
             df[c] = df[c].astype(c_type)
     return df
+
+
+def enforce_schema(df, schema):
+    """
+    Enforce a schema on a dataframe
+    """
+    if schema is None:
+        return df
+    for col, col_schema in schema.items():
+        if col not in df.columns:
+            continue
+        if isinstance(col_schema, type(lambda x: x)):
+            df[col] = col_schema(df[col])
+        elif isinstance(col_schema, dict):
+            df[col] = df[col].map(col_schema)
+        elif isinstance(col_schema, type):
+            df[col] = df[col].astype(col_schema)
+    return df

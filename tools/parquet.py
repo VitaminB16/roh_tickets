@@ -9,7 +9,8 @@ import pyarrow.parquet as pq
 from typing import Any, List, Tuple, Dict
 from concurrent.futures import ThreadPoolExecutor
 
-from python_roh.src.utils import force_list, async_retry
+from python_roh.src.config import PARQUET_SCHEMAS
+from python_roh.src.utils import force_list, async_retry, enforce_schema
 
 
 class Parquet:
@@ -132,9 +133,14 @@ class Parquet:
             df = pd.DataFrame()
 
         if df.empty and not allow_empty:
-            raise ValueError(f"File {self.path} is empty or not found, and allow_empty is False")
+            raise ValueError(
+                f"File {self.path} is empty or not found, and allow_empty is False"
+            )
 
         df = self.fix_column_types(df, filters)
+
+        enforced_schema = PARQUET_SCHEMAS.get(self.path, None)
+        df = enforce_schema(df, enforced_schema)
         return df
 
     def generate_filters(self, filters):

@@ -118,8 +118,6 @@ def add_production_ids(events_df):
             partition_cols=["title", "productionId", "date", "time", "performanceId"],
         )
     all_productions = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(allow_empty=True)
-    all_productions.date = pd.to_datetime(all_productions.date, format="%Y-%m-%d").dt.date
-    all_productions.time = pd.to_datetime(all_productions.time, format="%H:%M:%S.000000").dt.time
     all_productions = all_productions.loc[
         :, ["productionId", "title", "date", "time", "performanceId"]
     ]
@@ -146,7 +144,7 @@ def get_next_weeks_events(events_df, today):
     return today_tomorrow_events_df, next_week_events_df
 
 
-def query_soonest_performance_id():
+def query_soonest_performance_id(use_stored=True):
     """
     Query the soonest performance id
     """
@@ -156,7 +154,10 @@ def query_soonest_performance_id():
             "params": {},
         },
     }
-    events_df, _, _ = handle_upcoming_events(query_dict)
+    if use_stored:
+        events_df = Parquet(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
+    else:
+        events_df, _, _ = handle_upcoming_events(query_dict)
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
     events_df_sub = events_df.query(
         "location == 'Main Stage' & timestamp >= @today"
@@ -171,5 +172,9 @@ def query_soonest_performance_id():
         {events_df_sub.time.iloc[0]}
         """
     )
-    soonest_performance_id = _query_soonest_performance_id(soonest_production_url)
+    if use_stored:
+        soonest_performance_id = events_df_sub.performanceId.iloc[0]
+        print(f"Soonest performance id: {soonest_performance_id}")
+    else:
+        soonest_performance_id = _query_soonest_performance_id(soonest_production_url)
     return soonest_performance_id
