@@ -190,7 +190,7 @@ def query_soonest_performance_id(use_stored=True):
         """
     )
     if use_stored:
-        soonest_performance_id = events_df_sub.performanceId.iloc[0]
+        soonest_performance_id = events_df_sub.performanceId.iloc[0].astype(int)
         print(f"Soonest performance id: {soonest_performance_id}")
     else:
         soonest_performance_id = _query_soonest_performance_id(soonest_production_url)
