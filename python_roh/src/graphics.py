@@ -211,7 +211,7 @@ def plot_events(
     fig.update_layout(
         hovermode="closest",
         hoverdistance=1000,
-        width=1700,
+        width=1200,
         height=500,
         margin=dict(l=0, r=0, b=0, t=40, pad=0),
     )

@@ -78,12 +78,12 @@ def enrich_events_df(events_df):
         lambda x: f"{TICKETS_AND_EVENTS_URL}/{x}-dates"
     )
     events_df["productionId"] = events_df.productionId.astype(int)
-    events_df = add_production_ids(events_df)
+    events_df = enrich_events_with_productions(events_df)
     events_df.reset_index(drop=True, inplace=True)
     return events_df
 
 
-def add_production_ids(events_df):
+def enrich_events_with_productions(events_df):
     """
     Enriches the events_df with the production_id
     """
@@ -95,8 +95,19 @@ def add_production_ids(events_df):
     added_productions = unique_productions.query(
         "productionId not in @existing_productions.productionId"
     ).reset_index(drop=True)
+
     if not added_productions.empty:
-        print(f"New productions: \n{added_productions.title.unique()}")
+        handle_added_productions(added_productions)
+    events_df = merge_prouctions_into_events(events_df)
+
+    return events_df
+
+
+def handle_added_productions(added_productions):
+    """
+    Get the activities for the added productions and store them in a Parquet
+    """
+    print(f"New productions: \n{added_productions.title.unique()}")
     for production_i in added_productions.itertuples():
         production_url = production_i.url
         activities_df = query_production_activities(production_url)
@@ -117,6 +128,13 @@ def add_production_ids(events_df):
             performances_df,
             partition_cols=["title", "productionId", "date", "time", "performanceId"],
         )
+    return None
+
+
+def merge_prouctions_into_events(events_df):
+    """
+    Enrich the events_df with the production information
+    """
     all_productions = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(allow_empty=True)
     all_productions = all_productions.loc[
         :, ["productionId", "title", "date", "time", "performanceId"]
@@ -124,7 +142,6 @@ def add_production_ids(events_df):
     events_df = events_df.merge(
         all_productions, on=["productionId", "title", "date", "time"], how="left"
     )
-
     return events_df
 
 
