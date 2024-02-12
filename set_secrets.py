@@ -1,5 +1,5 @@
 import os
-
+from dotenv import load_dotenv
 
 def set_secrets():
     """
@@ -14,5 +14,5 @@ def set_secrets():
             key, value = line.strip().split(" = ")
             os.environ[key] = value
 
-
+load_dotenv()
 set_secrets()

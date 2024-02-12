@@ -83,3 +83,4 @@ if __name__ == "__main__":
     main(**args)
     if "secret_function" in globals() and "secret_function" in args:
         secret_function(QUERY_DICT)
+    quit()

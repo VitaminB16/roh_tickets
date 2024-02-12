@@ -8,3 +8,4 @@ secrets.txt
 *.jpg
 *.gif
 *.parquet
+*.env
