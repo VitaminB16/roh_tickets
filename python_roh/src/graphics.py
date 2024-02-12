@@ -6,10 +6,12 @@ from python_roh.src.config import *
 from python_roh.src.utils import JSON
 
 
-def plot_hall(seats_price_df, prices_df):
+def plot_hall(seats_price_df, prices_df, no_plot=False, **kwargs):
     """
     Plot the hall with the seats and their prices and availability
     """
+    if no_plot:
+        return
     # Get the edge seats to determine the stage position
     edge_query = "ZoneName == 'Orchestra Stalls' and SeatName.isin(['A1', 'A29'])"
     edge_seats = seats_price_df.query(edge_query)
@@ -120,7 +122,7 @@ def plot_hall(seats_price_df, prices_df):
             trace.marker.size = 8
 
     fig.show()
-    fig.write_image(HALL_IMAGE_LOCATION, scale=3)
+    # fig.write_image(HALL_IMAGE_LOCATION, scale=3)
 
 
 def persist_colours(plot_df, all_colours):
@@ -146,10 +148,18 @@ def persist_colours(plot_df, all_colours):
     return upcoming_titles_colour
 
 
-def plot_events(events_df, colours=["Plotly", "Dark2", "G10"], filter_recent=True):
+def plot_events(
+    events_df,
+    colours=["Plotly", "Dark2", "G10"],
+    filter_recent=True,
+    no_plot=False,
+    **kwargs,
+):
     """
     Plot the timeline of the upcoming events on the Main Stage
     """
+    if no_plot:
+        return
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
     if filter_recent:
         sub_query = "location == 'Main Stage' & timestamp >= @today"

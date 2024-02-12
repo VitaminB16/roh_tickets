@@ -54,16 +54,17 @@ def parse_args(args):
     """
     Parse the command line arguments.
     Options:
-    - upcoming: query the upcoming events and plot the events timeline
+    - events: query the upcoming events and plot the events timeline
     - seats: query the seats availability and plot the hall seats
         options:
         --soonest: plot the hall seats for the soonest performance
         -pid: performance_id (int) or "soonest" (str)
         -mosid: mode_of_sale_id
         --secret_function: option to use the secret function
+    --no_plot: do not plot the results
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("task_name", help="Task name", choices=["upcoming", "seats"])
+    parser.add_argument("task_name", help="Task name", choices=["events", "seats"])
     parser.add_argument(
         "--soonest",
         help="Plot the hall seats for the soonest performance",
@@ -81,6 +82,9 @@ def parse_args(args):
     )
     parser.add_argument(
         "--secret_function", help="Secret function", action="store_true", default=None
+    )
+    parser.add_argument(
+        "--no_plot", help="Do not plot the results", action="store_true", default=None
     )
     args = parser.parse_args(args)
 

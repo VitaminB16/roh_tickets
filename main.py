@@ -26,7 +26,7 @@ def upcoming_events_entry(**kwargs):
     events_df, today_tomorrow_events_df, next_week_events_df = handle_upcoming_events(
         QUERY_DICT
     )
-    plot_events(events_df)
+    plot_events(events_df, **kwargs)
     Parquet(EVENTS_PARQUET_LOCATION).write(
         events_df, partition_cols=["location", "date", "time", "title"]
     )
@@ -46,8 +46,7 @@ def seats_availability_entry(**kwargs):
         all_data["zone_ids"],
         all_data["price_types"],
     )
-
-    plot_hall(seats_price_df, prices_df)
+    plot_hall(seats_price_df, prices_df, **kwargs)
     return seats_price_df, prices_df, zones_df, price_types_df
 
 
@@ -56,7 +55,7 @@ def main(task_name, **kwargs):
     Main entry point for the tasks
     """
     task_fun = {
-        "upcoming": upcoming_events_entry,
+        "events": upcoming_events_entry,
         "seats": seats_availability_entry,
     }.get(task_name, None)
     if task_fun is None:
