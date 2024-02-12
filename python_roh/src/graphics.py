@@ -28,6 +28,7 @@ def plot_hall(seats_price_df, prices_df, no_plot=False, **kwargs):
     price_color_dict["Not available"] = NA_COLOR
 
     plot_df = seats_price_df.copy()
+    plot_df.Price = plot_df.Price.where(plot_df.seat_available, None)
     plot_df["Size"] = 1  # Dummy constant size for scatter plot
     plot_df["Price_print"] = plot_df["Price"]
     plot_df["Price_print"] = plot_df["Price_print"].apply(lambda x: f"£{x:.0f}")

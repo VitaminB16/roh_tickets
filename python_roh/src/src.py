@@ -131,9 +131,6 @@ def post_process_all_data(data, data_types=None):
     seats_price_df = seats_price_df.assign(
         seat_available=(~seats_price_df.SeatStatusId.isin(TAKEN_SEAT_STATUS_IDS))
     )
-    seats_price_df.Price = seats_price_df.Price.where(
-        seats_price_df.seat_available, None
-    )
     data = {
         "seats": seats_price_df,
         "prices": prices_df,
