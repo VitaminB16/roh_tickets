@@ -6,7 +6,13 @@ from python_roh.src.config import *
 from python_roh.src.utils import JSON
 
 
-def plot_hall(seats_price_df, prices_df, no_plot=False, **kwargs):
+def plot_hall(
+    seats_price_df,
+    prices_df,
+    no_plot=False,
+    dark_mode=False,
+    **kwargs,
+):
     """
     Plot the hall with the seats and their prices and availability
     """
@@ -122,8 +128,17 @@ def plot_hall(seats_price_df, prices_df, no_plot=False, **kwargs):
             trace.marker.line.width = 0
             trace.marker.size = 8
 
+    image_location = HALL_IMAGE_LOCATION
+    if dark_mode:
+        fig.update_layout(
+            plot_bgcolor="#303030",
+            paper_bgcolor="#303030",
+        )
+        fig.layout.font.color = "white"
+        image_location = image_location.replace(".png", "_dark.png")
+
     fig.show()
-    # fig.write_image(HALL_IMAGE_LOCATION, scale=3)
+    fig.write_image(image_location, scale=3)
 
 
 def persist_colours(plot_df, all_colours):
@@ -154,6 +169,7 @@ def plot_events(
     colours=["Plotly", "Dark2", "G10"],
     filter_recent=True,
     no_plot=False,
+    dark_mode=False,
     **kwargs,
 ):
     """
@@ -252,5 +268,14 @@ def plot_events(
         trace.marker.line.color = trace.marker.color
         trace.marker.line.width = 0.2
 
+    image_location = EVENTS_IMAGE_LOCATION
+    if dark_mode:
+        fig.update_layout(
+            plot_bgcolor="#303030",
+            paper_bgcolor="#303030",
+        )
+        fig.layout.font.color = "white"
+        image_location = image_location.replace(".png", "_dark.png")
+
     fig.show()
-    fig.write_image(EVENTS_IMAGE_LOCATION, scale=3)
+    fig.write_image(image_location, scale=3)
