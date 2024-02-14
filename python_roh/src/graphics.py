@@ -139,6 +139,7 @@ def plot_hall(
 
     fig.show()
     fig.write_image(image_location, scale=3)
+    return fig
 
 
 def persist_colours(plot_df, all_colours):
@@ -279,3 +280,4 @@ def plot_events(
 
     fig.show()
     fig.write_image(image_location, scale=3)
+    return fig

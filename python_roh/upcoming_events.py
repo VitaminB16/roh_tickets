@@ -184,13 +184,6 @@ def query_soonest_performance_id(use_stored=True):
     events_df_sub.sort_values(by=["timestamp"], inplace=True)
 
     soonest_production_url = events_df_sub.url.iloc[0]
-    print(
-        f"""
-        Soonest performance: {events_df_sub.title.iloc[0]}
-        {events_df_sub.date.iloc[0].strftime('%b %-d, %Y')}
-        {events_df_sub.time.iloc[0]}
-        """
-    )
     if use_stored:
         soonest_performance_id = events_df_sub.performanceId.iloc[0].astype(int)
         print(f"Soonest performance id: {soonest_performance_id}")

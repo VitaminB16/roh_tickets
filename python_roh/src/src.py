@@ -6,8 +6,9 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
 
-from .config import *
-from .utils import force_list
+from tools.parquet import Parquet
+from python_roh.src.config import *
+from python_roh.src.utils import force_list
 
 
 def _pre_process_zone_df(input_json):
@@ -255,3 +256,18 @@ def _query_soonest_performance_id(production_url):
     soonest_performance_id = int(activities_df.id[0])
     print(f"Soonest performance_id: {soonest_performance_id}")
     return soonest_performance_id
+
+
+def print_performance_info(performance_id=None):
+    performance_id = performance_id or os.environ["PERFORMANCE_ID"]
+    performance_df = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
+        filters={"performanceId": performance_id}
+    )
+    print(
+        f"""
+        {performance_df.title.iloc[0]}
+        {performance_df.date.iloc[0].strftime('%b %-d, %Y')}
+        {performance_df.time.iloc[0]}
+        """
+    )
+    return performance_df
