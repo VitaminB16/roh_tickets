@@ -172,7 +172,9 @@ def query_soonest_performance_id(use_stored=True):
         },
     }
     if use_stored:
-        events_df = Parquet(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
+        events_df = Parquet(EVENTS_PARQUET_LOCATION).read(
+            filters={"location": "Main Stage"}, allow_empty=True
+        )
     else:
         events_df, _, _ = handle_upcoming_events(query_dict)
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
