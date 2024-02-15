@@ -100,7 +100,7 @@ CLOUD_BUCKET = "vitaminb16-clean/"
 prefix = PLATFORM.fs_prefix
 if PLATFORM.name != "Local":
     prefix = prefix + CLOUD_BUCKET
-TITLE_COLOURS_LOCATION = prefix + "output/titles_colour.json"
+TITLE_COLOURS_LOCATION = prefix + "metadata/titles_colour.json"
 EVENTS_PARQUET_LOCATION = prefix + "output/roh_events.parquet"
 PRODUCTIONS_PARQUET_LOCATION = prefix + "output/roh_productions.parquet"
 HALL_IMAGE_LOCATION = prefix + "output/images/ROH_hall.png"
@@ -112,10 +112,18 @@ EVENTS_PARQUET_SCHEMA = {
 }
 PRODUCTIONS_PARQUET_SCHEMA = {
     "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
-    "time": lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
+    "time": [
+        lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
+        lambda x: pd.to_datetime(x, format="%H:%M:%S").dt.time,
+    ],
 }
 
 PARQUET_SCHEMAS = {
     EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
     PRODUCTIONS_PARQUET_LOCATION: PRODUCTIONS_PARQUET_SCHEMA,
+}
+
+PARQUET_TABLE_RELATIONS = {
+    EVENTS_PARQUET_LOCATION: "clean.v_roh_events",
+    PRODUCTIONS_PARQUET_LOCATION: "clean.v_roh_productions",
 }

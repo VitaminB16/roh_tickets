@@ -90,6 +90,30 @@ def ensure_types(df, types_dict):
     return df
 
 
+def enforce_one_schema(df_col, col_schema):
+    """
+    Enforce a schema on a dataframe
+    """
+    if isinstance(col_schema, type(lambda x: x)):
+        # e.g. lambda x: x.strip()
+        df_col = col_schema(df_col)
+    elif isinstance(col_schema, dict):
+        # e.g. {"a": int, "b": str}
+        df_col = df_col.map(col_schema)
+    elif isinstance(col_schema, type):
+        # e.g. int, str, float
+        df_col = df_col.astype(col_schema)
+    elif isinstance(col_schema, (list)):
+        # If it is a list of possible schemas, try each one until one works
+        for schema in col_schema:
+            try:
+                df_col = enforce_one_schema(df_col, schema)
+                break
+            except Exception:
+                pass
+    return df_col
+
+
 def enforce_schema(df, schema):
     """
     Enforce a schema on a dataframe
@@ -99,10 +123,5 @@ def enforce_schema(df, schema):
     for col, col_schema in schema.items():
         if col not in df.columns:
             continue
-        if isinstance(col_schema, type(lambda x: x)):
-            df[col] = col_schema(df[col])
-        elif isinstance(col_schema, dict):
-            df[col] = df[col].map(col_schema)
-        elif isinstance(col_schema, type):
-            df[col] = df[col].astype(col_schema)
+        df[col] = enforce_one_schema(df[col], col_schema)
     return df
