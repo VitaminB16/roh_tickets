@@ -8,6 +8,23 @@ class BasePlatform:
         self.fs_prefix = ""
 
 
+def parquet_filters_to_sql(filters):
+    """
+    Convert parquet filters to SQL
+    """
+    if filters is None:
+        return None
+    if isinstance(filters, list):
+        output = [parquet_filters_to_sql(x) for x in filters]
+        output = " AND ".join(output)
+        return output
+    col, op, value = filters
+    if isinstance(value, list):
+        value = ", ".join([f"'{x}'" for x in value])
+        value = f"({value})"
+    return f"{col} {op} {value}"
+
+
 class GCPPlatform(BasePlatform):
     """Google Cloud Platform specific methods"""
 
@@ -27,8 +44,11 @@ class GCPPlatform(BasePlatform):
     def exists(self, path):
         return self.fs.exists(path)
 
-    def read_table(self, table=None, **kwargs):
+    def read_table(self, table=None, filters=None, **kwargs):
         query = f"SELECT * FROM {table}"
+        if filters:
+            filters = parquet_filters_to_sql(filters)
+            query += f" WHERE {filters}"
         df = pd.read_gbq(query)
         return df
 
