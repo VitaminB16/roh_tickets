@@ -78,7 +78,7 @@ def main(task_name, **kwargs):
     return task_fun(**kwargs)
 
 
-def entry_point(event, context):
+def entry_point(event=None, context=None):
     msg = base64.b64decode(event["data"]).decode("utf-8")
     payload = json.loads(msg)
     main(**payload)

@@ -21,20 +21,22 @@ def set_secrets():
 
 def set_gcp_secrets(service="python-roh"):
     from google.cloud import secretmanager
+    import google.auth
 
-    project = os.environ["PROJECT"]
+    project = google.auth.default()[1]
     secret_client = secretmanager.SecretManagerServiceClient()
     secrets = secret_client.list_secrets(
         request={"parent": f"projects/{project}", "filter": f"labels.{service}:*"}
     )
     for secret in secrets:
+        name = secret.name
         try:
             value = secret_client.access_secret_version(
-                request={"name": f"{secret.name}/versions/latest"}
+                request={"name": f"{name}/versions/latest"}
             )
-            os.environ[secret.name.split("/")[-1]] = value.payload.data.decode("utf-8")
-        except FailedPrecondition as err:
-            print(f"Failed to grab secret {secret.name}. Exception: {err}")
+            os.environ[name.split("/")[-1]] = value.payload.data.decode("utf-8")
+        except Exception as e:
+            print(f"Failed to grab secret {name}. Exception: {e}")
 
 
 load_dotenv()

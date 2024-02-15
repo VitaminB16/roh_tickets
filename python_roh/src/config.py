@@ -19,7 +19,7 @@ ZONE_HIERARCHY = {
 }
 
 
-SEATS_BASE_URL = f"https://www.roh.org.uk/api/proxy/TXN/Performances/{os.environ['PERFORMANCE_ID']}/Seats"
+SEATS_BASE_URL = f"https://www.roh.org.uk/api/proxy/TXN/Performances/{os.getenv('PERFORMANCE_ID')}/Seats"
 PRICE_BASE_URL = f"https://www.roh.org.uk/api/proxy/TXN/Performances/Prices"
 PRICE_TYPES_BASE_URL = "https://www.roh.org.uk/api/proxy/TXN/PriceTypes/Details"
 ZONE_ID_BASE_URL = (

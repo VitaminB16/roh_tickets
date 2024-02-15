@@ -35,7 +35,9 @@ class GCPPlatform(BasePlatform):
         self.name = "GCP"
         self.fs_prefix = "gs://"
 
-    def open(self, path, mode):
+    def open(self, path, mode, allow_empty=False):
+        if allow_empty and not self.exists(path):
+            return None
         return self.fs.open(path, mode)
 
     def makedirs(self, path, exist_ok=True):
@@ -61,7 +63,9 @@ class LocalPlatform(BasePlatform):
         self.name = "Local"
         self.fs_prefix = ""
 
-    def open(self, path, mode):
+    def open(self, path, mode, allow_empty=False):
+        if allow_empty and not self.exists(path):
+            return None
         return open(path, mode)
 
     def makedirs(self, path, exist_ok=True):
