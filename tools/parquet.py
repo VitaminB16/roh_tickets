@@ -9,8 +9,8 @@ import pyarrow.parquet as pq
 from typing import Any, List, Tuple, Dict
 from concurrent.futures import ThreadPoolExecutor
 
-from python_roh.src.config import PARQUET_SCHEMAS
 from python_roh.src.utils import force_list, async_retry, enforce_schema
+from python_roh.src.config import PARQUET_SCHEMAS, PLATFORM, PARQUET_TABLE_RELATIONS
 
 
 class Parquet:
@@ -120,20 +120,24 @@ class Parquet:
         allow_empty=True,
         schema=None,
         filters=None,
+        use_bigquery=True,
         **kwargs,
     ):
         print(f"Reading from {self.path}")
         filters = self.generate_filters(filters)
-        try:
-            df = pq.read_table(
-                self.path,
-                filters=filters,
-                schema=schema,
-                **kwargs,
-            ).to_pandas()
-        except FileNotFoundError:
-            df = pd.DataFrame()
-
+        if use_bigquery and PLATFORM.name != "local":
+            table = PARQUET_TABLE_RELATIONS.get(self.path, None)
+            df = PLATFORM.read_table(table)
+        else:
+            try:
+                df = pq.read_table(
+                    self.path,
+                    filters=filters,
+                    schema=schema,
+                    **kwargs,
+                ).to_pandas()
+            except FileNotFoundError:
+                df = pd.DataFrame()
         if df.empty and not allow_empty:
             raise ValueError(
                 f"File {self.path} is empty or not found, and allow_empty is False"

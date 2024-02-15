@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 
 
 class BasePlatform:
@@ -22,10 +23,14 @@ class GCPPlatform(BasePlatform):
 
     def makedirs(self, path, exist_ok=True):
         self.fs.makedirs(path, exist_ok=exist_ok)
-    
+
     def exists(self, path):
         return self.fs.exists(path)
-    
+
+    def read_table(self, table=None, **kwargs):
+        query = f"SELECT * FROM {table}"
+        df = pd.read_gbq(query)
+        return df
 
 
 class LocalPlatform(BasePlatform):
@@ -41,7 +46,7 @@ class LocalPlatform(BasePlatform):
 
     def makedirs(self, path, exist_ok=True):
         os.makedirs(path, exist_ok=exist_ok)
-    
+
     def isfile(self, path):
         return os.path.isfile(path)
 
