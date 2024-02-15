@@ -261,7 +261,7 @@ def _query_soonest_performance_id(production_url):
 def print_performance_info(performance_id=None):
     performance_id = performance_id or os.environ["PERFORMANCE_ID"]
     performance_df = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
-        filters={"performanceId": performance_id}
+        filters={"performanceId": int(performance_id)}
     )
     print(
         f"""

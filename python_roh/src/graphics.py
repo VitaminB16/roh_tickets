@@ -28,6 +28,7 @@ def plot_hall(
 
     # Set the price bands to their colors
     price_bands = prices_df.Price.unique().astype(str)
+    price_bands = [price.split(".")[0] for price in price_bands]
     price_bands = ["£" + price for price in price_bands]
     price_colors = PRICE_COLOR_LIST[: len(price_bands)]
     price_color_dict = dict(zip(price_bands, price_colors))

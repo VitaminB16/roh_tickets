@@ -125,9 +125,9 @@ class Parquet:
     ):
         print(f"Reading from {self.path}")
         filters = self.generate_filters(filters)
-        if use_bigquery and PLATFORM.name != "local":
+        if use_bigquery and PLATFORM.name != "Local":
             table = PARQUET_TABLE_RELATIONS.get(self.path, None)
-            df = PLATFORM.read_table(table)
+            df = PLATFORM.read_table(table, filters)
         else:
             try:
                 df = pq.read_table(

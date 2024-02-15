@@ -1,0 +1,1 @@
+gcloud functions deploy cloud-zip-up --runtime python310 --trigger-http --memory 512MB --entry-point zip_files --region europe-west2
