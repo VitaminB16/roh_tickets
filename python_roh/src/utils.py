@@ -3,6 +3,8 @@ import json
 import asyncio
 import collections.abc
 
+from python_roh.src.config import PLATFORM
+
 LIST_LIKE_TYPES = (list, tuple, set, frozenset, collections.abc.KeysView)
 
 
@@ -37,7 +39,7 @@ class JSON:
         """
         if not os.path.isfile(self.path):
             return {}
-        with open(self.path, "r") as f:
+        with PLATFORM.open(self.path, "r") as f:
             return json.load(f)
 
     def write(self, data, **kwargs):
@@ -46,7 +48,8 @@ class JSON:
         """
         kwargs.setdefault("indent", 3)
         kwargs.setdefault("sort_keys", True)
-        with open(self.path, "w") as f:
+        PLATFORM.makedirs(os.path.dirname(self.path), exist_ok=True)
+        with PLATFORM.open(self.path, "w") as f:
             json.dump(data, f, **kwargs)
 
 

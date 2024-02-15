@@ -279,5 +279,5 @@ def plot_events(
         image_location = image_location.replace(".png", "_dark.png")
 
     fig.show()
-    fig.write_image(image_location, scale=3)
+    # fig.write_image(image_location, scale=3)
     return fig

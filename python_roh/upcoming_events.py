@@ -23,6 +23,7 @@ def handle_upcoming_events(query_dict):
     performances_df = get_performances_df(events_df)
     events_df = pd.concat([events_df, performances_df], axis=1)
     events_df.drop(columns=["performances", "date"], inplace=True)
+
     events_df = enrich_events_df(events_df)
 
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)

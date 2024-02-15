@@ -32,6 +32,7 @@ class Parquet:
         use_threading: bool = False,
         **kwargs: Any,
     ) -> Tuple[Dict[str, str], Dict[str, bool]]:
+        print(f"Writing to {self.path}")
         if partition_cols and use_threading:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
@@ -121,6 +122,7 @@ class Parquet:
         filters=None,
         **kwargs,
     ):
+        print(f"Reading from {self.path}")
         filters = self.generate_filters(filters)
         try:
             df = pq.read_table(

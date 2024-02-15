@@ -2,6 +2,9 @@ import os
 import argparse
 import pandas as pd
 
+from cloud.platform import Platform
+
+
 ZONE_HIERARCHY = {
     "Orchestra Stalls": 0,
     "Stalls Circle": 1,
@@ -43,11 +46,6 @@ PRICE_COLOR_LIST = [
     "rgb(136,204,39)",  # Cheapest
 ]
 NA_COLOR = "rgb(191,191,191)"
-TITLE_COLOURS_LOCATION = "output/titles_colour.json"
-EVENTS_PARQUET_LOCATION = "output/roh_events.parquet"
-PRODUCTIONS_PARQUET_LOCATION = "output/roh_productions.parquet"
-HALL_IMAGE_LOCATION = "output/images/ROH_hall.png"
-EVENTS_IMAGE_LOCATION = "output/images/ROH_events.png"
 
 
 def parse_args(args):
@@ -94,6 +92,17 @@ def parse_args(args):
     output = {k: v for k, v in output.items() if v is not None}
     return output
 
+
+PLATFORM = Platform()
+
+prefix = PLATFORM.fs_prefix
+if PLATFORM.name != "Local":
+    prefix = prefix + "vitaminb16-clean/"
+TITLE_COLOURS_LOCATION = prefix + "output/titles_colour.json"
+EVENTS_PARQUET_LOCATION = prefix + "output/roh_events.parquet"
+PRODUCTIONS_PARQUET_LOCATION = prefix + "output/roh_productions.parquet"
+HALL_IMAGE_LOCATION = prefix + "output/images/ROH_hall.png"
+EVENTS_IMAGE_LOCATION = prefix + "output/images/ROH_events.png"
 
 EVENTS_PARQUET_SCHEMA = {
     "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
