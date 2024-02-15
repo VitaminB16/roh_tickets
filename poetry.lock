@@ -957,6 +957,24 @@ google-auth = ">=1.25.0,<3.0dev"
 grpc = ["grpcio (>=1.38.0,<2.0dev)", "grpcio-status (>=1.38.0,<2.0.dev0)"]
 
 [[package]]
+name = "google-cloud-secret-manager"
+version = "2.18.1"
+description = "Google Cloud Secret Manager API client library"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "google-cloud-secret-manager-2.18.1.tar.gz", hash = "sha256:310555f3c8cb977f4a46d4454eca2c83fed6a09f3c4b35b84f6fa1f8fef55024"},
+    {file = "google_cloud_secret_manager-2.18.1-py2.py3-none-any.whl", hash = "sha256:38e00ece9abf466cb449991b1a141a69690c6d51fe18456e531faf4935fbade3"},
+]
+
+[package.dependencies]
+google-api-core = {version = ">=1.34.0,<2.0.dev0 || >=2.11.dev0,<3.0.0dev", extras = ["grpc"]}
+google-auth = ">=2.14.1,<3.0.0dev"
+grpc-google-iam-v1 = ">=0.12.4,<1.0.0dev"
+proto-plus = ">=1.22.3,<2.0.0dev"
+protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
+
+[[package]]
 name = "google-cloud-storage"
 version = "2.14.0"
 description = "Google Cloud Storage API client library"
@@ -1088,10 +1106,27 @@ files = [
 ]
 
 [package.dependencies]
+grpcio = {version = ">=1.44.0,<2.0.0.dev0", optional = true, markers = "extra == \"grpc\""}
 protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0.dev0"
 
 [package.extras]
 grpc = ["grpcio (>=1.44.0,<2.0.0.dev0)"]
+
+[[package]]
+name = "grpc-google-iam-v1"
+version = "0.13.0"
+description = "IAM API client library"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "grpc-google-iam-v1-0.13.0.tar.gz", hash = "sha256:fad318608b9e093258fbf12529180f400d1c44453698a33509cc6ecf005b294e"},
+    {file = "grpc_google_iam_v1-0.13.0-py2.py3-none-any.whl", hash = "sha256:53902e2af7de8df8c1bd91373d9be55b0743ec267a7428ea638db3775becae89"},
+]
+
+[package.dependencies]
+googleapis-common-protos = {version = ">=1.56.0,<2.0.0dev", extras = ["grpc"]}
+grpcio = ">=1.44.0,<2.0.0dev"
+protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
 
 [[package]]
 name = "grpcio"
@@ -2825,4 +2860,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "007f32b624df332fedba14dccf71dfd0ec059a742dfc22112bd00e3ef6b88464"
+content-hash = "f2f30daeeddc2bdc879a470840f94f9831082d4bb5835262eb220846a1ebe506"
