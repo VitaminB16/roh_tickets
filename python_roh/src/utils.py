@@ -37,7 +37,8 @@ class JSON:
         """
         Load a json file as a dict
         """
-        if not os.path.isfile(self.path):
+        print("Loading", self.path)
+        if not PLATFORM.exists(self.path):
             return {}
         with PLATFORM.open(self.path, "r") as f:
             return json.load(f)

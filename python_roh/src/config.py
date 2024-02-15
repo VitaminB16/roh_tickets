@@ -60,6 +60,7 @@ def parse_args(args):
         -mosid: mode_of_sale_id
         --secret_function: option to use the secret function
     --no_plot: do not plot the results
+    -platform: platform name (local, GCP)
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("task_name", help="Task name", choices=["events", "seats"])
@@ -95,9 +96,10 @@ def parse_args(args):
 
 PLATFORM = Platform()
 
+CLOUD_BUCKET = "vitaminb16-clean/"
 prefix = PLATFORM.fs_prefix
 if PLATFORM.name != "Local":
-    prefix = prefix + "vitaminb16-clean/"
+    prefix = prefix + CLOUD_BUCKET
 TITLE_COLOURS_LOCATION = prefix + "output/titles_colour.json"
 EVENTS_PARQUET_LOCATION = prefix + "output/roh_events.parquet"
 PRODUCTIONS_PARQUET_LOCATION = prefix + "output/roh_productions.parquet"

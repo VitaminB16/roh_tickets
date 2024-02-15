@@ -22,6 +22,10 @@ class GCPPlatform(BasePlatform):
 
     def makedirs(self, path, exist_ok=True):
         self.fs.makedirs(path, exist_ok=exist_ok)
+    
+    def exists(self, path):
+        return self.fs.exists(path)
+    
 
 
 class LocalPlatform(BasePlatform):
@@ -37,6 +41,12 @@ class LocalPlatform(BasePlatform):
 
     def makedirs(self, path, exist_ok=True):
         os.makedirs(path, exist_ok=exist_ok)
+    
+    def isfile(self, path):
+        return os.path.isfile(path)
+
+    def exists(self, path):
+        return os.path.exists(path)
 
 
 def Platform():

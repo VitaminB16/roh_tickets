@@ -138,7 +138,8 @@ def plot_hall(
         image_location = image_location.replace(".png", "_dark.png")
 
     fig.show()
-    fig.write_image(image_location, scale=3)
+    with PLATFORM.open(image_location, "wb") as f:
+        f.write(fig.to_image(format="png", scale=3))
     return fig
 
 
@@ -279,5 +280,6 @@ def plot_events(
         image_location = image_location.replace(".png", "_dark.png")
 
     fig.show()
-    # fig.write_image(image_location, scale=3)
+    with PLATFORM.open(image_location, "wb") as f:
+        f.write(fig.to_image(format="png", scale=3))
     return fig
