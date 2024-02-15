@@ -86,3 +86,7 @@ def Platform():
         "gcp": GCPPlatform,
     }.get(platform_name)
     return platform()
+
+
+# Initialised platform object
+PLATFORM = Platform()

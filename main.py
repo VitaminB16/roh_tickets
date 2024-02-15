@@ -54,7 +54,7 @@ def seats_availability_entry(**kwargs):
 
 def main(task_name, **kwargs):
     """
-    Main entry point for the tasks
+    Main scheduler function
     """
     task_fun = {
         "events": upcoming_events_entry,
@@ -64,11 +64,12 @@ def main(task_name, **kwargs):
         raise ValueError(f"Task {task_name} not found")
 
     query_dict_args = {
-        "performance_id": os.environ["PERFORMANCE_ID"],
-        "mode_of_sale_id": os.environ["MODE_OF_SALE_ID"],
-        "constituent_id": os.environ["CONSTITUENT_ID"],
-        "source_id": os.environ["SOURCE_ID"],
+        "performance_id": os.getenv("PERFORMANCE_ID"),
+        "mode_of_sale_id": os.getenv("MODE_OF_SALE_ID"),
+        "constituent_id": os.getenv("CONSTITUENT_ID"),
+        "source_id": os.getenv("SOURCE_ID"),
     }
+    query_dict_args = {k: v for k, v in query_dict_args.items() if v is not None}
     # Merge the query dict with the provided keyword arguments
     query_dict_args.update(kwargs)
 
@@ -78,9 +79,8 @@ def main(task_name, **kwargs):
     return task_fun(**kwargs)
 
 
-def entry_point(event=None, context=None):
-    msg = base64.b64decode(event["data"]).decode("utf-8")
-    payload = json.loads(msg)
+def main_entry(payload):
+
     main(**payload)
     if "secret_function" in globals() and "secret_function" in payload:
         print("Executing the secret function")
@@ -89,10 +89,23 @@ def entry_point(event=None, context=None):
     return ("Pipeline Complete", 200)
 
 
+def entry_point(request=None):
+    """
+    Entry point for the HTTP request
+    """
+    if request is not None:
+        request_json = request.get_json(silent=True)
+        request_args = request.args
+        payload = request_json if request_json else request_args
+    main_entry(payload)
+    return payload
+
+
 if __name__ == "__main__":
-    payload = {"task_name": "events", "pid": "soonest"}
+    with open("payload.json", "r") as f:
+        payload = json.load(f)
     args = sys.argv[1:]
     if len(args) > 0:
         args = parse_args(args)
         payload.update(args)
-    main(**payload)
+    main_entry(**payload)
