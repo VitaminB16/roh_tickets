@@ -1,5 +1,7 @@
 import os
 import sys
+import json
+import base64
 import pyarrow as pa
 import pyarrow.parquet as pq
 
@@ -76,10 +78,21 @@ def main(task_name, **kwargs):
     return task_fun(**kwargs)
 
 
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    args = parse_args(args)
-    main(**args)
-    if "secret_function" in globals() and "secret_function" in args:
+def entry_point(event, context):
+    msg = base64.b64decode(event["data"]).decode("utf-8")
+    payload = json.loads(msg)
+    main(**payload)
+    if "secret_function" in globals() and "secret_function" in payload:
+        print("Executing the secret function")
         secret_function(QUERY_DICT)
-    quit()
+    print("Execution finished")
+    return ("Pipeline Complete", 200)
+
+
+if __name__ == "__main__":
+    payload = {"task_name": "events", "pid": "soonest"}
+    args = sys.argv[1:]
+    if len(args) > 0:
+        args = parse_args(args)
+        payload.update(args)
+    main(**payload)
