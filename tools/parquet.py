@@ -123,7 +123,7 @@ class Parquet:
         use_bigquery=True,
         **kwargs,
     ):
-        print(f"Reading from {self.path}")
+        print(f"Reading from {self.path}; filters: {filters}")
         filters = self.generate_filters(filters)
         if use_bigquery and PLATFORM.name != "Local":
             table = PARQUET_TABLE_RELATIONS.get(self.path, None)

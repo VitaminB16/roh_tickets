@@ -13,10 +13,10 @@ def get_query_dict(
     """
     Return the query dictionary for the API requests for use in requests.get()
     """
-    mode_of_sale_id = mode_of_sale_id or os.environ["MODE_OF_SALE_ID"]
-    constituent_id = constituent_id or os.environ["CONSTITUENT_ID"]
-    source_id = source_id or os.environ["SOURCE_ID"]
-    performance_id = performance_id or os.environ["PERFORMANCE_ID"]
+    mode_of_sale_id = mode_of_sale_id or os.getenv("MODE_OF_SALE_ID")
+    constituent_id = constituent_id or os.getenv("CONSTITUENT_ID")
+    source_id = source_id or os.getenv("SOURCE_ID")
+    performance_id = performance_id or os.getenv("PERFORMANCE_ID")
 
     if performance_id == "soonest":
         performance_id = query_soonest_performance_id()

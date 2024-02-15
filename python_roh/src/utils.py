@@ -3,7 +3,7 @@ import json
 import asyncio
 import collections.abc
 
-from python_roh.src.config import PLATFORM
+from cloud.platform import PLATFORM
 
 LIST_LIKE_TYPES = (list, tuple, set, frozenset, collections.abc.KeysView)
 
@@ -33,12 +33,12 @@ class JSON:
     def __init__(self, path):
         self.path = path
 
-    def load(self):
+    def load(self, allow_empty=True, PLATFORM=PLATFORM):
         """
         Load a json file as a dict
         """
         print("Loading", self.path)
-        if not PLATFORM.exists(self.path):
+        if allow_empty and not PLATFORM.exists(self.path):
             return {}
         with PLATFORM.open(self.path, "r") as f:
             return json.load(f)
@@ -122,6 +122,6 @@ def enforce_schema(df, schema):
         return df
     for col, col_schema in schema.items():
         if col not in df.columns:
-            continue
+            df[col] = None
         df[col] = enforce_one_schema(df[col], col_schema)
     return df

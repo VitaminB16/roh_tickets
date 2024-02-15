@@ -180,7 +180,7 @@ def _fix_xy_positions(df):
     """
     Map the seats to their positions according to the web layout
     """
-    seat_positions = pd.read_csv("various/seat_map_positions/seat_positions.csv")
+    seat_positions = pd.read_csv(SEAT_MAP_POSITIONS_CSV)
     df_zones = df.ZoneName.unique()
     seat_positions.query("ZoneName in @df_zones", inplace=True)
     df.drop(columns=["x", "y"], inplace=True, errors="ignore")

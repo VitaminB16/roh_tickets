@@ -9,3 +9,4 @@ secrets.txt
 *.gif
 *.parquet
 *.env
+payload.json

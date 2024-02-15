@@ -5,6 +5,7 @@ from set_secrets import set_secrets
 from python_roh.src.src import API
 from python_roh.src.utils import JSON
 from python_roh.src.api import get_query_dict
+from python_roh.src.config import SEAT_MAP_POSITIONS_CSV
 
 
 def load_positions():
@@ -53,7 +54,7 @@ def load_positions():
     seat_map.x = seat_map.x.astype(float)
     seat_map.y = seat_map.y.astype(float)
 
-    csv_name = "various/seat_map_positions/seat_positions.csv"
+    csv_name = SEAT_MAP_POSITIONS_CSV
     seat_map.to_csv(csv_name, index=False)
     print(f"Written seat map positions to {csv_name}")
 
