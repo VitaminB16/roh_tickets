@@ -4,7 +4,7 @@ WITH PARTITION COLUMNS(
     productionId INT64,
     date DATE,
     time STRING,
-    performanceId INT64
+    performanceId STRING
 )
 OPTIONS(
     format = 'PARQUET',

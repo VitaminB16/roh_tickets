@@ -2,7 +2,7 @@ import os
 import argparse
 import pandas as pd
 
-from cloud.platform import Platform
+from cloud.platform import PLATFORM
 
 
 ZONE_HIERARCHY = {
@@ -94,12 +94,11 @@ def parse_args(args):
     return output
 
 
-PLATFORM = Platform()
-
 CLOUD_BUCKET = "vitaminb16-clean/"
 prefix = PLATFORM.fs_prefix
 if PLATFORM.name != "Local":
     prefix = prefix + CLOUD_BUCKET
+SEAT_MAP_POSITIONS_CSV = prefix + "metadata/seat_positions.csv"
 TITLE_COLOURS_LOCATION = prefix + "metadata/titles_colour.json"
 EVENTS_PARQUET_LOCATION = prefix + "output/roh_events.parquet"
 PRODUCTIONS_PARQUET_LOCATION = prefix + "output/roh_productions.parquet"
@@ -109,6 +108,7 @@ EVENTS_IMAGE_LOCATION = prefix + "output/images/ROH_events.png"
 EVENTS_PARQUET_SCHEMA = {
     "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
     "time": lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
+    "performanceId": lambda x: x.astype(str),
 }
 PRODUCTIONS_PARQUET_SCHEMA = {
     "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
@@ -116,6 +116,7 @@ PRODUCTIONS_PARQUET_SCHEMA = {
         lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
         lambda x: pd.to_datetime(x, format="%H:%M:%S").dt.time,
     ],
+    "performanceId": lambda x: x.astype(str),
 }
 
 PARQUET_SCHEMAS = {
