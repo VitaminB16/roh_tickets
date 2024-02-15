@@ -8,5 +8,5 @@ secrets.txt
 *.jpg
 *.gif
 *.parquet
-*.env
+*.env*
 payload.json

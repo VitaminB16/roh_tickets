@@ -97,6 +97,7 @@ def entry_point(request=None):
         request_json = request.get_json(silent=True)
         request_args = request.args
         payload = request_json if request_json else request_args
+    print("Payload:", payload)
     main_entry(payload)
     return payload
 
@@ -104,6 +105,8 @@ def entry_point(request=None):
 if __name__ == "__main__":
     with open("payload.json", "r") as f:
         payload = json.load(f)
+    # main_entry(payload)
+    # exit()
     args = sys.argv[1:]
     if len(args) > 0:
         args = parse_args(args)
