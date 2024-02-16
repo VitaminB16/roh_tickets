@@ -107,7 +107,10 @@ EVENTS_IMAGE_LOCATION = prefix + "output/images/ROH_events.png"
 
 EVENTS_PARQUET_SCHEMA = {
     "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
-    "time": lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
+    "time": [
+        lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
+        lambda x: pd.to_datetime(x, format="%H:%M:%S").dt.time,
+    ],
     "performanceId": lambda x: x.astype(str),
 }
 PRODUCTIONS_PARQUET_SCHEMA = {
