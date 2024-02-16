@@ -29,11 +29,19 @@ class GCPPlatform(BasePlatform):
     """Google Cloud Platform specific methods"""
 
     def __init__(self):
-        import gcsfs
 
-        self.fs = gcsfs.GCSFileSystem()
+        self._fs = None
         self.name = "GCP"
         self.fs_prefix = "gs://"
+
+    @property
+    def fs(self):
+        """Return the GCS file system object to overcome the fork-safety issue with gcsfs."""
+        if self._fs is None:
+            import gcsfs
+
+            self._fs = gcsfs.GCSFileSystem()
+        return self._fs
 
     def open(self, path, mode, allow_empty=False):
         if allow_empty and not self.exists(path):

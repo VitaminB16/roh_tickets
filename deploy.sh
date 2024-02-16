@@ -18,4 +18,6 @@ gcloud functions deploy $CLOUD_FUNCTION_NAME \
   --trigger-http \
   --entry-point=$ENTRY_POINT \
   --region=$REGION \
-  --env-vars-file .env.yaml
+  --env-vars-file .env.yaml \
+  --timeout=120s \
+  --memory=512MB

@@ -41,13 +41,13 @@ def seats_availability_entry(**kwargs):
     """
     print_performance_info()
     all_data = API(QUERY_DICT).query_all_data(post_process=True)
-
     seats_price_df, prices_df, zones_df, price_types_df = (
         all_data["seats"],
         all_data["prices"],
         all_data["zone_ids"],
         all_data["price_types"],
     )
+    print(f"Seats available: {seats_price_df.seat_available.sum()}")
     plot_hall(seats_price_df, prices_df, **kwargs)
     return seats_price_df, prices_df, zones_df, price_types_df
 

@@ -17,6 +17,7 @@ def plot_hall(
     Plot the hall with the seats and their prices and availability
     """
     if no_plot:
+        print("Skipping the plot")
         return
     # Get the edge seats to determine the stage position
     edge_query = "ZoneName == 'Orchestra Stalls' and SeatName.isin(['A1', 'A29'])"
@@ -179,6 +180,7 @@ def plot_events(
     Plot the timeline of the upcoming events on the Main Stage
     """
     if no_plot:
+        print("Skipping the plot")
         return
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
     if filter_recent:

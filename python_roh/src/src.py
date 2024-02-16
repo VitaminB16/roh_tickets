@@ -1,13 +1,19 @@
+import os
 import json
 import time
-import random
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
 
 from tools.parquet import Parquet
-from python_roh.src.config import *
+from python_roh.src.config import (
+    SEAT_MAP_POSITIONS_CSV,
+    TAKEN_SEAT_STATUS_IDS,
+    PRODUCTIONS_PARQUET_LOCATION,
+    ZONE_HIERARCHY,
+)
+from cloud.platform import PLATFORM
 from python_roh.src.utils import force_list
 
 
@@ -180,7 +186,12 @@ def _fix_xy_positions(df):
     """
     Map the seats to their positions according to the web layout
     """
-    seat_positions = pd.read_csv(SEAT_MAP_POSITIONS_CSV)
+    print("Fixing the seat positions")
+    print(SEAT_MAP_POSITIONS_CSV)
+
+    with PLATFORM.open(SEAT_MAP_POSITIONS_CSV, "rb") as f:
+        seat_positions = pd.read_csv(f)
+    print(f"Seat positions: {seat_positions.shape}")
     df_zones = df.ZoneName.unique()
     seat_positions.query("ZoneName in @df_zones", inplace=True)
     df.drop(columns=["x", "y"], inplace=True, errors="ignore")
