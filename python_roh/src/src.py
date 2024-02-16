@@ -269,11 +269,13 @@ def _query_soonest_performance_id(production_url):
     return soonest_performance_id
 
 
-def print_performance_info(performance_id=None):
+def print_performance_info(performance_id=None, print_info=True):
     performance_id = performance_id or os.environ["PERFORMANCE_ID"]
     performance_df = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
         filters={"performanceId": int(performance_id)}
     )
+    if not print_info:
+        return performance_df
     print(
         f"""
         {performance_df.title.iloc[0]}

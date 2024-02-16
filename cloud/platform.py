@@ -54,13 +54,24 @@ class GCPPlatform(BasePlatform):
     def exists(self, path):
         return self.fs.exists(path)
 
-    def read_table(self, table=None, filters=None, **kwargs):
+    def read_table(self, table=None, filters=None, allow_empty=False, **kwargs):
         query = f"SELECT * FROM {table}"
         if filters:
             filters = parquet_filters_to_sql(filters)
             query += f" WHERE {filters}"
-        df = pd.read_gbq(query)
+        try:
+            df = pd.read_gbq(query)
+        except:
+            if allow_empty:
+                return pd.DataFrame()
+            raise
         return df
+
+    def create_table(self, table, df, **kwargs):
+        df.to_gbq(table, if_exists="replace", **kwargs)
+
+    def insert_rows(self, df, table, if_exists="append", **kwargs):
+        df.to_gbq(table, if_exists=if_exists, **kwargs)
 
 
 class LocalPlatform(BasePlatform):
