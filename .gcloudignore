@@ -11,7 +11,14 @@
 # from your .gitignore file, remove the corresponding line
 # below:
 .git
-
-
-node_modules
-#!include:.gitignore
+secrets.txt
+**__pycache__/
+**ignore/
+*.DS_Store
+*.ipynb
+*.csv
+*.jpg
+*.gif
+*.parquet
+*.env*
+payload.json
