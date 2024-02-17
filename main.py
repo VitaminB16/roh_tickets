@@ -101,7 +101,7 @@ def entry_point(request=None):
     Entry point for the HTTP request
     """
     if request is not None:
-        request_json = request.get_json(silent=True)
+        request_json = request.get_json(silent=True, force=True)
         request_args = request.args
         payload = request_json if request_json else request_args
     print("Payload:", payload)
