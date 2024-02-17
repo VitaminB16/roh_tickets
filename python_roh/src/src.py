@@ -271,16 +271,23 @@ def _query_soonest_performance_id(production_url):
 
 def print_performance_info(performance_id=None, print_info=True):
     performance_id = performance_id or os.environ["PERFORMANCE_ID"]
-    performance_df = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
-        filters={"performanceId": int(performance_id)}
+    performance_id = json.loads(str(performance_id))
+    performance_id = [int(x) for x in force_list(performance_id)]
+    performance_df = (
+        Parquet(PRODUCTIONS_PARQUET_LOCATION)
+        .read(filters={"performanceId": performance_id})
+        .sort_values(by=["date", "time"], ascending=True)
     )
     if not print_info:
         return performance_df
-    print(
-        f"""
-        {performance_df.title.iloc[0]}
-        {performance_df.date.iloc[0].strftime('%b %-d, %Y')}
-        {performance_df.time.iloc[0]}
-        """
-    )
+
+    for i in range(performance_df.shape[0]):
+        print(
+            f"""
+            {performance_df.title.iloc[i]}
+            {performance_df.date.iloc[i].strftime('%b %-d, %Y')}
+            {performance_df.time.iloc[i]}
+            ID: {performance_df.performanceId.iloc[i]}
+            """
+        )
     return performance_df

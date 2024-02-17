@@ -40,6 +40,8 @@ def seats_availability_entry(**kwargs):
     Entry point for the seats availability task and the hall seats plot
     """
     print_performance_info()
+    if isinstance(json.loads(str(os.getenv("PERFORMANCE_ID"))), list):
+        raise ValueError("List performance IDs are not supported for `seats` task.")
     all_data = API(QUERY_DICT).query_all_data(post_process=True)
     seats_price_df, prices_df, zones_df, price_types_df = (
         all_data["seats"],
@@ -52,10 +54,7 @@ def seats_availability_entry(**kwargs):
     return seats_price_df, prices_df, zones_df, price_types_df
 
 
-def main(task_name, **kwargs):
-    """
-    Main scheduler function
-    """
+def task_scheduler(task_name, **kwargs):
     task_fun = {
         "events": upcoming_events_entry,
         "seats": seats_availability_entry,
@@ -75,16 +74,24 @@ def main(task_name, **kwargs):
 
     global QUERY_DICT  # Querying all data relating to the performance
     QUERY_DICT = get_query_dict(**query_dict_args)
+    return task_fun
 
+
+def main(task_name, **kwargs):
+    """
+    Main scheduler function
+    """
+    task_fun = task_scheduler(task_name, **kwargs)
     return task_fun(**kwargs)
 
 
 def main_entry(payload):
-
-    main(**payload)
-    if "secret_function" in globals() and "secret_function" in payload:
+    if "secret_function" in globals() and payload.get("secret_function", False):
         print("Executing the secret function")
+        task_scheduler(**payload)  # Skipping the main function
         secret_function(QUERY_DICT)
+    else:
+        main(**payload)
     print("Execution finished")
     return ("Pipeline Complete", 200)
 
@@ -106,7 +113,6 @@ if __name__ == "__main__":
     with open("payload.json", "r") as f:
         payload = json.load(f)
     main_entry(payload)
-    exit()
     args = sys.argv[1:]
     if len(args) > 0:
         args = parse_args(args)

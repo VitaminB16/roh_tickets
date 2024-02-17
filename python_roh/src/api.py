@@ -1,4 +1,5 @@
 import os
+import json
 from .config import *
 from python_roh.upcoming_events import query_soonest_performance_id
 
@@ -18,10 +19,12 @@ def get_query_dict(
     source_id = source_id or os.getenv("SOURCE_ID")
     performance_id = performance_id or os.getenv("PERFORMANCE_ID")
 
-    if performance_id == "soonest":
-        performance_id = query_soonest_performance_id()
-
-    os.environ["PERFORMANCE_ID"] = str(performance_id)
+    if isinstance(performance_id, str) and performance_id.startswith("soonest"):
+        n_soonest = int(performance_id.split("_")[1]) if "_" in performance_id else 1
+        performance_id = query_soonest_performance_id(
+            n_soonest=n_soonest, use_stored=True
+        )
+    os.environ["PERFORMANCE_ID"] = json.dumps(performance_id)  # In case it's a list
     os.environ["MODE_OF_SALE_ID"] = str(mode_of_sale_id)
     os.environ["CONSTITUENT_ID"] = str(constituent_id)
     os.environ["SOURCE_ID"] = str(source_id)

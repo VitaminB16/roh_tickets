@@ -1,8 +1,13 @@
 import pandas as pd
 
-from .src.config import *
+from python_roh.src.config import *
 from tools.parquet import Parquet
-from .src.src import API, _query_soonest_performance_id, query_production_activities
+from python_roh.src.utils import force_list
+from python_roh.src.src import (
+    API,
+    _query_soonest_performance_id,
+    query_production_activities,
+)
 
 
 """
@@ -162,7 +167,7 @@ def get_next_weeks_events(events_df, today):
     return today_tomorrow_events_df, next_week_events_df
 
 
-def query_soonest_performance_id(use_stored=True):
+def query_soonest_performance_id(n_soonest=1, use_stored=True):
     """
     Query the soonest performance id
     """
@@ -184,10 +189,16 @@ def query_soonest_performance_id(use_stored=True):
     ).reset_index(drop=True)
     events_df_sub.sort_values(by=["timestamp"], inplace=True)
 
-    soonest_production_url = events_df_sub.url.iloc[0]
     if use_stored:
-        soonest_performance_id = events_df_sub.performanceId.astype(str).iloc[0]
-        print(f"Soonest performance id: {soonest_performance_id}")
+        soonest_perf_ids = (
+            events_df_sub.performanceId.astype(str).iloc[:n_soonest].values.tolist()
+        )
+        soonest_perf_ids = force_list(soonest_perf_ids)
+        print(f"Soonest performance id: {soonest_perf_ids}")
     else:
-        soonest_performance_id = _query_soonest_performance_id(soonest_production_url)
-    return soonest_performance_id
+        soonest_prod_urls = events_df_sub.url.iloc[:n_soonest].values.tolist()
+        soonest_prod_urls = force_list(soonest_prod_urls)
+        soonest_perf_ids = [_query_soonest_performance_id(x) for x in soonest_prod_urls]
+    if len(soonest_perf_ids) == 1:
+        soonest_perf_ids = soonest_perf_ids[0]
+    return soonest_perf_ids
