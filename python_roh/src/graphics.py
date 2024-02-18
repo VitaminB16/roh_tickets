@@ -11,6 +11,7 @@ def plot_hall(
     prices_df,
     no_plot=False,
     dark_mode=False,
+    save_both=True,
     **kwargs,
 ):
     """
@@ -130,11 +131,21 @@ def plot_hall(
             trace.marker.line.width = 0
             trace.marker.size = 8
 
+    if save_both:
+        plot_hall(
+            seats_price_df,
+            prices_df,
+            no_plot=no_plot,
+            dark_mode=not dark_mode,
+            save_both=False,  # Prevent infinite recursion
+            **kwargs,
+        )
+
     image_location = HALL_IMAGE_LOCATION
     if dark_mode:
         fig.update_layout(
-            plot_bgcolor="#303030",
-            paper_bgcolor="#303030",
+            plot_bgcolor="#0E1117",
+            paper_bgcolor="#0E1117",
         )
         fig.layout.font.color = "white"
         image_location = image_location.replace(".png", "_dark.png")
@@ -174,6 +185,7 @@ def plot_events(
     filter_recent=True,
     no_plot=False,
     dark_mode=False,
+    save_both=True,
     **kwargs,
 ):
     """
@@ -274,15 +286,30 @@ def plot_events(
         trace.marker.line.width = 0.2
 
     image_location = EVENTS_IMAGE_LOCATION
+
+    if save_both:
+        plot_events(
+            events_df,
+            colours=colours,
+            filter_recent=filter_recent,
+            no_plot=no_plot,
+            dark_mode=not dark_mode,
+            save_both=False,  # Prevent infinite recursion
+            **kwargs,
+        )
+
     if dark_mode:
         fig.update_layout(
-            plot_bgcolor="#303030",
-            paper_bgcolor="#303030",
+            plot_bgcolor="#0E1117",
+            paper_bgcolor="#0E1117",
         )
+        fig.layout.xaxis.gridcolor = "#3D3630"
+        fig.layout.yaxis.gridcolor = "#3D3630"
         fig.layout.font.color = "white"
         image_location = image_location.replace(".png", "_dark.png")
 
     fig.show()
     with PLATFORM.open(image_location, "wb") as f:
         f.write(fig.to_image(format="png", scale=3))
+
     return fig
