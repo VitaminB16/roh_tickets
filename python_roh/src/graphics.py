@@ -1,9 +1,10 @@
 import random
 import pandas as pd
 import plotly.express as px
+import matplotlib.font_manager as fm
 
 from python_roh.src.config import *
-from python_roh.src.utils import JSON
+from python_roh.src.utils import JSON, purge_image_cache
 
 
 def plot_hall(
@@ -154,6 +155,8 @@ def plot_hall(
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
         f.write(fig.to_image(format="png", scale=3))
     print(f"Saved {image_location}")
+    purge_image_cache()
+
     return fig
 
 
@@ -195,6 +198,14 @@ def plot_events(
     if no_plot:
         print("Skipping the plot")
         return
+
+    if os.getenv("PLATFORM") != "local":
+        # GCP environment does not have the font installed
+        tmp_font_path = "/tmp/Gotham-Book.ttf"
+        PLATFORM.download(GOTHAM_FONT_LOCATION, tmp_font_path)
+        prop = fm.FontProperties(fname=tmp_font_path)
+        fm.fontManager.ttflist.extend([prop])
+
     today = pd.Timestamp.today(tz="Europe/London")
     if filter_recent:
         sub_query = "location == 'Main Stage' & timestamp >= @today"
@@ -323,5 +334,6 @@ def plot_events(
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
         f.write(fig.to_image(format="png", scale=3))
     print(f"Saved {image_location}")
+    purge_image_cache()
 
     return fig

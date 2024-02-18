@@ -125,3 +125,30 @@ def enforce_schema(df, schema):
             df[col] = None
         df[col] = enforce_one_schema(df[col], col_schema)
     return df
+
+
+def purge_image_cache(repo_url="https://github.com/VitaminB16/roh_tickets"):
+    """
+    Purge the image cache of a github repository. This is useful when the image is updated and the old one is still cached.
+    """
+    import requests
+    from bs4 import BeautifulSoup
+
+    repo_html = requests.get(repo_url).text
+    soup = BeautifulSoup(repo_html, "html.parser")
+    image_elements = soup.find_all("img")
+    # Extract all urls
+    image_urls = [el["src"] for el in image_elements if "src" in el.attrs]
+    image_urls.extend([el["srcset"] for el in image_elements if "srcset" in el.attrs])
+    image_urls = list(set(image_urls))
+    for image_url in image_urls:
+        try:
+            response = requests.request("PURGE", image_url)
+            print(f"Purged {image_url} - {response.status_code}")
+        except Exception as e:
+            pass
+    return
+
+
+if __name__ == "__main__":
+    purge_image_cache()

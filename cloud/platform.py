@@ -72,6 +72,10 @@ class GCPPlatform(BasePlatform):
 
     def insert_rows(self, df, table, if_exists="append", **kwargs):
         df.to_gbq(table, if_exists=if_exists, **kwargs)
+    
+    def download(self, path, local_path):
+        print(f"Downloading {path} to {local_path}")
+        self.fs.get(path, local_path)
 
 
 class LocalPlatform(BasePlatform):
