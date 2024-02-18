@@ -153,6 +153,7 @@ def plot_hall(
     fig.show()
     with PLATFORM.open(image_location, "wb") as f:
         f.write(fig.to_image(format="png", scale=3))
+    print(f"Saved {image_location}")
     return fig
 
 
@@ -194,7 +195,7 @@ def plot_events(
     if no_plot:
         print("Skipping the plot")
         return
-    today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
+    today = pd.Timestamp.today(tz="Europe/London")
     if filter_recent:
         sub_query = "location == 'Main Stage' & timestamp >= @today"
     else:
@@ -263,10 +264,20 @@ def plot_events(
         title=None,
         xaxis=dict(
             range=[
-                today - pd.Timedelta(hours=5),
+                today - pd.Timedelta(hours=6),
                 plot_df.timestamp_end.max() + pd.Timedelta(days=1),
             ]
         ),
+    )
+    # Add "Updated at: date time" to the top right corner
+    fig.add_annotation(
+        text=f"Last updated at {today.strftime('%b %-d, %Y (%-I:%M %p)')}",
+        xref="paper",
+        yref="paper",
+        x=1,
+        y=1.07,
+        showarrow=False,
+        font=dict(size=15, family="Gotham"),
     )
     fig.layout.font.family = "Gotham"
     fig.layout.font.size = 15
@@ -311,5 +322,6 @@ def plot_events(
     fig.show()
     with PLATFORM.open(image_location, "wb") as f:
         f.write(fig.to_image(format="png", scale=3))
+    print(f"Saved {image_location}")
 
     return fig

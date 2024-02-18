@@ -95,15 +95,18 @@ def parse_args(args):
 
 
 CLOUD_BUCKET = "vitaminb16-clean/"
+PUBLIC_BUCKET = "vitaminb16-public/"
 prefix = PLATFORM.fs_prefix
+prefix_public = PLATFORM.fs_prefix
 if PLATFORM.name != "Local":
     prefix = prefix + CLOUD_BUCKET
+    prefix_public = prefix_public + PUBLIC_BUCKET
 SEAT_MAP_POSITIONS_CSV = prefix + "metadata/seat_positions.csv"
 TITLE_COLOURS_LOCATION = prefix + "metadata/titles_colour.json"
 EVENTS_PARQUET_LOCATION = prefix + "output/roh_events.parquet"
 PRODUCTIONS_PARQUET_LOCATION = prefix + "output/roh_productions.parquet"
-HALL_IMAGE_LOCATION = prefix + "output/images/ROH_hall.png"
-EVENTS_IMAGE_LOCATION = prefix + "output/images/ROH_events.png"
+HALL_IMAGE_LOCATION = prefix_public + "output/images/ROH_hall.png"
+EVENTS_IMAGE_LOCATION = prefix_public + "output/images/ROH_events.png"
 
 EVENTS_PARQUET_SCHEMA = {
     "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
