@@ -32,7 +32,7 @@ LOCATION="europe-west2"
 URI="https://europe-west2-vitaminb16.cloudfunctions.net/python-roh"
 SCHEDULE="0 13 * * *"
 TIME_ZONE="GMT"
-PAYLOAD="{'task_name': 'events', 'no_plot': true}"
+PAYLOAD='{"task_name": "events"}'
 OIDC_SERVICE_ACCOUNT_EMAIL="vitaminb16@vitaminb16.iam.gserviceaccount.com"
 
 configure_job() {
