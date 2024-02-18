@@ -134,6 +134,7 @@ def purge_image_cache(repo_url="https://github.com/VitaminB16/roh_tickets"):
     import requests
     from bs4 import BeautifulSoup
 
+    # Get all images from the repository
     repo_html = requests.get(repo_url, headers={"User-Agent": "Mozilla/5.0"}).text
     soup = BeautifulSoup(repo_html, "html.parser")
     image_elements = soup.find_all("img")
@@ -141,6 +142,7 @@ def purge_image_cache(repo_url="https://github.com/VitaminB16/roh_tickets"):
     image_urls = [el["src"] for el in image_elements if "src" in el.attrs]
     image_urls.extend([el["srcset"] for el in image_elements if "srcset" in el.attrs])
     image_urls = list(set(image_urls))
+    image_urls = [url for url in image_urls if "http" in url]
     for image_url in image_urls:
         try:
             response = requests.request("PURGE", image_url)
