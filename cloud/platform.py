@@ -43,10 +43,10 @@ class GCPPlatform(BasePlatform):
             self._fs = gcsfs.GCSFileSystem()
         return self._fs
 
-    def open(self, path, mode, allow_empty=False):
+    def open(self, path, mode, allow_empty=False, **kwargs):
         if allow_empty and not self.exists(path):
             return None
-        return self.fs.open(path, mode)
+        return self.fs.open(path, mode, **kwargs)
 
     def makedirs(self, path, exist_ok=True):
         self.fs.makedirs(path, exist_ok=exist_ok)
@@ -82,7 +82,7 @@ class LocalPlatform(BasePlatform):
         self.name = "Local"
         self.fs_prefix = ""
 
-    def open(self, path, mode, allow_empty=False):
+    def open(self, path, mode, allow_empty=False, **kwargs):
         if allow_empty and not self.exists(path):
             return None
         return open(path, mode)
