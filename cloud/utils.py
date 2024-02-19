@@ -86,7 +86,7 @@ class PubSub:
             log(f"An error occurred: {e}")
 
 
-def log(*args):
+def log(*args, **kwargs):
     """
     Function for logging to Google Cloud Logs. Logs a message as usual, and logs a dictionary of data as jsonPayload.
 
@@ -108,4 +108,4 @@ def log(*args):
         logging.info(log_data)
     else:
         # If running locally, use a normal print
-        print(log_data["message"])
+        print(log_data["message"], **kwargs)
