@@ -19,7 +19,7 @@ class Graphics:
             raise ValueError(f"Invalid plot type: {self.plot_type}")
         fig = plot_function(*args, **kwargs)
         purge_image_cache()
-        return
+        return fig
 
 
 def process_hall_plot_df(seats_price_df, prices_df):
@@ -56,6 +56,7 @@ def plot_hall(
     save_both=True,
     font_family="GothamSSm-Book",
     dont_save=False,
+    dont_show=False,
     **kwargs,
 ):
     """
@@ -163,6 +164,8 @@ def plot_hall(
             no_plot=no_plot,
             dark_mode=not dark_mode,
             save_both=False,  # Prevent infinite recursion
+            dont_show=dont_show,
+            dont_save=dont_save,
             **kwargs,
         )
 
@@ -175,7 +178,8 @@ def plot_hall(
         fig.layout.font.color = "white"
         image_location = image_location.replace(".png", "_dark.png")
 
-    fig.show()
+    if not dont_show:
+        fig.show()
 
     if not dont_save:
         return fig
@@ -219,6 +223,7 @@ def plot_events(
     save_both=True,
     font_family="GothamSSm-Book",
     dont_save=False,
+    dont_show=False,
     **kwargs,
 ):
     """
@@ -340,6 +345,8 @@ def plot_events(
             dark_mode=not dark_mode,
             font_family=font_family,
             save_both=False,  # Prevent infinite recursion
+            dont_show=dont_show,
+            dont_save=dont_save,
             **kwargs,
         )
 
@@ -353,7 +360,8 @@ def plot_events(
         fig.layout.font.color = "white"
         image_location = image_location.replace(".png", "_dark.png")
 
-    fig.show()
+    if not dont_show:
+        fig.show()
 
     if not dont_save:
         return fig
