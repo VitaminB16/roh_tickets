@@ -56,11 +56,13 @@ def plot_hall(
     font_family="GothamSSm-Book",
     dont_save=False,
     dont_show=False,
+    autosize=True,
     **kwargs,
 ):
     """
     Plot the hall with the seats and their prices and availability
     """
+    plot_width, plot_height = (1200, 900) if not autosize else (None, None)
     if no_plot:
         log("Skipping the plot")
         return
@@ -112,9 +114,9 @@ def plot_hall(
         font=dict(size=20, color="rgb(135,135,135)"),
     )
     fig.update_layout(
-        autosize=False,
-        width=1200,
-        height=900,
+        width=plot_width,
+        height=plot_height,
+        autosize=autosize,
         margin=dict(l=0, r=0, b=0, t=0, pad=0),
         hoverlabel=dict(
             font_size=16,
@@ -165,6 +167,8 @@ def plot_hall(
             save_both=False,  # Prevent infinite recursion
             dont_show=dont_show,
             dont_save=dont_save,
+            plot_width=plot_width,
+            autosize=autosize,
             **kwargs,
         )
 
@@ -223,11 +227,13 @@ def plot_events(
     font_family="GothamSSm-Book",
     dont_save=False,
     dont_show=False,
+    autosize=True,
     **kwargs,
 ):
     """
     Plot the timeline of the upcoming events on the Main Stage
     """
+    plot_width, plot_height = (1200, 500) if not autosize else (None, None)
     if no_plot:
         log("Skipping the plot")
         return
@@ -282,8 +288,9 @@ def plot_events(
     fig.update_layout(
         hovermode="closest",
         hoverdistance=1000,
-        width=1200,
-        height=500,
+        width=plot_width,
+        height=plot_height,
+        autosize=autosize,
         margin=dict(l=0, r=0, b=0, t=40, pad=0),
     )
     fig.update_layout(
@@ -346,6 +353,7 @@ def plot_events(
             save_both=False,  # Prevent infinite recursion
             dont_show=dont_show,
             dont_save=dont_save,
+            plot_width=plot_width,
             **kwargs,
         )
 

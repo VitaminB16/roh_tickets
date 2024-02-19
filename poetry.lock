@@ -460,6 +460,20 @@ traitlets = ">=4"
 test = ["pytest"]
 
 [[package]]
+name = "darkdetect"
+version = "0.8.0"
+description = "Detect OS Dark Mode from Python"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "darkdetect-0.8.0-py3-none-any.whl", hash = "sha256:a7509ccf517eaad92b31c214f593dbcf138ea8a43b2935406bbd565e15527a85"},
+    {file = "darkdetect-0.8.0.tar.gz", hash = "sha256:b5428e1170263eb5dea44c25dc3895edd75e6f52300986353cd63533fe7df8b1"},
+]
+
+[package.extras]
+macos-listener = ["pyobjc-framework-Cocoa"]
+
+[[package]]
 name = "dash"
 version = "2.15.0"
 description = "A Python framework for building reactive web-apps. Developed by Plotly."
@@ -3124,4 +3138,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "aba69d9102f6f23727ba1dd214f73a9deba32acb6e14da93373645e6372271d5"
+content-hash = "311c8f2fbcd1147fc44c3cfab4dd96a0f2c8219d5a3f8203b1186e43ae2d44da"
