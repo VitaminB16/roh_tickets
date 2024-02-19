@@ -25,14 +25,14 @@ def upcoming_events_entry(dont_save=False, **kwargs):
     Entry point for the upcoming events task and the events timeline plot
     """
     events_df, today_tomorrow_events_df, next_week_events_df = handle_upcoming_events(
-        QUERY_DICT
+        QUERY_DICT, **kwargs
     )
-    Graphics("events").plot(events_df, **kwargs)
+    fig = Graphics("events").plot(events_df, **kwargs)
     if not dont_save:
         Parquet(EVENTS_PARQUET_LOCATION).write(
             events_df, partition_cols=["location", "date", "time", "title"]
         )
-    return events_df, today_tomorrow_events_df, next_week_events_df
+    return events_df, today_tomorrow_events_df, next_week_events_df, fig
 
 
 def seats_availability_entry(**kwargs):
@@ -50,8 +50,8 @@ def seats_availability_entry(**kwargs):
         all_data["price_types"],
     )
     log(f"Seats available: {seats_price_df.seat_available.sum()}")
-    Graphics("hall").plot(seats_price_df, prices_df, **kwargs)
-    return seats_price_df, prices_df, zones_df, price_types_df
+    fig = Graphics("hall").plot(seats_price_df, prices_df, **kwargs)
+    return seats_price_df, prices_df, zones_df, price_types_df, fig
 
 
 def task_scheduler(task_name, **kwargs):
@@ -85,13 +85,15 @@ def main(task_name, **kwargs):
     return task_fun(**kwargs)
 
 
-def main_entry(payload):
+def main_entry(payload, return_output=False):
     if "secret_function" in globals() and payload.get("secret_function", False):
         log("Executing the secret function")
         task_scheduler(**payload)  # Skipping the main function
         secret_function(QUERY_DICT)
     else:
-        main(**payload)
+        output = main(**payload)
+        if return_output:
+            return output
     log("Execution finished")
     return ("Pipeline Complete", 200)
 

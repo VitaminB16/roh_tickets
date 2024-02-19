@@ -16,10 +16,18 @@ This module contains the functions to handle the data for the upcoming events.
 """
 
 
-def handle_upcoming_events(query_dict):
+def handle_upcoming_events(query_dict, query_events_api=True, **kwargs):
     """
     Entry point for the upcoming events
     """
+    if not query_events_api:
+        log("Not querying the API for events. Using stored data.")
+        events_df = Parquet(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
+        today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
+        today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
+            events_df, today
+        )
+        return events_df, today_tomorrow_events_df, next_week_events_df
     data = API(query_dict).query_all_data("events")
     events_df, included_df = data["events"]
 
