@@ -4,7 +4,6 @@ import glob
 import asyncio
 import pandas as pd
 import pyarrow as pa
-from retrying import retry
 import pyarrow.parquet as pq
 from typing import Any, List, Tuple, Dict
 from concurrent.futures import ThreadPoolExecutor

@@ -1,9 +1,6 @@
-import io
 import random
 import pandas as pd
 import plotly.express as px
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
 
 from cloud.utils import log
 from python_roh.src.config import *

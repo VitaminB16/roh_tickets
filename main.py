@@ -1,9 +1,6 @@
 import os
 import sys
 import json
-import base64
-import pyarrow as pa
-import pyarrow.parquet as pq
 from flask import Flask, jsonify
 from flask import request as flask_request
 
@@ -11,13 +8,12 @@ from flask import request as flask_request
 from set_secrets import set_secrets
 
 from cloud.utils import log
+from tools.parquet import Parquet
 from python_roh.src.config import *
 from python_roh.src.api import get_query_dict
 from python_roh.src.src import API, print_performance_info
 from python_roh.src.graphics import plot_hall, plot_events
 from python_roh.upcoming_events import handle_upcoming_events
-
-from tools.parquet import Parquet
 
 
 if "src_secret.py" in os.listdir("python_roh/src"):

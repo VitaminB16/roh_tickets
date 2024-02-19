@@ -8,7 +8,6 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 nbformat = "5.9.2"
-matplotlib = "3.8.2"
 pandas = "2.1.4"
 requests = "2.31.0"
 ipykernel = "6.28.0"

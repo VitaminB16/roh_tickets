@@ -2,8 +2,9 @@ import os
 import sys
 import json
 
-from python_roh.src.config import *
 from set_secrets import set_secrets
+
+from python_roh.src.config import *
 from cloud.utils import GCPRequest, log
 
 

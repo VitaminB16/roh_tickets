@@ -1,6 +1,7 @@
 import os
 import json
-from .config import *
+
+from python_roh.src.config import *
 from python_roh.upcoming_events import query_soonest_performance_id
 
 
