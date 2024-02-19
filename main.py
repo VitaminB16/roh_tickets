@@ -10,6 +10,7 @@ from flask import request as flask_request
 
 from set_secrets import set_secrets
 
+from cloud.utils import log
 from python_roh.src.config import *
 from python_roh.src.api import get_query_dict
 from python_roh.src.src import API, print_performance_info
@@ -51,7 +52,7 @@ def seats_availability_entry(**kwargs):
         all_data["zone_ids"],
         all_data["price_types"],
     )
-    print(f"Seats available: {seats_price_df.seat_available.sum()}")
+    log(f"Seats available: {seats_price_df.seat_available.sum()}")
     plot_hall(seats_price_df, prices_df, **kwargs)
     return seats_price_df, prices_df, zones_df, price_types_df
 
@@ -89,12 +90,12 @@ def main(task_name, **kwargs):
 
 def main_entry(payload):
     if "secret_function" in globals() and payload.get("secret_function", False):
-        print("Executing the secret function")
+        log("Executing the secret function")
         task_scheduler(**payload)  # Skipping the main function
         secret_function(QUERY_DICT)
     else:
         main(**payload)
-    print("Execution finished")
+    log("Execution finished")
     return ("Pipeline Complete", 200)
 
 
@@ -106,7 +107,7 @@ def entry_point(request=None):
         request_json = request.get_json(silent=True, force=True)
         request_args = request.args
         payload = request_json if request_json else request_args
-    print("Payload:", payload)
+    log("Payload:", payload)
     main_entry(payload)
     return payload
 
@@ -124,7 +125,7 @@ def flask_entry_point():
     else:
         payload = flask_request.args.to_dict()
 
-    print("Payload:", payload)
+    log("Payload:", payload)
     # Pass the payload to your main_entry function
     response_message, status_code = main_entry(payload)
     return jsonify(message=response_message), status_code

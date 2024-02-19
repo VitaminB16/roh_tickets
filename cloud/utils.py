@@ -1,10 +1,18 @@
+import os
 import json
+import logging
 import requests
 import google.auth
 import google.auth.exceptions
 from google.cloud import pubsub_v1
 from google.oauth2 import id_token
+from google.cloud import logging as gcp_logging
 from google.auth.transport.requests import Request
+
+if os.getenv("SERVE_AS", "gcp") not in ["azure_job"]:
+    client = gcp_logging.Client()
+    client.get_default_handler()
+    client.setup_logging()
 
 
 class GCPRequest:
@@ -36,10 +44,10 @@ class GCPRequest:
             token = id_token.fetch_id_token(Request(), self.url)
             return token
         except google.auth.exceptions.RefreshError as e:
-            print(f"Error refreshing credentials: {e}")
+            log(f"Error refreshing credentials: {e}")
             return None
         except Exception as e:
-            print(f"Error obtaining identity token: {e}")
+            log(f"Error obtaining identity token: {e}")
             return None
 
     def post(self, payload, **kwargs):
@@ -75,4 +83,29 @@ class PubSub:
             )
             result = publish_future.result()
         except Exception as e:
-            print(f"An error occurred: {e}")
+            log(f"An error occurred: {e}")
+
+
+def log(*args):
+    """
+    Function for logging to Google Cloud Logs. Logs a message as usual, and logs a dictionary of data as jsonPayload.
+
+    Arguments:
+        *args (list): list of elements to "print" to google cloud logs.
+    """
+    # Use these environment variables as payload to log to Google Cloud Logs
+    env_keys = ["SERVE_AS"]
+    env_data = {key: os.getenv(key, None) for key in env_keys}
+    log_data = {k: v for k, v in env_data.items() if v is not None}
+
+    # If any arguments are a dictionary, add it to the log_data so it can be queried in Google Cloud Logs
+    for arg in args:
+        if isinstance(arg, dict):
+            log_data.update(arg)
+        log_data["message"] = " ".join([str(a) for a in args])
+
+    if os.getenv("SERVE_AS", "cloud_function") in ["cloud_run"]:
+        logging.info(log_data)
+    else:
+        # If running locally, use a normal print
+        print(log_data["message"])

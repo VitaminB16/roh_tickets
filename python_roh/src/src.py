@@ -13,6 +13,7 @@ from python_roh.src.config import (
     PRODUCTIONS_PARQUET_LOCATION,
     ZONE_HIERARCHY,
 )
+from cloud.utils import log
 from cloud.platform import PLATFORM
 from python_roh.src.utils import force_list
 
@@ -167,7 +168,7 @@ class API:
         for data_type in force_list(data_types):
             self.all_data[data_type] = self.query_one_data(data_type)
             time.sleep(0.3)
-        print(f"Queried the following from the API: {data_types}")
+        log(f"Queried the following from the API: {data_types}")
         if post_process:
             self.all_data = post_process_all_data(self.all_data)
         return self.all_data
@@ -186,12 +187,12 @@ def _fix_xy_positions(df):
     """
     Map the seats to their positions according to the web layout
     """
-    print("Fixing the seat positions")
-    print(SEAT_MAP_POSITIONS_CSV)
+    log("Fixing the seat positions")
+    log(SEAT_MAP_POSITIONS_CSV)
 
     with PLATFORM.open(SEAT_MAP_POSITIONS_CSV, "rb") as f:
         seat_positions = pd.read_csv(f)
-    print(f"Seat positions: {seat_positions.shape}")
+    log(f"Seat positions: {seat_positions.shape}")
     df_zones = df.ZoneName.unique()
     seat_positions.query("ZoneName in @df_zones", inplace=True)
     df.drop(columns=["x", "y"], inplace=True, errors="ignore")
@@ -265,7 +266,7 @@ def _query_soonest_performance_id(production_url):
     activities_df.query("date >= @today", inplace=True)
     activities_df.reset_index(drop=True, inplace=True)
     soonest_performance_id = int(activities_df.id[0])
-    print(f"Soonest performance_id: {soonest_performance_id}")
+    log(f"Soonest performance_id: {soonest_performance_id}")
     return soonest_performance_id
 
 
@@ -282,7 +283,7 @@ def print_performance_info(performance_id=None, print_info=True):
         return performance_df
 
     for i in range(performance_df.shape[0]):
-        print(
+        log(
             f"""
             {performance_df.title.iloc[i]}
             {performance_df.date.iloc[i].strftime('%b %-d, %Y')}

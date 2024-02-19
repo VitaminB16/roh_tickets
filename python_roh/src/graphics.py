@@ -5,8 +5,9 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 
+from cloud.utils import log
 from python_roh.src.config import *
-from python_roh.src.utils import JSON, purge_image_cache  # , install_font_on_gcf
+from python_roh.src.utils import JSON, purge_image_cache
 
 
 def plot_hall(
@@ -22,7 +23,7 @@ def plot_hall(
     Plot the hall with the seats and their prices and availability
     """
     if no_plot:
-        print("Skipping the plot")
+        log("Skipping the plot")
         return
     # Get the edge seats to determine the stage position
     edge_query = "ZoneName == 'Orchestra Stalls' and SeatName.isin(['A1', 'A29'])"
@@ -157,7 +158,7 @@ def plot_hall(
     fig.show()
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
         f.write(fig.to_image(format="png", scale=3))
-    print(f"Saved {image_location}")
+    log(f"Saved {image_location}")
     purge_image_cache()
 
     return fig
@@ -200,7 +201,7 @@ def plot_events(
     Plot the timeline of the upcoming events on the Main Stage
     """
     if no_plot:
-        print("Skipping the plot")
+        log("Skipping the plot")
         return
 
     today = pd.Timestamp.today(tz="Europe/London")
@@ -331,7 +332,7 @@ def plot_events(
     fig.show()
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
         f.write(fig.to_image(format="png", scale=3))
-    print(f"Saved {image_location}")
+    log(f"Saved {image_location}")
     purge_image_cache()
 
     return fig

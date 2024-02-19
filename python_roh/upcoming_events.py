@@ -1,7 +1,8 @@
 import pandas as pd
 
-from python_roh.src.config import *
+from cloud.utils import log
 from tools.parquet import Parquet
+from python_roh.src.config import *
 from python_roh.src.utils import force_list
 from python_roh.src.src import (
     API,
@@ -113,7 +114,7 @@ def handle_added_productions(added_productions):
     """
     Get the activities for the added productions and store them in a Parquet
     """
-    print(f"New productions: \n{added_productions.title.unique()}")
+    log(f"New productions: \n{added_productions.title.unique()}")
     for production_i in added_productions.itertuples():
         production_url = production_i.url
         activities_df = query_production_activities(production_url)
@@ -194,7 +195,7 @@ def query_soonest_performance_id(n_soonest=1, use_stored=True):
             events_df_sub.performanceId.astype(str).iloc[:n_soonest].values.tolist()
         )
         soonest_perf_ids = force_list(soonest_perf_ids)
-        print(f"Soonest performance id: {soonest_perf_ids}")
+        log(f"Soonest performance id: {soonest_perf_ids}")
     else:
         soonest_prod_urls = events_df_sub.url.iloc[:n_soonest].values.tolist()
         soonest_prod_urls = force_list(soonest_prod_urls)

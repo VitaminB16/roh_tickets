@@ -2,6 +2,7 @@ import pandas as pd
 
 from set_secrets import set_secrets
 
+from cloud.utils import log
 from python_roh.src.src import API
 from python_roh.src.utils import JSON
 from python_roh.src.api import get_query_dict
@@ -12,7 +13,7 @@ def load_positions():
     # JSON file with the seat map positions from the web page using extract_positions.js
     seat_map_json = JSON("various/seat_map_positions/seat_positions.json").load()
     if seat_map_json == {}:
-        print(
+        log(
             "various/seat_map_positions/seat_positions.json not found!\n"
             + "Make sure to run extract_positions.js first."
         )
@@ -56,7 +57,7 @@ def load_positions():
 
     csv_name = SEAT_MAP_POSITIONS_CSV
     seat_map.to_csv(csv_name, index=False)
-    print(f"Written seat map positions to {csv_name}")
+    log(f"Written seat map positions to {csv_name}")
 
 
 if __name__ == "__main__":

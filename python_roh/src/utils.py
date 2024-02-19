@@ -1,8 +1,10 @@
 import os
 import json
+import logging
 import asyncio
 import collections.abc
 
+from cloud.utils import log
 from cloud.platform import PLATFORM
 
 LIST_LIKE_TYPES = (list, tuple, set, frozenset, collections.abc.KeysView)
@@ -22,7 +24,7 @@ def jprint(x):
     """
     Pretty print a json object
     """
-    print(json.dumps(x, indent=3))
+    log(json.dumps(x, indent=3))
 
 
 class JSON:
@@ -37,7 +39,7 @@ class JSON:
         """
         Load a json file as a dict
         """
-        print("Loading", self.path)
+        log("Loading", self.path)
         if allow_empty and not PLATFORM.exists(self.path):
             return {}
         with PLATFORM.open(self.path, "r") as f:
@@ -72,7 +74,7 @@ def async_retry(wait_fixed=0.1, stop_max_attempt_number=3):
                     if attempt < stop_max_attempt_number - 1:
                         await asyncio.sleep(wait_fixed)
                     else:
-                        print("Max attempts reached!")
+                        log("Max attempts reached!")
                         raise  # If last attempt, raise the exception
 
         return wrapper
@@ -146,9 +148,9 @@ def purge_image_cache(repo_url="https://github.com/VitaminB16/roh_tickets"):
     for image_url in image_urls:
         try:
             response = requests.request("PURGE", image_url)
-            print(f"Purged {image_url} - {response.status_code}")
+            log(f"Purged {image_url} - {response.status_code}")
         except Exception as e:
-            print(f"Failed to purge {image_url} - {e}")
+            log(f"Failed to purge {image_url} - {e}")
     return
 
 
@@ -171,21 +173,21 @@ def run_command(command):
 #     Install a font on Google Cloud Functions
 #     """
 
-#     print("Current fonts:")
+#     log("Current fonts:")
 #     for i in range(30):
-#         print(1)
+#         log(1)
 
 #     current_fonts = run_command(["fc-list"])
 
-#     print("Install the font")
+#     log("Install the font")
 #     run_command(["fc-cache", "-f", "-v", "/tmp/"])
 
-#     print("New fonts:")
+#     log("New fonts:")
 #     new_fonts = run_command(["fc-list"])
-#     print(new_fonts)
+#     log(new_fonts)
 
 #     new_fonts = [f for f in new_fonts if f not in current_fonts]
-#     print(new_fonts)
+#     log(new_fonts)
 #     return
 
 

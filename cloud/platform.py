@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 
+from cloud.utils import log
+
 
 class BasePlatform:
     def __init__(self):
@@ -72,9 +74,9 @@ class GCPPlatform(BasePlatform):
 
     def insert_rows(self, df, table, if_exists="append", **kwargs):
         df.to_gbq(table, if_exists=if_exists, **kwargs)
-    
+
     def download(self, path, local_path):
-        print(f"Downloading {path} to {local_path}")
+        log(f"Downloading {path} to {local_path}")
         self.fs.get(path, local_path)
 
 

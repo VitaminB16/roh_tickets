@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 
+from cloud.utils import log
 
 def set_secrets():
     """
@@ -16,7 +17,7 @@ def set_secrets():
                 key, value = line.strip().split(" = ")
                 os.environ[key] = value
     except FileNotFoundError:
-        print("No secrets.txt file found. Continuing without these secrets.")
+        log("No secrets.txt file found. Continuing without these secrets.")
 
 
 def set_gcp_secrets(service="python-roh"):
@@ -35,8 +36,10 @@ def set_gcp_secrets(service="python-roh"):
                 request={"name": f"{name}/versions/latest"}
             )
             os.environ[name.split("/")[-1]] = value.payload.data.decode("utf-8")
+            print(f"Set secret {name.split('/')[-1]}")
         except Exception as e:
             print(f"Failed to grab secret {name}. Exception: {e}")
+            log(f"Failed to grab secret {name}. Exception: {e}")
 
 
 load_dotenv()

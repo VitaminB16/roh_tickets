@@ -9,6 +9,7 @@ import pyarrow.parquet as pq
 from typing import Any, List, Tuple, Dict
 from concurrent.futures import ThreadPoolExecutor
 
+from cloud.utils import log
 from python_roh.src.utils import force_list, async_retry, enforce_schema
 from python_roh.src.config import PARQUET_SCHEMAS, PLATFORM, PARQUET_TABLE_RELATIONS
 
@@ -32,7 +33,7 @@ class Parquet:
         use_threading: bool = False,
         **kwargs: Any,
     ) -> Tuple[Dict[str, str], Dict[str, bool]]:
-        print(f"Writing to {self.path}")
+        log(f"Writing to {self.path}")
         if partition_cols and use_threading:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
@@ -123,7 +124,7 @@ class Parquet:
         use_bigquery=True,
         **kwargs,
     ):
-        print(
+        log(
             f"Reading from {self.path}; filters: {filters}; use_bigquery: {use_bigquery}"
         )
         filters = self.generate_filters(filters)

@@ -981,6 +981,38 @@ files = [
 ]
 
 [[package]]
+name = "google-cloud-appengine-logging"
+version = "1.4.1"
+description = "Google Cloud Appengine Logging API client library"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "google-cloud-appengine-logging-1.4.1.tar.gz", hash = "sha256:9905c7c30c3c2bbedd0b132e2b271fc8247333ebc931d2d23af1bbbd11b435fe"},
+    {file = "google_cloud_appengine_logging-1.4.1-py2.py3-none-any.whl", hash = "sha256:851dad2c4dd85dcf5b9e32879acda998a250e82c4d4f2bd5ef67b904840c7b17"},
+]
+
+[package.dependencies]
+google-api-core = {version = ">=1.34.0,<2.0.dev0 || >=2.11.dev0,<3.0.0dev", extras = ["grpc"]}
+google-auth = ">=2.14.1,<3.0.0dev"
+proto-plus = ">=1.22.3,<2.0.0dev"
+protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
+
+[[package]]
+name = "google-cloud-audit-log"
+version = "0.2.5"
+description = "Google Cloud Audit Protos"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "google-cloud-audit-log-0.2.5.tar.gz", hash = "sha256:86e2faba3383adc8fd04a5bd7fd4f960b3e4aedaa7ed950f2f891ce16902eb6b"},
+    {file = "google_cloud_audit_log-0.2.5-py2.py3-none-any.whl", hash = "sha256:18b94d4579002a450b7902cd2e8b8fdcb1ea2dd4df3b41f8f82be6d9f7fcd746"},
+]
+
+[package.dependencies]
+googleapis-common-protos = ">=1.56.2,<2.0dev"
+protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
+
+[[package]]
 name = "google-cloud-bigquery"
 version = "3.17.2"
 description = "Google BigQuery API client library"
@@ -1051,6 +1083,29 @@ google-auth = ">=1.25.0,<3.0dev"
 
 [package.extras]
 grpc = ["grpcio (>=1.38.0,<2.0dev)", "grpcio-status (>=1.38.0,<2.0.dev0)"]
+
+[[package]]
+name = "google-cloud-logging"
+version = "3.9.0"
+description = "Stackdriver Logging API client library"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "google-cloud-logging-3.9.0.tar.gz", hash = "sha256:4decb1b0bed4a0e3c0e58a376646e6002d6be7cad039e3466822e8665072ea33"},
+    {file = "google_cloud_logging-3.9.0-py2.py3-none-any.whl", hash = "sha256:094a2db068ff7f38c9e0c1017673fa49c0768fbae02769e03e06baa30f138b87"},
+]
+
+[package.dependencies]
+google-api-core = {version = ">=1.33.2,<2.0.dev0 || >=2.8.dev0,<3.0.0dev", extras = ["grpc"]}
+google-cloud-appengine-logging = ">=0.1.0,<2.0.0dev"
+google-cloud-audit-log = ">=0.1.0,<1.0.0dev"
+google-cloud-core = ">=2.0.0,<3.0.0dev"
+grpc-google-iam-v1 = ">=0.12.4,<1.0.0dev"
+proto-plus = [
+    {version = ">=1.22.2,<2.0.0dev", markers = "python_version >= \"3.11\""},
+    {version = ">=1.22.0,<2.0.0dev", markers = "python_version < \"3.11\""},
+]
+protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
 
 [[package]]
 name = "google-cloud-pubsub"
@@ -3157,4 +3212,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "cf76d16dba578cfe2a59ee9eda11d5717e88b6269477142cda429374ef544795"
+content-hash = "5dcb09347451eb0db653eaa30bcd10e44b1b24dab36c730cd29e14087462399e"
