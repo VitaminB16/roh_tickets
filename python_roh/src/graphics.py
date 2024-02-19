@@ -7,6 +7,47 @@ from python_roh.src.config import *
 from python_roh.src.utils import JSON, purge_image_cache
 
 
+class Graphics:
+    def __init__(self, plot_type, **kwargs):
+        self.kwargs = kwargs
+        super().__init__(**kwargs)
+        self.plot_type = plot_type
+
+    def plot(self, *args, **kwargs):
+        plot_function = globals().get(f"plot_{self.plot_type}", None)
+        if plot_function is None:
+            raise ValueError(f"Invalid plot type: {self.plot_type}")
+        fig = plot_function(*args, **kwargs)
+        purge_image_cache()
+        return
+
+
+def process_hall_plot_df(seats_price_df, prices_df):
+    """
+    Process the hall plot dataframe to include the price bands and availability
+    """
+    # Set the price bands to their colors
+    price_bands = prices_df.Price.unique().astype(str)
+    price_bands = [price.split(".")[0] for price in price_bands]
+    price_bands = ["£" + price for price in price_bands]
+    price_colors = PRICE_COLOR_LIST[: len(price_bands)]
+    price_color_dict = dict(zip(price_bands, price_colors))
+    price_color_dict["Not available"] = NA_COLOR
+
+    plot_df = seats_price_df.copy()
+    plot_df.Price = plot_df.Price.where(plot_df.seat_available, None)
+    plot_df["Size"] = 1  # Dummy constant size for scatter plot
+    plot_df["Price_print"] = plot_df["Price"]
+    plot_df["Price_print"] = plot_df["Price_print"].apply(lambda x: f"£{x:.0f}")
+    plot_df.loc[plot_df["Price"].isnull(), "Price_print"] = "Not available"
+    plot_df = plot_df.assign(symbol="circle-open")
+    plot_df.loc[plot_df["Price"].isnull(), "symbol"] = "circle"
+    plot_df.Price = plot_df.Price.fillna("Not available").astype(str)
+    plot_df.Price = plot_df.Price.apply(lambda x: x.split(".")[0])
+    plot_df["Color"] = plot_df.Price_print.map(price_color_dict)
+    return plot_df, price_color_dict
+
+
 def plot_hall(
     seats_price_df,
     prices_df,
@@ -29,26 +70,7 @@ def plot_hall(
     middle_x, middle_y = edge_seats.x.mean(), edge_seats.y.mean()
     stage_y_min = middle_y + 120
     stage_y_max = middle_y + 60
-
-    # Set the price bands to their colors
-    price_bands = prices_df.Price.unique().astype(str)
-    price_bands = [price.split(".")[0] for price in price_bands]
-    price_bands = ["£" + price for price in price_bands]
-    price_colors = PRICE_COLOR_LIST[: len(price_bands)]
-    price_color_dict = dict(zip(price_bands, price_colors))
-    price_color_dict["Not available"] = NA_COLOR
-
-    plot_df = seats_price_df.copy()
-    plot_df.Price = plot_df.Price.where(plot_df.seat_available, None)
-    plot_df["Size"] = 1  # Dummy constant size for scatter plot
-    plot_df["Price_print"] = plot_df["Price"]
-    plot_df["Price_print"] = plot_df["Price_print"].apply(lambda x: f"£{x:.0f}")
-    plot_df.loc[plot_df["Price"].isnull(), "Price_print"] = "Not available"
-    plot_df = plot_df.assign(symbol="circle-open")
-    plot_df.loc[plot_df["Price"].isnull(), "symbol"] = "circle"
-    plot_df.Price = plot_df.Price.fillna("Not available").astype(str)
-    plot_df.Price = plot_df.Price.apply(lambda x: x.split(".")[0])
-    plot_df["Color"] = plot_df.Price_print.map(price_color_dict)
+    plot_df, price_color_dict = process_hall_plot_df(seats_price_df, prices_df)
 
     fig = px.scatter(
         plot_df,
@@ -156,7 +178,6 @@ def plot_hall(
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
         f.write(fig.to_image(format="png", scale=3))
     log(f"Saved {image_location}")
-    purge_image_cache()
 
     return fig
 
@@ -330,6 +351,5 @@ def plot_events(
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
         f.write(fig.to_image(format="png", scale=3))
     log(f"Saved {image_location}")
-    purge_image_cache()
 
     return fig

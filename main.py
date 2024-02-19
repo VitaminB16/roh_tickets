@@ -10,9 +10,9 @@ from set_secrets import set_secrets
 from cloud.utils import log
 from tools.parquet import Parquet
 from python_roh.src.config import *
+from python_roh.src.graphics import Graphics
 from python_roh.src.api import get_query_dict
 from python_roh.src.src import API, print_performance_info
-from python_roh.src.graphics import plot_hall, plot_events
 from python_roh.upcoming_events import handle_upcoming_events
 
 
@@ -27,7 +27,7 @@ def upcoming_events_entry(**kwargs):
     events_df, today_tomorrow_events_df, next_week_events_df = handle_upcoming_events(
         QUERY_DICT
     )
-    plot_events(events_df, **kwargs)
+    Graphics("events").plot(events_df, **kwargs)
     Parquet(EVENTS_PARQUET_LOCATION).write(
         events_df, partition_cols=["location", "date", "time", "title"]
     )
@@ -49,7 +49,7 @@ def seats_availability_entry(**kwargs):
         all_data["price_types"],
     )
     log(f"Seats available: {seats_price_df.seat_available.sum()}")
-    plot_hall(seats_price_df, prices_df, **kwargs)
+    Graphics("hall").plot(seats_price_df, prices_df, **kwargs)
     return seats_price_df, prices_df, zones_df, price_types_df
 
 
