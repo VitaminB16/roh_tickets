@@ -20,5 +20,7 @@ if __name__ == "__main__":
             "cloud_run": "CLOUD_RUN_URL",
             "cloud_function": "CLOUD_FUNCTION_URL",
         }.get(serve_as, "CLOUD_FUNCTION_URL")
-    response = GCPRequest(os.environ["CLOUD_FUNCTION_URL"]).post(payload)
+    url = os.getenv(url_env, os.getenv("CLOUD_FUNCTION_URL"))
+    print(f"Sending {payload} to {url}")
+    response = GCPRequest(url).post(payload)
     print(response.text)
