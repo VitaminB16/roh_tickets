@@ -1,6 +1,8 @@
-Set of utilities for my personal use for working with ROH REST API.
+A data engineering project for my personal use for working with the undocumented ROH REST API.
 
-In order to maintain a low profile, the documentation for this repository is limited.
+It is deployed to Google Cloud as a Cloud Function, and a Cloud Run service via Docker container. Cloud Scheduler service is set up to call the Cloud Run several times a day to check for updated data from the API and store it in a Google Cloud Storage bucket. It also updates the **Upcoming events** plot below.
+
+In order to maintain a low profile, the documentation for this repository is limited. The code is not intended for public use.
 
 ---
 
