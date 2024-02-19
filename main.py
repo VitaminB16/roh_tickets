@@ -131,11 +131,12 @@ if __name__ == "__main__":
     serve_as = os.environ.get("SERVE_AS", "local")
     if serve_as == "cloud_run":
         app.run(host="0.0.0.0", port=8080)
-    elif serve_as == "local":
+    else:
         with open("payload.json", "r") as f:
             payload = json.load(f)
         args = sys.argv[1:]
         if len(args) > 0:
             args = parse_args(args)
             payload.update(args)
+        payload.update({"save_both": False})
         main_entry(payload)

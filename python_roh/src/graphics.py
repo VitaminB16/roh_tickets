@@ -125,7 +125,7 @@ def plot_hall(
 
     # circle: occupied, circle-open: available
     for trace in fig.data:
-        if trace.marker.color != NA_COLOR:
+        if trace.marker.color != NA_COLOR and not dark_mode:
             trace.marker.symbol = "circle-open"
             trace.marker.line.width = 2.8
             trace.marker.size = 6.6
