@@ -29,13 +29,13 @@ gcloud run deploy ${CLOUD_FUNCTION_NAME} \
 # Cloud Scheduler  #
 ####################
 
-# Job 1: Run events task daily at 13:00 GMT to update the events data for any new events and productions
+# Job 1: Run events task daily at 9, 12, 15, 18, 21:00 GMT to update the events data for any new events and productions
 
 # Job configuration
 JOB_NAME="python-roh-update-events-daily"
 LOCATION="europe-west2"
 URI="https://python-roh-jfzraqzsma-nw.a.run.app"
-SCHEDULE="0 9,12,15,18 * * *"
+SCHEDULE="0 9,12,15,18,21 * * *"
 TIME_ZONE="GMT"
 PAYLOAD='{"task_name": "events"}'
 OIDC_SERVICE_ACCOUNT_EMAIL="vitaminb16@vitaminb16.iam.gserviceaccount.com"
