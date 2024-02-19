@@ -167,7 +167,7 @@ class API:
             data_types = self.query_dict.keys()
         for data_type in force_list(data_types):
             self.all_data[data_type] = self.query_one_data(data_type)
-            time.sleep(0.3)
+            time.sleep(0.05)
         log(f"Queried the following from the API: {data_types}")
         if post_process:
             self.all_data = post_process_all_data(self.all_data)
@@ -270,7 +270,9 @@ def _query_soonest_performance_id(production_url):
     return soonest_performance_id
 
 
-def print_performance_info(performance_id=None, print_info=True):
+def print_performance_info(performance_id=None, print_info=True, print_performance_info=True, **kwargs):
+    if not print_performance_info:
+        return None
     performance_id = performance_id or os.environ["PERFORMANCE_ID"]
     performance_id = json.loads(str(performance_id))
     performance_id = [int(x) for x in force_list(performance_id)]

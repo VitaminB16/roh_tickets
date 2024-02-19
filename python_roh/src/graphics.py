@@ -9,8 +9,6 @@ from python_roh.src.utils import JSON, purge_image_cache
 
 class Graphics:
     def __init__(self, plot_type, **kwargs):
-        self.kwargs = kwargs
-        super().__init__(**kwargs)
         self.plot_type = plot_type
 
     def plot(self, *args, **kwargs):
@@ -18,7 +16,8 @@ class Graphics:
         if plot_function is None:
             raise ValueError(f"Invalid plot type: {self.plot_type}")
         fig = plot_function(*args, **kwargs)
-        purge_image_cache()
+        if kwargs.get("dont_save", False):
+            purge_image_cache()
         return fig
 
 
@@ -181,7 +180,7 @@ def plot_hall(
     if not dont_show:
         fig.show()
 
-    if not dont_save:
+    if dont_save:
         return fig
 
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
