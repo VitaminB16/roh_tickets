@@ -14,7 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN mkdir -p /usr/share/fonts/custom
 
 # Copy the Gotham-Book.ttf font into the custom directory
-COPY fonts/GothamBook.ttf /usr/share/fonts/custom/
+COPY fonts/GothamSSm-Medium.ttf /usr/share/fonts/custom/
+COPY fonts/GothamSSm-Book.ttf /usr/share/fonts/custom/
 RUN fc-cache -fv
 # Print the list of available fonts for logging
 RUN fc-list | grep "Gotham"

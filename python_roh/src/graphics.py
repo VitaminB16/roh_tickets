@@ -15,7 +15,7 @@ def plot_hall(
     no_plot=False,
     dark_mode=False,
     save_both=True,
-    font_family="Gotham",
+    font_family="GothamSSm-Book",
     **kwargs,
 ):
     """
@@ -193,7 +193,7 @@ def plot_events(
     no_plot=False,
     dark_mode=False,
     save_both=True,
-    font_family="Gotham",
+    font_family="GothamSSm-Book",
     **kwargs,
 ):
     """
@@ -279,13 +279,13 @@ def plot_events(
     )
     # Add "Updated at: date time" to the top right corner
     fig.add_annotation(
-        text=f"Last updated at {today.strftime('%b %-d, %Y (%-I:%M %p)')}",
+        text=f"Updated at: {today.strftime('%b %-d, %Y (%-I:%M %p)')}",
         xref="paper",
         yref="paper",
         x=1,
         y=1.07,
         showarrow=False,
-        font=dict(size=15, family=font_family),
+        font=dict(size=16, family=font_family),
     )
     fig.layout.font.family = font_family
     fig.layout.font.size = 15
