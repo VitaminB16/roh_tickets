@@ -55,6 +55,7 @@ def plot_hall(
     dark_mode=False,
     save_both=True,
     font_family="GothamSSm-Book",
+    dont_save=False,
     **kwargs,
 ):
     """
@@ -175,6 +176,10 @@ def plot_hall(
         image_location = image_location.replace(".png", "_dark.png")
 
     fig.show()
+
+    if not dont_save:
+        return fig
+
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
         f.write(fig.to_image(format="png", scale=3))
     log(f"Saved {image_location}")
@@ -213,6 +218,7 @@ def plot_events(
     dark_mode=False,
     save_both=True,
     font_family="GothamSSm-Book",
+    dont_save=False,
     **kwargs,
 ):
     """
@@ -348,6 +354,10 @@ def plot_events(
         image_location = image_location.replace(".png", "_dark.png")
 
     fig.show()
+
+    if not dont_save:
+        return fig
+
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
         f.write(fig.to_image(format="png", scale=3))
     log(f"Saved {image_location}")

@@ -20,7 +20,7 @@ if "src_secret.py" in os.listdir("python_roh/src"):
     from python_roh.src.src_secret import secret_function
 
 
-def upcoming_events_entry(**kwargs):
+def upcoming_events_entry(dont_save=False, **kwargs):
     """
     Entry point for the upcoming events task and the events timeline plot
     """
@@ -28,9 +28,10 @@ def upcoming_events_entry(**kwargs):
         QUERY_DICT
     )
     Graphics("events").plot(events_df, **kwargs)
-    Parquet(EVENTS_PARQUET_LOCATION).write(
-        events_df, partition_cols=["location", "date", "time", "title"]
-    )
+    if not dont_save:
+        Parquet(EVENTS_PARQUET_LOCATION).write(
+            events_df, partition_cols=["location", "date", "time", "title"]
+        )
     return events_df, today_tomorrow_events_df, next_week_events_df
 
 
