@@ -4,6 +4,8 @@ import json
 import base64
 import pyarrow as pa
 import pyarrow.parquet as pq
+from flask import Flask, jsonify
+from flask import request as flask_request
 
 
 from set_secrets import set_secrets
@@ -109,11 +111,34 @@ def entry_point(request=None):
     return payload
 
 
+app = Flask(__name__)
+
+
+@app.route("/", methods=["POST", "GET"])
+def flask_entry_point():
+    """
+    Entry point adapted for Flask, compatible with Cloud Run.
+    """
+    if flask_request.method == "POST":
+        payload = flask_request.get_json(silent=True, force=True)
+    else:
+        payload = flask_request.args.to_dict()
+
+    print("Payload:", payload)
+    # Pass the payload to your main_entry function
+    response_message, status_code = main_entry(payload)
+    return jsonify(message=response_message), status_code
+
+
 if __name__ == "__main__":
-    with open("payload.json", "r") as f:
-        payload = json.load(f)
-    args = sys.argv[1:]
-    if len(args) > 0:
-        args = parse_args(args)
-        payload.update(args)
-    main_entry(payload)
+    serve_as = os.environ.get("SERVE_AS", "local")
+    if serve_as == "cloud_run":
+        app.run(host="0.0.0.0", port=8080)
+    elif serve_as == "local":
+        with open("payload.json", "r") as f:
+            payload = json.load(f)
+        args = sys.argv[1:]
+        if len(args) > 0:
+            args = parse_args(args)
+            payload.update(args)
+        main_entry(payload)
