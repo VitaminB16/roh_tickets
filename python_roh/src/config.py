@@ -106,7 +106,6 @@ SEAT_MAP_POSITIONS_CSV = prefix + "metadata/seat_positions.csv"
 TITLE_COLOURS_LOCATION = prefix + "metadata/titles_colour.json"
 EVENTS_PARQUET_LOCATION = prefix + "output/roh_events.parquet"
 PRODUCTIONS_PARQUET_LOCATION = prefix + "output/roh_productions.parquet"
-GOTHAM_FONT_LOCATION = prefix + "fonts/Gotham-Book.ttf"
 # Public  --------------------------------
 HALL_IMAGE_LOCATION = prefix_public + "output/images/ROH_hall.png"
 EVENTS_IMAGE_LOCATION = prefix_public + "output/images/ROH_events.png"

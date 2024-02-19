@@ -1,10 +1,12 @@
+import io
 import random
 import pandas as pd
 import plotly.express as px
+import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 
 from python_roh.src.config import *
-from python_roh.src.utils import JSON, purge_image_cache
+from python_roh.src.utils import JSON, purge_image_cache  # , install_font_on_gcf
 
 
 def plot_hall(
@@ -13,6 +15,7 @@ def plot_hall(
     no_plot=False,
     dark_mode=False,
     save_both=True,
+    font_family="Gotham",
     **kwargs,
 ):
     """
@@ -94,7 +97,7 @@ def plot_hall(
         margin=dict(l=0, r=0, b=0, t=0, pad=0),
         hoverlabel=dict(
             font_size=16,
-            font_family="Gotham",
+            font_family=font_family,
             font_color="White",
             bgcolor="#C7102E",
         ),
@@ -110,7 +113,7 @@ def plot_hall(
         ),
         title=None,
     )
-    fig.layout.font.family = "Gotham"
+    fig.layout.font.family = font_family
     fig.update_traces(
         hovertemplate="<br>".join(
             [
@@ -190,6 +193,7 @@ def plot_events(
     no_plot=False,
     dark_mode=False,
     save_both=True,
+    font_family="Gotham",
     **kwargs,
 ):
     """
@@ -198,13 +202,6 @@ def plot_events(
     if no_plot:
         print("Skipping the plot")
         return
-
-    if os.getenv("PLATFORM") != "local":
-        # GCP environment does not have the font installed
-        tmp_font_path = "/tmp/Gotham-Book.ttf"
-        PLATFORM.download(GOTHAM_FONT_LOCATION, tmp_font_path)
-        prop = fm.FontProperties(fname=tmp_font_path)
-        fm.fontManager.ttflist.extend([prop])
 
     today = pd.Timestamp.today(tz="Europe/London")
     if filter_recent:
@@ -263,13 +260,13 @@ def plot_events(
     fig.update_layout(
         hoverlabel=dict(
             font_size=16,
-            font_family="Gotham",
+            font_family=font_family,
             font_color="White",
             bgcolor="#C7102E",
         ),
         legend=dict(
             title="",
-            font=dict(size=15, family="Gotham"),
+            font=dict(size=15, family=font_family),
             orientation="h",
         ),
         title=None,
@@ -288,9 +285,9 @@ def plot_events(
         x=1,
         y=1.07,
         showarrow=False,
-        font=dict(size=15, family="Gotham"),
+        font=dict(size=15, family=font_family),
     )
-    fig.layout.font.family = "Gotham"
+    fig.layout.font.family = font_family
     fig.layout.font.size = 15
     fig.update_traces(
         hovertemplate="<br>".join(
@@ -316,6 +313,7 @@ def plot_events(
             filter_recent=filter_recent,
             no_plot=no_plot,
             dark_mode=not dark_mode,
+            font_family=font_family,
             save_both=False,  # Prevent infinite recursion
             **kwargs,
         )

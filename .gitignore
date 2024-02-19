@@ -10,3 +10,4 @@ secrets.txt
 *.parquet
 *.env*
 *payload.json
+fonts/

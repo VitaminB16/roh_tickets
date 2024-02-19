@@ -152,5 +152,42 @@ def purge_image_cache(repo_url="https://github.com/VitaminB16/roh_tickets"):
     return
 
 
+def run_command(command):
+    """
+    Utility function to run a shell command and return its output, with error handling.
+    """
+    import subprocess
+
+    result = subprocess.run(command, capture_output=True, text=True, check=True)
+    if result.returncode != 0:
+        raise Exception(
+            f"Command '{' '.join(command)}' failed with error: {result.stderr}"
+        )
+    return result.stdout.split("\n")
+
+
+# def install_font_on_gcf(font_directory="/tmp", font_path=None):
+#     """
+#     Install a font on Google Cloud Functions
+#     """
+
+#     print("Current fonts:")
+#     for i in range(30):
+#         print(1)
+
+#     current_fonts = run_command(["fc-list"])
+
+#     print("Install the font")
+#     run_command(["fc-cache", "-f", "-v", "/tmp/"])
+
+#     print("New fonts:")
+#     new_fonts = run_command(["fc-list"])
+#     print(new_fonts)
+
+#     new_fonts = [f for f in new_fonts if f not in current_fonts]
+#     print(new_fonts)
+#     return
+
+
 if __name__ == "__main__":
     purge_image_cache()
