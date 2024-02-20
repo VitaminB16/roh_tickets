@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 
 from cloud.utils import log
 
+
 def set_secrets():
     """
     Set environment variables from secrets.txt
@@ -42,6 +43,6 @@ def set_gcp_secrets(service="python-roh"):
             log(f"Failed to grab secret {name}. Exception: {e}")
 
 
-load_dotenv()
 set_gcp_secrets()
+load_dotenv()
 set_secrets()
