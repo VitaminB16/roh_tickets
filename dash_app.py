@@ -1,5 +1,6 @@
 import dash
 import darkdetect
+import pandas as pd
 from dash import dcc, html
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output, State
@@ -71,14 +72,35 @@ def serve_layout():
                 ],
                 style={
                     "textAlign": "center",
+                    "margin-top": "-25px",
                     "marginBottom": "25px",
                     **dark_mode_style,
                     "marginLeft": "auto",
                     "marginRight": "auto",
                 },
             ),
+            html.Hr(
+                style={
+                    "borderTop": "1px solid #dddddd",
+                    "width": "100%",
+                    "marginBottom": "25px",
+                    "marginTop": "25px",
+                }
+            ),
             html.Div(
-                [  # Seats map
+                id="event-info",
+                style={
+                    "margin-top": "0px",
+                    "marginBottom": "0px",
+                    "textAlign": "center",
+                    "font-family": "Gotham SSm, Futura, Roboto, Arial, Lucida Sans",
+                    **dark_mode_style,
+                    "marginLeft": "auto",
+                    "marginRight": "auto",
+                },
+            ),
+            html.Div(
+                [
                     dcc.Loading(
                         id="loading-seats",
                         type="default",
@@ -107,7 +129,6 @@ def serve_layout():
 app.layout = serve_layout
 
 
-# Call to get the events calendar
 @app.callback(
     [Output("events-graph", "figure"), Output("events-graph", "style")],
     [Input("interval-component", "n_intervals")],
@@ -121,22 +142,45 @@ def load_events_calendar(n_intervals):
     return fig, visible_style
 
 
-# Display the seats map based on the selected event
 @app.callback(
-    [Output("seats-graph", "figure"), Output("seats-graph", "style")],
+    [
+        Output("seats-graph", "figure"),
+        Output("seats-graph", "style"),
+        Output("event-info", "children"),
+    ],
     [Input("events-graph", "clickData")],
     [State("selected-event", "data")],
 )
 def display_seats_map(clickData, _):
     if clickData is None:
         raise PreventUpdate
-    performance_id = clickData["points"][0]["customdata"][3]
+    point = clickData["points"][0]
+    performance_id = point["customdata"][3]
+    event_title = point["customdata"][0]
+    event_time = pd.to_datetime(point["y"]).strftime("%H:%M")
+    event_date = pd.to_datetime(point["x"]).strftime("%A, %B %-d, %Y")
+    line_style = {"marginBottom": "0px", "marginTop": "0px"}
+    box_style = {
+        "border": "1px solid #ddd",
+        "padding": "10px",
+        "marginBottom": "10px",
+        "borderRadius": "5px",
+        "backgroundColor": "#f9f9f9",
+    }
+    event_info_box = html.Div(
+        [
+            html.H3(event_title, style=line_style),
+            html.P(f"{event_date}", style=line_style),
+            html.P(f"{event_time}", style=line_style),
+        ],
+        style=box_style,
+    )
+
     fig = get_seats_map(performance_id)
 
-    # Update the style to make the graph visible
     visible_style = {"visibility": "visible", "display": "block"}
 
-    return fig, visible_style
+    return fig, visible_style, event_info_box
 
 
 # Call to get the seats map
