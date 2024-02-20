@@ -126,6 +126,7 @@ def flask_entry_point():
     else:
         payload = flask_request.args.to_dict()
 
+    log("SERVE_AS:", os.environ.get("SERVE_AS", None))
     log("Payload:", payload)
     # Pass the payload to your main_entry function
     response_message, status_code = main_entry(payload)
@@ -136,8 +137,10 @@ if __name__ == "__main__":
     serve_as = os.environ.get("SERVE_AS", "local")
     port = int(os.environ.get("PORT", 8080))
     if serve_as == "cloud_run":
+        log("Starting the Flask app for Cloud Run")
         app.run(host="0.0.0.0", port=port)
     elif serve_as == "dash_app":
+        log("Starting the Dash app")
         from dash_app import app
 
         app.run_server(host="0.0.0.0", port=port)
