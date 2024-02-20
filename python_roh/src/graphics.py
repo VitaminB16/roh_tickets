@@ -26,8 +26,9 @@ def process_hall_plot_df(seats_price_df, prices_df):
     Process the hall plot dataframe to include the price bands and availability
     """
     # Set the price bands to their colors
-    price_bands = prices_df.Price.unique().astype(str)
-    price_bands = [price.split(".")[0] for price in price_bands]
+    price_bands = prices_df.Price.unique()
+    price_bands.sort()
+    price_bands = price_bands[::-1].astype(str)
     price_bands = ["£" + price for price in price_bands]
     price_colors = PRICE_COLOR_LIST[: len(price_bands)]
     price_color_dict = dict(zip(price_bands, price_colors))
@@ -103,7 +104,7 @@ def plot_hall(
         y0=stage_y_min,
         y1=stage_y_max,
         line=dict(color="rgb(135,135,135)", width=2),
-        fillcolor="white",
+        fillcolor="rgba(0,0,0,0)",
         opacity=1,
     )
     fig.add_annotation(  # Stage label
