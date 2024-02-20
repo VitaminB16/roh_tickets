@@ -1,4 +1,5 @@
 #!/bin/bash
 
-./cloudfunction_deploy.sh
-./cloudrun_deploy.sh
+./deploy_cloudfunction.sh
+./deploy_cloudrun.sh
+./deploy_dashapp.sh
