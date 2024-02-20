@@ -30,6 +30,7 @@ def process_hall_plot_df(seats_price_df, prices_df):
     price_bands.sort()
     price_bands = price_bands[::-1].astype(str)
     price_bands = ["£" + price for price in price_bands]
+    price_bands = [price.split(".")[0] for price in price_bands]
     price_colors = PRICE_COLOR_LIST[: len(price_bands)]
     price_color_dict = dict(zip(price_bands, price_colors))
     price_color_dict["Not available"] = NA_COLOR
@@ -38,7 +39,9 @@ def process_hall_plot_df(seats_price_df, prices_df):
     plot_df.Price = plot_df.Price.where(plot_df.seat_available, None)
     plot_df["Size"] = 1  # Dummy constant size for scatter plot
     plot_df["Price_print"] = plot_df["Price"]
-    plot_df["Price_print"] = plot_df["Price_print"].apply(lambda x: f"£{x:.0f}")
+    plot_df["Price_print"] = plot_df["Price_print"].apply(
+        lambda x: f"£{x}".split(".")[0]
+    )
     plot_df.loc[plot_df["Price"].isnull(), "Price_print"] = "Not available"
     plot_df = plot_df.assign(symbol="circle-open")
     plot_df.loc[plot_df["Price"].isnull(), "symbol"] = "circle"

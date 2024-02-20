@@ -30,7 +30,6 @@ TICKETS_AND_EVENTS_URL = "https://www.roh.org.uk/tickets-and-events"
 
 # TAKEN_SEAT_STATUS_IDS = [3, 4, 6, 7, 8, 13]
 TAKEN_SEAT_STATUS_IDS = [4, 5, 6, 7, 8, 13, 592]  # 3,
-
 PRICE_COLOR_LIST = [
     "rgb(250,53,38)",  # Most expensive
     "rgb(251,32,204)",
@@ -43,7 +42,14 @@ PRICE_COLOR_LIST = [
     "rgb(31,182,244)",
     "rgb(252,24,146)",
     "rgb(0,68,136)",
-    "rgb(136,204,39)",  # Cheapest
+    "rgb(136,204,39)",
+    # Below inserted when > 12 price types
+    "rgb(107,122,248)",
+    "rgb(162,36,23)",
+    "rgb(190,102,15)",
+    "rgb(0,119,101)",
+    "rgb(246,247,67)",
+    "rgb(85,35,229)",  # Cheapest
 ]
 NA_COLOR = "rgb(191,191,191)"
 

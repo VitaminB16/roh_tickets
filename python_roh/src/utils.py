@@ -190,5 +190,26 @@ def run_command(command):
 #     return
 
 
+def rgb_to_hex(rgb):
+    """
+    [rgb(0,0,0), rgb(255,255,255)] -> ['#000000', '#ffffff']
+    """
+    rgb = [x.replace("rgb", "").replace(")", "").replace("(", "") for x in rgb]
+    rgb = [x.split(",") for x in rgb]
+    rgb = [[int(x) for x in y] for y in rgb]
+    rgb = ["#" + "".join([f"{x:02x}" for x in y]) for y in rgb]
+    return rgb
+
+
+def hex_to_rgb(hex):
+    """
+    ['#000000', '#ffffff'] -> [rgb(0,0,0), rgb(255,255,255)]
+    """
+    hex = [x.replace("#", "") for x in hex]
+    hex = [[int(x[i : i + 2], 16) for i in (0, 2, 4)] for x in hex]
+    hex = [f"rgb({x[0]},{x[1]},{x[2]})" for x in hex]
+    return hex
+
+
 if __name__ == "__main__":
     purge_image_cache()
