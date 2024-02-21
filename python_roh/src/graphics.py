@@ -60,7 +60,7 @@ def plot_hall(
     font_family="GothamSSm-Book",
     dont_save=False,
     dont_show=False,
-    autosize=True,
+    autosize=False,
     **kwargs,
 ):
     """
@@ -231,7 +231,7 @@ def plot_events(
     font_family="GothamSSm-Book",
     dont_save=False,
     dont_show=False,
-    autosize=True,
+    autosize=False,
     **kwargs,
 ):
     """
