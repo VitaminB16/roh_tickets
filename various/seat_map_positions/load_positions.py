@@ -1,6 +1,6 @@
 import pandas as pd
 
-from set_secrets import set_secrets
+from python_roh.set_secrets import set_secrets
 
 from cloud.utils import log
 from python_roh.src.src import API

@@ -11,3 +11,5 @@ secrets.txt
 *.env*
 *payload.json
 fonts/
+.vscode
+_includes/

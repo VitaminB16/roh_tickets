@@ -5,7 +5,7 @@ from flask import Flask, jsonify
 from flask import request as flask_request
 
 
-from set_secrets import set_secrets
+from python_roh.set_secrets import set_secrets
 
 from cloud.utils import log
 from tools.parquet import Parquet
@@ -142,7 +142,7 @@ if __name__ == "__main__":
         app.run(host="0.0.0.0", port=port)
     elif serve_as == "dash_app":
         log("Starting the Dash app")
-        from dash_app import app
+        from python_roh.dash_app import app
 
         app.run_server(host="0.0.0.0", port=port)
     else:
