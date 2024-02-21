@@ -13,6 +13,35 @@ app = dash.Dash(__name__)
 # Initial theme detection
 is_dark_mode = not darkdetect.isDark()
 
+DARK_MODE_STYLE = {"backgroundColor": "#0E1117", "color": "#FFFFFF"}
+LIGHT_MODE_STYLE = {"backgroundColor": "#FFFFFF", "color": "#000000"}
+TOGGLE_BUTTON_STYLE = {
+    "position": "fixed",
+    "bottom": "10px",
+    "right": "10px",
+    "zIndex": "1000",
+    "font-family": "Gotham SSm, Futura, Roboto, Arial, Lucida Sans",
+    "borderRadius": "5px",
+}
+AUTO_MARGIN = {"marginLeft": "auto", "marginRight": "auto"}
+FONT_FAMILY = "Gotham SSm, Futura, Roboto, Arial, Lucida Sans"
+
+
+# Helper Functions
+def create_dynamic_style(is_dark_mode):
+    return DARK_MODE_STYLE if is_dark_mode else LIGHT_MODE_STYLE
+
+
+def update_toggle_button_style(is_dark_mode):
+    base_style = TOGGLE_BUTTON_STYLE.copy()
+    mode_style = (
+        {"border": "1px solid #ddd", **DARK_MODE_STYLE}
+        if is_dark_mode
+        else {"border": "1px solid #000"}
+    )
+    return {**base_style, **mode_style}
+
+
 global DASH_PAYLOAD_DEFAULTS
 DASH_PAYLOAD_DEFAULTS = {
     "dont_save": True,  # don't save the plot?
@@ -24,61 +53,31 @@ DASH_PAYLOAD_DEFAULTS = {
     "print_performance_info": False,  # print performance info?
     "autosize": True,  # autosize parameter
 }
-toggle_button_style = {
-    "position": "fixed",
-    "bottom": "10px",
-    "right": "10px",
-    "zIndex": "1000",
-    "font-family": "Gotham SSm, Futura, Roboto, Arial, Lucida Sans",
-    "borderRadius": "5px",
-}
-# Store initial theme in a dcc.Store to allow dynamic changes
+
 app.layout = html.Div(
     [
         dcc.Store(id="theme-store", data={"dark_mode": darkdetect.isDark()}),
         html.Button(
             "Toggle Dark/Light Mode",
             id="dark-mode-toggle",
-            style={
-                **toggle_button_style,
-                "border": "1px solid #000",
-                **(
-                    {
-                        "border": "1px solid #ddd",
-                        "backgroundColor": "#0E1117",
-                        "color": "#FFFFFF",
-                    }
-                    if is_dark_mode
-                    else {}
-                ),
-            },
+            style=update_toggle_button_style(darkdetect.isDark()),
         ),
         dcc.Interval(
-            id="interval-component-init",
-            interval=0.1 * 1000,  # 0.1 seconds
-            n_intervals=0,
-            max_intervals=1,  # It will fire only once
+            id="interval-component-init", interval=100, n_intervals=0, max_intervals=1
         ),
-        html.Div(
-            id="dynamic-content"
-        ),  # This div will contain dynamically generated content based on the theme
+        html.Div(id="dynamic-content"),
     ]
 )
 
 
+# Callbacks
 @app.callback(Output("dynamic-content", "children"), [Input("theme-store", "data")])
 def update_dynamic_content(theme_data):
-    dark_mode = theme_data["dark_mode"]
-    # Generate content based on dark mode status
-    # This is where you dynamically adjust styles and properties
-    content = serve_layout(dark_mode)
-    return content
+    return serve_layout(theme_data["dark_mode"])
 
 
 def serve_layout(dark_mode):
-    dark_mode_style = (
-        {"backgroundColor": "#0E1117", "color": "#FFFFFF"} if dark_mode else {}
-    )
+    style = create_dynamic_style(dark_mode)
 
     full_page_style = {
         "minHeight": "100vh",
@@ -86,24 +85,20 @@ def serve_layout(dark_mode):
         "margin-top": "-25px",
         "margin-bottom": "-25px",
         "padding": "10px",
-        "font-family": "Gotham SSm, Futura, Roboto, Arial, Lucida Sans",
-        **dark_mode_style,
+        **FONT_FAMILY,
+        **style,
     }
 
     return html.Div(
         [
             html.Button(
-                children="Toggle Dark/Light Mode",
+                "Toggle Dark/Light Mode",
                 id="dark-mode-toggle",
-                style={
-                    **toggle_button_style,
-                    "border": "1px solid #ddd" if dark_mode else "1px solid #000",
-                    **dark_mode_style,
-                },
+                style=update_toggle_button_style(dark_mode),
             ),
             html.H1(
                 "Events and Seats Dashboard",
-                style={"textAlign": "center", "margin-top": "30px", **dark_mode_style},
+                style={"textAlign": "center", "margin-top": "30px", **style},
             ),
             dcc.Store(id="selected-event"),
             dcc.Interval(
@@ -124,7 +119,7 @@ def serve_layout(dark_mode):
                             )
                         ],
                         style={
-                            **dark_mode_style,
+                            **style,
                             "height": 100,
                             "maxWidth": "100%",
                         },
@@ -134,9 +129,8 @@ def serve_layout(dark_mode):
                     "textAlign": "center",
                     "margin-top": "-25px",
                     "marginBottom": "25px",
-                    **dark_mode_style,
-                    "marginLeft": "auto",
-                    "marginRight": "auto",
+                    **style,
+                    **AUTO_MARGIN,
                 },
             ),
             html.Hr(
@@ -153,10 +147,9 @@ def serve_layout(dark_mode):
                     "margin-top": "0px",
                     "marginBottom": "0px",
                     "textAlign": "center",
-                    "font-family": "Gotham SSm, Futura, Roboto, Arial, Lucida Sans",
-                    **dark_mode_style,
-                    "marginLeft": "auto",
-                    "marginRight": "auto",
+                    **FONT_FAMILY,
+                    **style,
+                    **AUTO_MARGIN,
                 },
             ),
             html.Div(
@@ -174,10 +167,9 @@ def serve_layout(dark_mode):
                 ],
                 style={
                     "textAlign": "center",
-                    **dark_mode_style,
+                    **style,
+                    **AUTO_MARGIN,
                     "maxWidth": "1400px",
-                    "marginLeft": "auto",
-                    "marginRight": "auto",
                     "maxHeight": "1000px",
                 },
             ),
@@ -239,9 +231,7 @@ def load_events_calendar(n_intervals):
     [
         Output("seats-graph", "figure"),
         Output("seats-graph", "style"),
-        Output(
-            "event-info-container", "children"
-        ),
+        Output("event-info-container", "children"),
     ],
     [Input("events-graph", "clickData")],
     [State("selected-event", "data"), State("theme-store", "data")],
