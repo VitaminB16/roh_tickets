@@ -121,7 +121,7 @@ class Parquet:
         schema=None,
         filters=None,
         use_bigquery=True,
-        columns=[],
+        columns=None,
         **kwargs,
     ):
         log(

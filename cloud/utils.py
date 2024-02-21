@@ -155,7 +155,11 @@ class SQLBuilder:
         if filters is None:
             return ""
         conditions = []
-        for col, op, value in filters.items():
+        if isinstance(filters, dict):
+            items = filters.items()
+        else:
+            items = filters
+        for col, op, value in items:
             if isinstance(value, list):
                 value = ", ".join([f"'{x}'" for x in value])
                 conditions.append(f"{col} {op} ({value})")

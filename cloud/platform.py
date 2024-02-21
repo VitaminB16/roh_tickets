@@ -60,9 +60,6 @@ class GCPPlatform(BasePlatform):
         self, table=None, filters=None, allow_empty=False, columns=None, **kwargs
     ):
         query = SQLBuilder(table).select(columns).where(filters).build()
-        if filters:
-            filters = parquet_filters_to_sql(filters)
-            query += f" WHERE {filters}"
         try:
             df = pd.read_gbq(query)
         except:
