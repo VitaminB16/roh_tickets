@@ -24,7 +24,7 @@ def get_query_dict(
     if isinstance(performance_id, str) and performance_id.startswith("soonest"):
         n_soonest = int(performance_id.split("_")[1]) if "_" in performance_id else 1
         performance_id = query_soonest_performance_id(
-            n_soonest=n_soonest, use_stored=True
+            n_soonest=n_soonest, **kwargs
         )
     os.environ["PERFORMANCE_ID"] = json.dumps(performance_id)  # In case it's a list
     os.environ["MODE_OF_SALE_ID"] = str(mode_of_sale_id)

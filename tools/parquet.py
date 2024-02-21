@@ -121,6 +121,7 @@ class Parquet:
         schema=None,
         filters=None,
         use_bigquery=True,
+        columns=[],
         **kwargs,
     ):
         log(
@@ -129,7 +130,12 @@ class Parquet:
         filters = self.generate_filters(filters)
         if use_bigquery and PLATFORM.name != "Local":
             table = PARQUET_TABLE_RELATIONS.get(self.path, None)
-            df = PLATFORM.read_table(table, filters)
+            df = PLATFORM.read_table(
+                table=table,
+                filters=filters,
+                columns=columns,
+                allow_empty=allow_empty,
+            )
         else:
             try:
                 df = pq.read_table(

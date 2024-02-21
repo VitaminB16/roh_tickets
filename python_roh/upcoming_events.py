@@ -157,10 +157,10 @@ def merge_prouctions_into_events(events_df):
     """
     Enrich the events_df with the production information
     """
-    all_productions = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(allow_empty=True)
-    all_productions = all_productions.loc[
-        :, ["productionId", "title", "date", "time", "performanceId"]
-    ]
+    production_cols = ["productionId", "title", "date", "time", "performanceId"]
+    all_productions = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
+        columns=production_cols, allow_empty=True
+    )
     events_df = events_df.merge(
         all_productions, on=["productionId", "title", "date", "time"], how="left"
     )
@@ -183,7 +183,7 @@ def get_next_weeks_events(events_df, today):
     return today_tomorrow_events_df, next_week_events_df
 
 
-def query_soonest_performance_id(n_soonest=1, use_stored=True):
+def query_soonest_performance_id(n_soonest=1, use_stored=True, **kwargs):
     """
     Query the soonest performance id
     """

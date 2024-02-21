@@ -69,6 +69,7 @@ def task_scheduler(task_name, **kwargs):
         "mode_of_sale_id": os.getenv("MODE_OF_SALE_ID"),
         "constituent_id": os.getenv("CONSTITUENT_ID"),
         "source_id": os.getenv("SOURCE_ID"),
+        **kwargs,
     }
     query_dict_args = {k: v for k, v in query_dict_args.items() if v is not None}
     # Merge the query dict with the provided keyword arguments
