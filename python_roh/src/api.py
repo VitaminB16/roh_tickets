@@ -1,6 +1,7 @@
 import os
 import json
 
+from cloud.utils import log
 from python_roh.src.config import *
 from python_roh.upcoming_events import query_soonest_performance_id
 
@@ -10,7 +11,7 @@ def get_query_dict(
     constituent_id=None,
     mode_of_sale_id=None,
     source_id=None,
-    **kwargs
+    **kwargs,
 ):
     """
     Return the query dictionary for the API requests for use in requests.get()
@@ -29,6 +30,12 @@ def get_query_dict(
     os.environ["MODE_OF_SALE_ID"] = str(mode_of_sale_id)
     os.environ["CONSTITUENT_ID"] = str(constituent_id)
     os.environ["SOURCE_ID"] = str(source_id)
+
+    # Log what is queried
+    log(
+        f"performance_id={performance_id}, mode_of_sale_id={mode_of_sale_id}, "
+        f"constituent_id={constituent_id}, source_id={source_id}"
+    )
 
     query_dict = {
         "seats": {

@@ -4,12 +4,10 @@ PROJECT_ID="vitaminb16"
 CLOUD_FUNCTION_NAME="python-roh-dash"
 REGION="europe-west2"
 YAML_FILE="yamls/dash.env.yaml"
-DOCKERFILE="DockerfileDash"
 MEMORY="1Gi"
 SERVE_AS="dash_app"
 
-# The Dockerfile for the Dash app is the same as the one for the Cloud Run app, except for the SERVE_AS environment variable
-cp Dockerfile ${DOCKERFILE}
+# The Dockerfile for the Dash app is the same as the one for the Cloud Run app
 cp .gcloudignore .dockerignore
 
 poetry export -f requirements.txt --output requirements.txt --without-hashes
@@ -19,7 +17,7 @@ awk -F= '{print $1 ": \"" $2 "\""}' .env | grep -v GOOGLE_APPLICATION_CREDENTIAL
 
 echo "SERVE_AS: \"${SERVE_AS}\"" >>${YAML_FILE}
 
-docker build . -f ${DOCKERFILE} -t gcr.io/${PROJECT_ID}/${CLOUD_FUNCTION_NAME}:latest
+docker build . -t gcr.io/${PROJECT_ID}/${CLOUD_FUNCTION_NAME}:latest
 
 docker push gcr.io/${PROJECT_ID}/${CLOUD_FUNCTION_NAME}:latest
 
