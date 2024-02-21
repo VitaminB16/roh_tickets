@@ -20,7 +20,7 @@ if "src_secret.py" in os.listdir("python_roh/src"):
     from python_roh.src.src_secret import secret_function
 
 
-def upcoming_events_entry(dont_save=False, **kwargs):
+def upcoming_events_entry(dont_save=True, **kwargs):
     """
     Entry point for the upcoming events task and the events timeline plot
     """
