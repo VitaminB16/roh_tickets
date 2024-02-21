@@ -109,3 +109,56 @@ def log(*args, **kwargs):
     else:
         # If running locally, use a normal print
         print(log_data["message"], **kwargs)
+
+
+class SQLBuilder:
+    """
+    Class for building SQL queries.
+    """
+
+    def __init__(self, table_name: str):
+        self.table_name = table_name
+        self.query_parts = ["FROM", f"`{table_name}`"]
+
+    def build(self) -> str:
+        """
+        Return the final query string.
+        """
+        return " ".join(self.query_parts)
+
+    def select(self, columns=None) -> "SQLBuilder":
+        """
+        Build a SELECT query.
+        """
+        if columns is None:
+            columns = "*"
+        if isinstance(columns, str):
+            columns = [columns]
+        columns = [f"`{x}`" for x in columns if x != "*"] or ["*"]
+        select_clause = "SELECT " + ", ".join(columns)
+        self.query_parts.insert(0, select_clause)  # Insert at the beginning
+        return self
+
+    def where(self, filters: dict) -> "SQLBuilder":
+        """
+        Build a WHERE clause.
+        """
+        where_clause = self._where(filters)
+        if where_clause:
+            self.query_parts.append("WHERE " + where_clause)
+        return self
+
+    def _where(self, filters: dict) -> str:
+        """
+        Helper to build a WHERE clause.
+        """
+        if filters is None:
+            return ""
+        conditions = []
+        for col, op, value in filters.items():
+            if isinstance(value, list):
+                value = ", ".join([f"'{x}'" for x in value])
+                conditions.append(f"{col} {op} ({value})")
+            else:
+                conditions.append(f"{col} {op} '{value}'")
+        return " AND ".join(conditions)

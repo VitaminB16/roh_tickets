@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-from cloud.utils import log
+from cloud.utils import log, SQLBuilder
 
 
 class BasePlatform:
@@ -56,8 +56,10 @@ class GCPPlatform(BasePlatform):
     def exists(self, path):
         return self.fs.exists(path)
 
-    def read_table(self, table=None, filters=None, allow_empty=False, **kwargs):
-        query = f"SELECT * FROM {table}"
+    def read_table(
+        self, table=None, filters=None, allow_empty=False, columns=None, **kwargs
+    ):
+        query = SQLBuilder(table).select(columns).where(filters).build()
         if filters:
             filters = parquet_filters_to_sql(filters)
             query += f" WHERE {filters}"
