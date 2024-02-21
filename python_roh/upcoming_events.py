@@ -98,17 +98,24 @@ def enrich_events_df(events_df):
     return events_df
 
 
-def enrich_events_with_productions(events_df):
+def enrich_events_with_productions(events_df, dont_read_from_storage=True):
     """
     Enriches the events_df with the production_id
     """
     unique_productions = events_df.drop_duplicates(subset=["productionId"])
-    # Get the existing partitions without reading the parquet
-    existing_productions = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(allow_empty=True)
-    if existing_productions.empty:
-        existing_productions = pd.DataFrame(columns=["slug", "productionId"])
+
+    if dont_read_from_storage:
+        # Get the existing partitions without reading the parquet
+        existing_prods = PLATFORM.glob(f"{PRODUCTIONS_PARQUET_LOCATION}/*/*")
+        existing_prods = [x.split("/")[-1] for x in existing_prods]
+        existing_prods = [x.replace("productionId=", "") for x in existing_prods]
+        existing_prod_ids = [int(x) for x in existing_prods if x.isdigit()]
+    else:
+        # Get the existing productions from the Parquet
+        existing_prods = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(allow_empty=True)
+        existing_prod_ids = existing_prods.productionId.unique()
     added_productions = unique_productions.query(
-        "productionId not in @existing_productions.productionId"
+        "productionId not in @existing_prod_ids"
     ).reset_index(drop=True)
 
     if not added_productions.empty:

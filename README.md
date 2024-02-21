@@ -26,4 +26,8 @@ The GCP-hosted Dash app is publicly available here: **https://python-roh-dash-jf
 </picture>
 
 
-
+<!-- 
+TODO:
+- [ ] Add Firestore utils class to `cloud` module
+- [ ] Move titles_colour.json from Storage into Firestore
+ -->

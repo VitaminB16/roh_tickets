@@ -79,6 +79,9 @@ class GCPPlatform(BasePlatform):
         log(f"Downloading {path} to {local_path}")
         self.fs.get(path, local_path)
 
+    def glob(self, path):
+        return self.fs.glob(path)
+
 
 class LocalPlatform(BasePlatform):
     """Local file system specific methods"""
@@ -101,6 +104,11 @@ class LocalPlatform(BasePlatform):
 
     def exists(self, path):
         return os.path.exists(path)
+
+    def glob(self, path):
+        import glob
+
+        return glob.glob(path)
 
 
 def Platform():
