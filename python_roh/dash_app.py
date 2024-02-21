@@ -242,9 +242,9 @@ def load_events_calendar(n_intervals):
         Output("event-info", "children"),
     ],
     [Input("events-graph", "clickData")],
-    [State("selected-event", "data")],
+    [State("selected-event", "data"), State("theme-store", "data")],
 )
-def display_seats_map(clickData, _):
+def display_seats_map(clickData, _, theme_data):
     if clickData is None:
         raise PreventUpdate
     point = clickData["points"][0]
@@ -258,8 +258,13 @@ def display_seats_map(clickData, _):
         "padding": "10px",
         "marginBottom": "10px",
         "borderRadius": "5px",
-        "backgroundColor": "#f9f9f9",
-        **({"backgroundColor": "#0E1117", "color": "#FFFFFF"} if is_dark_mode else {}),
+        **(
+            {"backgroundColor": "#0E1117", "color": "#FFFFFF"}
+            if theme_data["dark_mode"]
+            else {
+                "backgroundColor": "#f9f9f9",
+            }
+        ),
     }
     event_info_box = html.Div(
         [
