@@ -148,7 +148,7 @@ def serve_layout(dark_mode):
                 }
             ),
             html.Div(
-                id="event-info",
+                id="event-info-container",
                 style={
                     "margin-top": "0px",
                     "marginBottom": "0px",
@@ -239,7 +239,9 @@ def load_events_calendar(n_intervals):
     [
         Output("seats-graph", "figure"),
         Output("seats-graph", "style"),
-        Output("event-info", "children"),
+        Output(
+            "event-info-container", "children"
+        ),
     ],
     [Input("events-graph", "clickData")],
     [State("selected-event", "data"), State("theme-store", "data")],
@@ -254,6 +256,9 @@ def display_seats_map(clickData, _, theme_data):
     event_date = pd.to_datetime(point["x"]).strftime("%A, %B %-d, %Y")
     line_style = {"marginBottom": "0px", "marginTop": "0px"}
     box_style = {
+        "display": "flex",
+        "justifyContent": "space-between",
+        "alignItems": "center",
         "border": "1px solid #ddd",
         "padding": "10px",
         "marginBottom": "10px",
@@ -261,25 +266,49 @@ def display_seats_map(clickData, _, theme_data):
         **(
             {"backgroundColor": "#0E1117", "color": "#FFFFFF"}
             if theme_data["dark_mode"]
-            else {
-                "backgroundColor": "#f9f9f9",
-            }
+            else {"backgroundColor": "#f9f9f9"}
         ),
     }
+    url_style = {
+        "display": "flex",
+        "flexDirection": "column",
+        "alignItems": "right",
+        "color": "#FA8072" if theme_data["dark_mode"] else "#0000EE",
+        "textDecoration": "underline",
+    }
+
     event_info_box = html.Div(
         [
             html.H3(event_title, style=line_style),
             html.P(f"{event_date}", style=line_style),
             html.P(f"{event_time}", style=line_style),
         ],
-        style=box_style,
+        style={"flex": "1"},
+    )
+    event_urls = html.Div(
+        [
+            dcc.Link(
+                "Book tickets",
+                href=f"https://www.roh.org.uk/checkout/interstitial/{performance_id}",
+                target="_blank",
+                style=url_style,
+            ),
+            dcc.Link(
+                "View seat map",
+                href=f"https://www.roh.org.uk/seatmap?performanceId={performance_id}",
+                target="_blank",
+                style=url_style,
+            ),
+        ],
+        style={"position": "absolute", "marginLeft": "75%", "textAlign": "right"},
     )
 
-    fig = get_seats_map(performance_id)
+    event_info_container = html.Div([event_info_box, event_urls], style=box_style)
 
+    fig = get_seats_map(performance_id)
     visible_style = {"visibility": "visible", "display": "block"}
 
-    return fig, visible_style, event_info_box
+    return fig, visible_style, event_info_container
 
 
 # Call to get the seats map
