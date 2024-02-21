@@ -374,7 +374,7 @@ def plot_events(
     if not dont_show:
         fig.show()
 
-    if not dont_save:
+    if dont_save:
         return fig
 
     with PLATFORM.open(image_location, "wb", content_type="image/png") as f:
