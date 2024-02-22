@@ -123,6 +123,7 @@ EVENTS_PARQUET_SCHEMA = {
         lambda x: pd.to_datetime(x, format="%H:%M:%S").dt.time,
     ],
     "performanceId": lambda x: x.astype(str),
+    "productionId": lambda x: x.astype(int),
 }
 PRODUCTIONS_PARQUET_SCHEMA = {
     "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
@@ -131,6 +132,7 @@ PRODUCTIONS_PARQUET_SCHEMA = {
         lambda x: pd.to_datetime(x, format="%H:%M:%S").dt.time,
     ],
     "performanceId": lambda x: x.astype(str),
+    "productionId": lambda x: x.astype(int),
 }
 
 PARQUET_SCHEMAS = {
