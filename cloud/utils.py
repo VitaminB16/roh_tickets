@@ -75,10 +75,8 @@ class Firestore:
             # gs://project/bucket/path -> project, bucket, path
             # path -> collection/document/../collection/document
             self.path = self.path.replace("gs://", "")
-            self.project, self.bucket, self.path = self.path.split("/", 2)
+            self.bucket, self.path = self.path.split("/", 1)
         path_elements = self.path.split("/")
-        if method in ["set", "delete"]:
-            raise ValueError("Firestore path must be a document or collection.")
         return path_elements
 
     def get_ref(self, method=None):
@@ -91,9 +89,11 @@ class Firestore:
         print(f"Firestore {ref_type} reference: {self.path}")
         return doc_ref
 
-    def get(self):
+    def get(self, allow_empty=False):
         doc_ref = self.get_ref(method="get")
         output = doc_ref.get().to_dict()
+        if output is None and allow_empty:
+            output = {}
         print(f"Read from Firestore: {self.path}")
         return output
 
