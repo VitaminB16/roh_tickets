@@ -1022,6 +1022,26 @@ google-auth = ">=1.25.0,<3.0dev"
 grpc = ["grpcio (>=1.38.0,<2.0dev)", "grpcio-status (>=1.38.0,<2.0.dev0)"]
 
 [[package]]
+name = "google-cloud-firestore"
+version = "2.15.0"
+description = "Google Cloud Firestore API client library"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "google-cloud-firestore-2.15.0.tar.gz", hash = "sha256:589ce49c6b8d7315a248327e4a124a44143f5a5314ea768f7c851660c21e6321"},
+    {file = "google_cloud_firestore-2.15.0-py2.py3-none-any.whl", hash = "sha256:71b1b32c11e7cb2fa804037865619930655409a49238807a88c244510e5d21c7"},
+]
+
+[package.dependencies]
+google-api-core = {version = ">=1.34.0,<2.0.dev0 || >=2.11.dev0,<3.0.0dev", extras = ["grpc"]}
+google-cloud-core = ">=1.4.1,<3.0.0dev"
+proto-plus = [
+    {version = ">=1.22.2,<2.0.0dev", markers = "python_version >= \"3.11\""},
+    {version = ">=1.22.0,<2.0.0dev", markers = "python_version < \"3.11\""},
+]
+protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
+
+[[package]]
 name = "google-cloud-logging"
 version = "3.9.0"
 description = "Stackdriver Logging API client library"
@@ -3138,4 +3158,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "311c8f2fbcd1147fc44c3cfab4dd96a0f2c8219d5a3f8203b1186e43ae2d44da"
+content-hash = "f9bc282575ed4869b084cfb761211a3df21c63d48c3818c768d5a66791488dbe"

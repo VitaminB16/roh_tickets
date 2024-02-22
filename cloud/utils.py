@@ -4,8 +4,8 @@ import logging
 import requests
 import google.auth
 import google.auth.exceptions
-from google.cloud import pubsub_v1
 from google.oauth2 import id_token
+from google.cloud import pubsub_v1, firestore
 from google.cloud import logging as gcp_logging
 from google.auth.transport.requests import Request
 
@@ -63,6 +63,57 @@ class GCPRequest:
         return response
 
 
+class Firestore:
+    """
+    Class for managing documents in Google Cloud Firestore
+    """
+
+    def __init__(self, path=None, project_id=None):
+        self.project_id = project_id or os.getenv("PROJECT")
+        self.client = firestore.Client(self.project_id)
+        self.path = path
+
+    def _parse_path(self, method="get"):
+        """
+        Parse the path into collections and documents.
+        Has to be of the form "collection/document/collection/document/.../collection/document"
+        """
+        path_elements = self.path.split("/")
+        collections = path_elements[0::2]
+        documents = path_elements[1::2]
+        if method in ["set", "get"] and len(collections) != len(documents):
+            raise ValueError("Path must have an even number of elements")
+        return collections, documents
+
+    def get_doc_ref(self):
+        """
+        Get a reference to the document.
+        """
+        collections, documents = self._parse_path(self.path)
+        doc_ref = self.client.collection(collections[0]).document(documents[0])
+        for collection, document in zip(collections[1:], documents[1:]):
+            doc_ref = doc_ref.collection(collection).document(document)
+        return doc_ref
+
+    def get(self):
+        """
+        Read from Firestore. E.g. Firestore("collection/document").get()
+        """
+        doc_ref = self.get_doc_ref()
+        output = doc_ref.get().to_dict()
+        print(f"Read from Firestore: {self.path}")
+        return output
+
+    def set(self, data):
+        """
+        Write to Firestore. E.g. Firestore("collection/document").set(data)
+        """
+        doc_ref = self.get_doc_ref()
+        doc_ref.set(data)
+        print(f"Written to Firestore: {self.path}")
+        return True
+
+
 class PubSub:
     """
     Class for pushing a payload to a topic
@@ -84,31 +135,6 @@ class PubSub:
             result = publish_future.result()
         except Exception as e:
             log(f"An error occurred: {e}")
-
-
-def log(*args, **kwargs):
-    """
-    Function for logging to Google Cloud Logs. Logs a message as usual, and logs a dictionary of data as jsonPayload.
-
-    Arguments:
-        *args (list): list of elements to "print" to google cloud logs.
-    """
-    # Use these environment variables as payload to log to Google Cloud Logs
-    env_keys = ["SERVE_AS"]
-    env_data = {key: os.getenv(key, None) for key in env_keys}
-    log_data = {k: v for k, v in env_data.items() if v is not None}
-
-    # If any arguments are a dictionary, add it to the log_data so it can be queried in Google Cloud Logs
-    for arg in args:
-        if isinstance(arg, dict):
-            log_data.update(arg)
-        log_data["message"] = " ".join([str(a) for a in args])
-
-    if os.getenv("SERVE_AS", "cloud_function") in ["cloud_run"]:
-        logging.info(log_data)
-    else:
-        # If running locally, use a normal print
-        print(log_data["message"], **kwargs)
 
 
 class SQLBuilder:
@@ -166,3 +192,28 @@ class SQLBuilder:
             else:
                 conditions.append(f"{col} {op} '{value}'")
         return " AND ".join(conditions)
+
+
+def log(*args, **kwargs):
+    """
+    Function for logging to Google Cloud Logs. Logs a message as usual, and logs a dictionary of data as jsonPayload.
+
+    Arguments:
+        *args (list): list of elements to "print" to google cloud logs.
+    """
+    # Use these environment variables as payload to log to Google Cloud Logs
+    env_keys = ["SERVE_AS"]
+    env_data = {key: os.getenv(key, None) for key in env_keys}
+    log_data = {k: v for k, v in env_data.items() if v is not None}
+
+    # If any arguments are a dictionary, add it to the log_data so it can be queried in Google Cloud Logs
+    for arg in args:
+        if isinstance(arg, dict):
+            log_data.update(arg)
+        log_data["message"] = " ".join([str(a) for a in args])
+
+    if os.getenv("SERVE_AS", "cloud_function") in ["cloud_run"]:
+        logging.info(log_data)
+    else:
+        # If running locally, use a normal print
+        print(log_data["message"], **kwargs)

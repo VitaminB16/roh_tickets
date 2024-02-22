@@ -118,11 +118,7 @@ def serve_layout(dark_mode):
                                 style={"height": 400, "visibility": "hidden"},
                             )
                         ],
-                        style={
-                            **style,
-                            "height": 100,
-                            "maxWidth": "100%",
-                        },
+                        style={**style, "height": 100, "maxWidth": "100%"},
                     ),
                 ],
                 style={
@@ -254,7 +250,7 @@ def display_seats_map(clickData, _, theme_data):
         "marginBottom": "10px",
         "borderRadius": "5px",
         **(
-            {"backgroundColor": "#0E1117", "color": "#FFFFFF"}
+            DARK_MODE_STYLE
             if theme_data["dark_mode"]
             else {"backgroundColor": "#f9f9f9"}
         ),
