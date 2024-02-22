@@ -2,8 +2,8 @@ import random
 import pandas as pd
 import plotly.express as px
 
-from cloud.utils import log
 from python_roh.src.config import *
+from cloud.utils import log, Firestore
 from python_roh.src.utils import JSON, purge_image_cache
 
 
@@ -203,7 +203,10 @@ def persist_colours(plot_df, all_colours):
     Whenever new titles are added, persist the colours of the existing titles
     """
     all_colours = set(all_colours)
-    existing_titles_colour = JSON(TITLE_COLOURS_LOCATION).load()
+    existing_titles_colour = Firestore(TITLE_COLOURS_LOCATION).get(allow_empty=True)
+    load_from_json = existing_titles_colour == {}
+    if load_from_json:
+        existing_titles_colour = JSON(TITLE_COLOURS_LOCATION).load()
     existing_titles = set(existing_titles_colour.keys())
     upcoming_titles = set(plot_df.title.unique())
     new_titles = upcoming_titles - existing_titles
@@ -217,7 +220,9 @@ def persist_colours(plot_df, all_colours):
     random.shuffle(unused_colours)  # Randomize the leftover colours
     new_titles_colours = dict(zip(new_titles, unused_colours))
     upcoming_titles_colour.update(new_titles_colours)
-    JSON(TITLE_COLOURS_LOCATION).write(upcoming_titles_colour)
+    if load_from_json:
+        JSON(TITLE_COLOURS_LOCATION).write(upcoming_titles_colour)
+    Firestore(TITLE_COLOURS_LOCATION).set(upcoming_titles_colour)
     return upcoming_titles_colour
 
 
