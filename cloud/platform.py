@@ -1,4 +1,5 @@
 import os
+import glob
 import pandas as pd
 
 from cloud.utils import log, SQLBuilder
@@ -80,6 +81,9 @@ class GCPPlatform(BasePlatform):
 
     def glob(self, path):
         return self.fs.glob(path)
+    
+    def walk(self, path):
+        return self.fs.walk(path)
 
 
 class LocalPlatform(BasePlatform):
@@ -105,9 +109,10 @@ class LocalPlatform(BasePlatform):
         return os.path.exists(path)
 
     def glob(self, path):
-        import glob
-
         return glob.glob(path)
+    
+    def walk(self, path):
+        return os.walk(path)
 
 
 def Platform():

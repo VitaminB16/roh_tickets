@@ -5,6 +5,7 @@ import asyncio
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
+from urllib.parse import unquote
 from typing import Any, List, Tuple, Dict
 from concurrent.futures import ThreadPoolExecutor
 
@@ -122,6 +123,7 @@ class Parquet:
         filters=None,
         use_bigquery=True,
         columns=None,
+        read_partitions_only=False,
         **kwargs,
     ):
         log(
@@ -129,6 +131,7 @@ class Parquet:
         )
         filters = self.generate_filters(filters)
         if use_bigquery and PLATFORM.name != "Local":
+            # Obtains the data from BigQuery using external table on the Parquet
             table = PARQUET_TABLE_RELATIONS.get(self.path, None)
             df = PLATFORM.read_table(
                 table=table,
@@ -136,7 +139,11 @@ class Parquet:
                 columns=columns,
                 allow_empty=allow_empty,
             )
+        elif read_partitions_only:
+            # Only reads the partitions of the Parquet file using the filenames
+            df = self.get_partitions_df()
         else:
+            # Actually reads the Parquet file from storage
             try:
                 df = pq.read_table(
                     self.path,
@@ -182,30 +189,40 @@ class Parquet:
                 df[c] = df[c].str.replace("_", " ")
         return df
 
-    def get_partitions(self):
+    def get_partitions_df(self):
+        """
+        Get the partitions of the parquet file
+        """
+        all_partition_paths = self.get_all_partition_paths()
+        all_partitions = [x.split("/") for x in all_partition_paths]
+        all_partitions = [
+            dict(y.split("=") for y in x if "=" in y) for x in all_partitions
+        ]
+        df = pd.DataFrame(all_partitions)
+        df = df.map(unquote)
+        return df
+
+    def get_all_partition_paths(self):
         """
         Get the partitions of the parquet file
         """
         partition_cols = self.get_partition_cols()
         glob_query = os.path.join(self.path, *["*"] * len(partition_cols))
-        all_paths = glob.glob(glob_query)
-        partitions = [x[len(self.path) + 1 :] for x in all_paths]
-
-        return partitions
+        all_partitions = PLATFORM.glob(glob_query)
+        return all_partitions
 
     def get_partition_cols(self):
         """
-        Get the partition columns of the parquet file
+        Get the partitions of the parquet file without reading the files
         """
-        partition_cols = []
-
-        for root, dirs, files in os.walk(self.path):
-            if files:
-                partition_cols = root.split(os.path.sep)
-                break
-
-        partition_cols = [x.split("=")[0] for x in partition_cols if "=" in x]
-        return partition_cols
+        glob_query = os.path.join(self.path, "*")
+        all_paths = PLATFORM.glob(glob_query)
+        while all_paths:
+            glob_query = all_paths[0] + "/*"
+            all_paths = PLATFORM.glob(glob_query)
+        glob_query = glob_query.split("/")
+        partition_path = [x.split("=")[0] for x in glob_query if "=" in x]
+        return partition_path
 
 
 def to_parquet(
@@ -222,4 +239,13 @@ def to_parquet(
         compression=compression,
         index=index,
         schema=schema,
+    )
+
+
+if __name__ == "__main__":
+    Parquet("gs://vitaminb16-clean/output/roh_productions.parquet").read(
+        columns=["productionId", "title", "date", "time", "performanceId"],
+        allow_empty=True,
+        use_bigquery=False,
+        read_partitions_only=True,
     )

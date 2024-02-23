@@ -160,19 +160,13 @@ def merge_prouctions_into_events(events_df, dont_read_from_storage=True):
     Enrich the events_df with the production information
     """
     production_cols = ["productionId", "title", "date", "time", "performanceId"]
-    if dont_read_from_storage:
-        # Get the existing partitions without reading the parquet
-        existing_prods = PLATFORM.glob(f"{PRODUCTIONS_PARQUET_LOCATION}/*/*/*/*/*")
-        existing_prods = [x.split("/")[3:] for x in existing_prods]
-        existing_prods = [dict(y.split("=") for y in x) for x in existing_prods]
-        all_productions = pd.DataFrame(existing_prods)
-        all_productions = all_productions.map(unquote)
-        enforced_schema = PARQUET_SCHEMAS.get(PRODUCTIONS_PARQUET_LOCATION, None)
-        all_productions = enforce_schema(all_productions, enforced_schema)
-    else:
-        all_productions = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
-            columns=production_cols, allow_empty=True, use_bigquery=False
-        )
+    # Get the existing partitions without reading the parquet
+    all_productions = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
+        columns=production_cols,
+        allow_empty=True,
+        use_bigquery=False,
+        read_partitions_only=dont_read_from_storage,
+    )
     events_df = events_df.merge(
         all_productions, on=["productionId", "title", "date", "time"], how="left"
     )
