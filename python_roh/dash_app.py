@@ -24,7 +24,7 @@ TOGGLE_BUTTON_STYLE = {
     "borderRadius": "5px",
 }
 AUTO_MARGIN = {"marginLeft": "auto", "marginRight": "auto"}
-FONT_FAMILY = "Gotham SSm, Futura, Roboto, Arial, Lucida Sans"
+FONT_FAMILY = {"font-family": "Gotham SSm, Futura, Roboto, Arial, Lucida Sans"}
 
 
 # Helper Functions

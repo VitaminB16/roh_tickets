@@ -126,9 +126,10 @@ class Parquet:
         read_partitions_only=False,
         **kwargs,
     ):
-        log(
-            f"Reading from {self.path}; filters: {filters}; use_bigquery: {use_bigquery}"
-        )
+        print_str = f"Reading from {self.path}; filters: {filters}; use_bigquery: {use_bigquery}"
+        if read_partitions_only:
+            print_str += "; read_partitions_only: True"
+        log(print_str)
         filters = self.generate_filters(filters)
         if use_bigquery and PLATFORM.name != "Local":
             # Obtains the data from BigQuery using external table on the Parquet
