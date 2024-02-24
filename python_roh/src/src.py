@@ -270,10 +270,16 @@ def _query_soonest_performance_id(production_url):
     return soonest_performance_id
 
 
-def print_performance_info(performance_id=None, print_info=True, print_performance_info=True, **kwargs):
+def print_performance_info(
+    performance_id=None, print_info=True, print_performance_info=True, **kwargs
+):
     if not print_performance_info:
         return None
-    performance_id = performance_id or os.environ["PERFORMANCE_ID"]
+    performance_id = (
+        os.environ["PERFORMANCE_ID"]
+        if "soonest" in str(performance_id)
+        else performance_id
+    )
     performance_id = json.loads(str(performance_id))
     performance_id = [int(x) for x in force_list(performance_id)]
     performance_df = (
