@@ -190,6 +190,14 @@ def _fix_xy_positions(df):
     log("Fixing the seat positions")
     log(SEAT_MAP_POSITIONS_CSV)
 
+    # Check if SEAT_MAP_POSITIONS_CSV exists
+    if not PLATFORM.exists(SEAT_MAP_POSITIONS_CSV):
+        log(
+            f"File {SEAT_MAP_POSITIONS_CSV} does not exist! Running load_positions.py..."
+        )
+        from various.seat_map_positions.load_positions import load_positions
+
+        load_positions()
     with PLATFORM.open(SEAT_MAP_POSITIONS_CSV, "rb") as f:
         seat_positions = pd.read_csv(f)
     log(f"Seat positions: {seat_positions.shape}")
