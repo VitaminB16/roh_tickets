@@ -86,8 +86,7 @@ def main(task_name, **kwargs):
 
 def main_entry(payload, return_output=False):
     if "secret_function" in globals() and payload.get("secret_function", False):
-        log("Executing the secret function")
-        task_scheduler(**payload)  # Skipping the main function
+        task_scheduler(**payload)  # Sets the QUERY_DICT without executing the task
         secret_function(QUERY_DICT)
     else:
         output = main(**payload)

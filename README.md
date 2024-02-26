@@ -4,7 +4,7 @@ It is deployed to Google Cloud as a Cloud Function, and a Cloud Run service via 
 
 In order to maintain a low profile, the documentation for this repository is limited. The code is not intended for public use.
 
-The GCP-hosted Dash app is publicly available here: **https://python-roh-dash-jfzraqzsma-nw.a.run.app**
+The GCP-hosted Dash app is publicly available here: **https://artnosv.com/roh-events/**
 
 ---
 
