@@ -28,6 +28,7 @@ The GCP-hosted Dash app is publicly available here: **https://artnosv.com/roh-ev
 
 <!-- 
 TODO:
-- [ ] Add Firestore utils class to `cloud` module
-- [ ] Move titles_colour.json from Storage into Firestore
+- [x] Add Firestore utils class to `cloud` module
+- [x] Move titles_colour.json from Storage into Firestore
+- [ ] Convert plotly.express to plotly.graph_objects in `graphics.py` for better control over the plot
  -->

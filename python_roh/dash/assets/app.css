@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Gotham SSm';
-  src: url('/assets/GothamSSm-Book.ttf') format('truetype');
+  src: url('GothamSSm-Book.ttf') format('truetype');
   font-weight: 400;
   /* Normal/regular/book weight */
   font-style: normal;
@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: 'Gotham SSm';
-  src: url('/assets/GothamSSm-Light.ttf') format('truetype');
+  src: url('GothamSSm-Light.ttf') format('truetype');
   font-weight: 300;
   /* Lighter weight */
   font-style: normal;
@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: 'Gotham SSm';
-  src: url('/assets/GothamSSm-Medium.ttf') format('truetype');
+  src: url('GothamSSm-Medium.ttf') format('truetype');
   font-weight: 500;
   /* Medium weight */
   font-style: normal;
