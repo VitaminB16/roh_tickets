@@ -51,7 +51,7 @@ if __name__ == "__main__":
         app.run(host="0.0.0.0", port=port)
     elif serve_as == "dash_app":
         log("Starting the Dash app")
-        from python_roh.dash_app import app
+        from python_roh.dash.app import app
 
         app.run_server(host="0.0.0.0", port=port)
     else:

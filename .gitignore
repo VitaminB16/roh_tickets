@@ -8,6 +8,7 @@ secrets.txt
 *.jpg
 *.gif
 *.parquet
+*.ttf
 *.env*
 *payload.json
 fonts/
