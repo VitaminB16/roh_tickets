@@ -4,7 +4,7 @@ import pandas as pd
 from dash import dcc, html, no_update
 from dash.exceptions import PreventUpdate
 from dash_svg import Svg, G, Path, Circle
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State, ClientsideFunction
 
 
 from main import main_entry
@@ -34,7 +34,7 @@ DASH_PAYLOAD_DEFAULTS = {
     "save_both": False,  # save both light and dark mode?
     "dont_show": True,  # don't show the plot?
     "show_both": False,  # show both light and dark mode?
-    "dark_mode": not is_dark_mode,  # dark mode?
+    "dark_mode": False,  # dark mode?
     "query_events_api": False,  # query the events API?
     "print_performance_info": False,  # print performance info?
     "autosize": True,  # autosize parameter
@@ -81,9 +81,22 @@ app.layout = html.Div(
 
 
 # Callbacks
+app.clientside_callback(
+    ClientsideFunction(namespace="clientside", function_name="detectTheme"),
+    Output("theme-store", "data"),
+    [Input("interval-component-init", "n_intervals")],
+)
+
+
 @app.callback(Output("dynamic-content", "children"), [Input("theme-store", "data")])
 def update_dynamic_content(theme_data):
-    return serve_layout(theme_data["dark_mode"])
+    if theme_data is None:
+        dark_mode = True
+    else:
+        dark_mode = theme_data["dark_mode"]
+    global DASH_PAYLOAD_DEFAULTS
+    DASH_PAYLOAD_DEFAULTS["dark_mode"] = dark_mode
+    return serve_layout(dark_mode)
 
 
 def serve_layout(dark_mode):
@@ -234,14 +247,12 @@ def update_layout(theme_data):
 
 
 @app.callback(
-    Output("theme-store", "data"),
-    [
-        Input("dark-mode-toggle", "n_clicks"),
-        Input("interval-component-init", "n_intervals"),
-    ],
+    Output("theme-store", "data", allow_duplicate=True),
+    [Input("dark-mode-toggle", "n_clicks")],
     [State("theme-store", "data")],
+    prevent_initial_call=True,
 )
-def initialize_or_toggle_dark_mode(n_clicks, n_intervals, current_state):
+def initialize_or_toggle_dark_mode(n_clicks, current_state):
     ctx = dash.callback_context
     if not ctx.triggered:
         # On page load, there's no triggered input, so we don't change the state.
@@ -256,10 +267,6 @@ def initialize_or_toggle_dark_mode(n_clicks, n_intervals, current_state):
             global DASH_PAYLOAD_DEFAULTS
             DASH_PAYLOAD_DEFAULTS["dark_mode"] = is_dark_mode
             return {"dark_mode": is_dark_mode}
-        elif triggered_id == "interval-component-init":
-            # Page is loading; no need to change the state but need to ensure content is loaded.
-            # So we return the current state to trigger the content update without changing the theme.
-            return current_state
         else:
             return no_update
 
@@ -267,10 +274,13 @@ def initialize_or_toggle_dark_mode(n_clicks, n_intervals, current_state):
 @app.callback(
     [Output("events-graph", "figure"), Output("events-graph", "style")],
     [Input("interval-component", "n_intervals")],
+    [State("theme-store", "data")],
 )
-def load_events_calendar(n_intervals):
+def load_events_calendar(n_intervals, theme_data):
     if n_intervals == 0:
         raise PreventUpdate
+    global DASH_PAYLOAD_DEFAULTS
+    DASH_PAYLOAD_DEFAULTS["dark_mode"] = theme_data["dark_mode"]
     payload = {"task_name": "events", **DASH_PAYLOAD_DEFAULTS}
     _, _, _, fig = main_entry(payload, return_output=True)
     visible_style = {"visibility": "visible", "display": "block"}
