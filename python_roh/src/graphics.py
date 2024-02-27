@@ -265,6 +265,7 @@ def plot_events(
 
     # Ensure persistence of the colours
     upcoming_titles_colour = persist_colours(plot_df, set(colour_list))
+    plot_df.sort_values("timestamp_start", inplace=True)
 
     fig = px.timeline(
         plot_df,
