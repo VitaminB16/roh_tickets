@@ -1,5 +1,4 @@
 import dash
-import darkdetect
 import pandas as pd
 from dash import dcc, html, no_update
 from dash.exceptions import PreventUpdate
@@ -10,9 +9,6 @@ from dash.dependencies import Input, Output, State, ClientsideFunction
 from main import main_entry
 
 app = dash.Dash(__name__)
-
-# Initial theme detection
-is_dark_mode = not darkdetect.isDark()
 
 DARK_MODE_STYLE = {"backgroundColor": "#0E1117", "color": "#FFFFFF"}
 LIGHT_MODE_STYLE = {"backgroundColor": "#FFFFFF", "color": "#000000"}
@@ -42,13 +38,6 @@ DASH_PAYLOAD_DEFAULTS = {
 }
 
 
-def get_url_style(is_dark_mode):
-    return {
-        "color": "#FA8072" if is_dark_mode else "#0000EE",
-        "textDecoration": "underline",
-    }
-
-
 # Helper Functions
 def create_dynamic_style(is_dark_mode):
     return DARK_MODE_STYLE if is_dark_mode else LIGHT_MODE_STYLE
@@ -66,16 +55,11 @@ def update_toggle_button_style(is_dark_mode):
 
 app.layout = html.Div(
     [
-        dcc.Store(id="theme-store", data={"dark_mode": darkdetect.isDark()}),
-        html.Button(
-            "Toggle Dark/Light Mode",
-            id="dark-mode-toggle",
-            style=update_toggle_button_style(darkdetect.isDark()),
-        ),
+        dcc.Store(id="theme-store"),
+        html.Div(id="dynamic-content"),
         dcc.Interval(
             id="interval-component-init", interval=100, n_intervals=0, max_intervals=1
         ),
-        html.Div(id="dynamic-content"),
     ]
 )
 
@@ -117,7 +101,6 @@ def toggle_dark_mode(n_clicks, current_state):
 
 def serve_layout(dark_mode):
     style = create_dynamic_style(dark_mode)
-    url_style = get_url_style(dark_mode)
 
     full_page_style = {
         "minHeight": "100vh",
@@ -165,7 +148,6 @@ def serve_layout(dark_mode):
                                 "display": "inline-block",
                                 "vertical-align": "middle",
                                 "marginLeft": "5px",
-                                **url_style,
                             },
                         ),
                         style={"display": "inline-block"},
@@ -314,7 +296,6 @@ def display_seats_map(clickData, _, theme_data):
         "display": "flex",
         "flexDirection": "column",
         "alignItems": "right",
-        **get_url_style(theme_data["dark_mode"]),
     }
 
     event_info_box = html.Div(

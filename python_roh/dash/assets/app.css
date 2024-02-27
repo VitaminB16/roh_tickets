@@ -25,3 +25,46 @@
 body {
   font-family: 'Gotham SSm', sans-serif;
 }
+
+/* Adding styles for links to match the website's CSS */
+
+/* unvisited link */
+a:link {
+  color: #226db4;
+}
+
+/* visited link */
+a:visited {
+  color: #226db4;
+}
+
+/* mouse over link */
+a:hover {
+  color: salmon;
+}
+
+/* selected link */
+a:active {
+  color: red;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Dark mode CSS */
+  a:link,
+  a:visited {
+    color: #5193ff;
+    /* Lighter blue for links */
+    text-decoration: none;
+    /* Removes underline from links */
+  }
+
+  a:hover {
+    color: #ffa07a;
+    /* Lighter salmon for hover state */
+  }
+
+  a:active {
+    color: #ff4500;
+    /* Brighter red for active state */
+  }
+}

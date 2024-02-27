@@ -1,3 +1,4 @@
+// This file is used to detect the user's system theme and set the dark_mode variable accordingly
 window.dash_clientside = Object.assign({}, window.dash_clientside, {
   clientside: {
     detectTheme: function (n_intervals) {
