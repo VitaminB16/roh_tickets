@@ -583,6 +583,17 @@ files = [
 ]
 
 [[package]]
+name = "dash-svg"
+version = "0.0.12"
+description = "SVG support library for Plotly/Dash"
+optional = false
+python-versions = "*"
+files = [
+    {file = "dash_svg-0.0.12-py3-none-any.whl", hash = "sha256:0ec26694ccfc4f6c65d20254d76b2cd3680975ca5fbe0056956c3992551c727b"},
+    {file = "dash_svg-0.0.12.tar.gz", hash = "sha256:a7115bf437d770b822c2dd53b9d9a981210619b7d17c925cbee04905fc761b4e"},
+]
+
+[[package]]
 name = "dash-table"
 version = "5.0.0"
 description = "Dash table"
@@ -3212,4 +3223,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "bc15bb553cd1fd1318ad55f157f7e40fa4edc55046e013fb70ee25bf59c9d439"
+content-hash = "4e061f9e9633ecc048f8817300ce5a1ad5e2e72d5a4ba9b20573452df906c3c8"
