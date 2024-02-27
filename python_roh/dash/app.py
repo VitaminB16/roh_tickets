@@ -99,6 +99,22 @@ def update_dynamic_content(theme_data):
     return serve_layout(dark_mode)
 
 
+@app.callback(
+    Output("theme-store", "data", allow_duplicate=True),
+    [Input("dark-mode-toggle", "n_clicks")],
+    [State("theme-store", "data")],
+    prevent_initial_call=True,
+)
+def toggle_dark_mode(n_clicks, current_state):
+    if n_clicks is None:
+        raise PreventUpdate
+    is_dark_mode = not current_state["dark_mode"]
+    global DASH_PAYLOAD_DEFAULTS
+    DASH_PAYLOAD_DEFAULTS["dark_mode"] = is_dark_mode
+
+    return {"dark_mode": is_dark_mode}
+
+
 def serve_layout(dark_mode):
     style = create_dynamic_style(dark_mode)
     url_style = get_url_style(dark_mode)
@@ -244,31 +260,6 @@ def serve_layout(dark_mode):
 @app.callback(Output("page-content", "children"), [Input("theme-store", "data")])
 def update_layout(theme_data):
     return serve_layout(theme_data["dark_mode"])
-
-
-@app.callback(
-    Output("theme-store", "data", allow_duplicate=True),
-    [Input("dark-mode-toggle", "n_clicks")],
-    [State("theme-store", "data")],
-    prevent_initial_call=True,
-)
-def initialize_or_toggle_dark_mode(n_clicks, current_state):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        # On page load, there's no triggered input, so we don't change the state.
-        # This prevents unintended toggling on page reload.
-        raise PreventUpdate
-    else:
-
-        triggered_id = ctx.triggered[0]["prop_id"].split(".")[0]
-        if triggered_id == "dark-mode-toggle":
-            # Toggle button was clicked.
-            is_dark_mode = not current_state["dark_mode"]
-            global DASH_PAYLOAD_DEFAULTS
-            DASH_PAYLOAD_DEFAULTS["dark_mode"] = is_dark_mode
-            return {"dark_mode": is_dark_mode}
-        else:
-            return no_update
 
 
 @app.callback(
