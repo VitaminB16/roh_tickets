@@ -217,24 +217,17 @@ def query_soonest_performance_id(n_soonest=1, use_stored=True, **kwargs):
         },
     }
     if use_stored:
-        events_df = Parquet(EVENTS_PARQUET_LOCATION).read(
-            filters={"location": "Main Stage"}, allow_empty=True
-        )
-    else:
-        events_df, _, _ = handle_upcoming_events(query_dict)
-    today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
-    events_df_sub = events_df.query(
-        "location == 'Main Stage' & timestamp >= @today"
-    ).reset_index(drop=True)
-    events_df_sub.sort_values(by=["timestamp"], inplace=True)
-
-    if use_stored:
-        soonest_perf_ids = (
-            events_df_sub.performanceId.astype(str).iloc[:n_soonest].values.tolist()
-        )
-        soonest_perf_ids = force_list(soonest_perf_ids)
+        soonest_ids = Firestore(SOONEST_PERFORMANCES_LOCATION).read(allow_empty=True)
+        soonest_ids = list(dict(sorted(soonest_ids.items())).values())
+        soonest_perf_ids = force_list(soonest_ids)[:n_soonest]
         log(f"Soonest performance id: {soonest_perf_ids}")
     else:
+        events_df, _, _ = handle_upcoming_events(query_dict)
+        today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
+        events_df_sub = events_df.query(
+            "location == 'Main Stage' & timestamp >= @today"
+        ).reset_index(drop=True)
+        events_df_sub.sort_values(by=["timestamp"], inplace=True)
         soonest_prod_urls = events_df_sub.url.iloc[:n_soonest].values.tolist()
         soonest_prod_urls = force_list(soonest_prod_urls)
         soonest_perf_ids = [_query_soonest_performance_id(x) for x in soonest_prod_urls]

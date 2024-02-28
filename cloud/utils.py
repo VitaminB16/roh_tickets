@@ -89,7 +89,7 @@ class Firestore:
         print(f"Firestore {ref_type} reference: {self.path}")
         return doc_ref
 
-    def get(self, allow_empty=False):
+    def read(self, allow_empty=False):
         doc_ref = self.get_ref(method="get")
         output = doc_ref.get().to_dict()
         if output is None and allow_empty:

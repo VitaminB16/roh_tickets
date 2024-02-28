@@ -203,7 +203,7 @@ def persist_colours(plot_df, all_colours):
     Whenever new titles are added, persist the colours of the existing titles
     """
     all_colours = set(all_colours)
-    existing_titles_colour = Firestore(TITLE_COLOURS_LOCATION).get(allow_empty=True)
+    existing_titles_colour = Firestore(TITLE_COLOURS_LOCATION).read(allow_empty=True)
     load_from_json = existing_titles_colour == {}
     if load_from_json:
         existing_titles_colour = JSON(TITLE_COLOURS_LOCATION).load()
