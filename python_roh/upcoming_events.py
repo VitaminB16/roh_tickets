@@ -218,6 +218,12 @@ def query_soonest_performance_id(n_soonest=1, use_stored=True, **kwargs):
     }
     if use_stored:
         soonest_ids = Firestore(SOONEST_PERFORMANCES_LOCATION).read(allow_empty=True)
+        if not soonest_ids or soonest_ids == {}:
+            log("No soonest performances found in Firestore. Querying the API.")
+            soonest_perf_ids = query_soonest_performance_id(
+                n_soonest=n_soonest, use_stored=False, **kwargs
+            )
+            return soonest_perf_ids
         soonest_ids = list(dict(sorted(soonest_ids.items())).values())
         soonest_perf_ids = force_list(soonest_ids)[:n_soonest]
         log(f"Soonest performance id: {soonest_perf_ids}")
