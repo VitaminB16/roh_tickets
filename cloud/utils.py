@@ -97,9 +97,13 @@ class Firestore:
         print(f"Read from Firestore: {self.path}")
         return output
 
-    def set(self, data):
+    def write(self, data):
         doc_ref = self.get_ref(method="set")
-        doc_ref.set(data)
+        try:
+            doc_ref.set(data)
+        except ValueError as e:
+            data = json.loads(json.dumps(data))
+            doc_ref.set(data)
         print(f"Written to Firestore: {self.path}")
         return True
 

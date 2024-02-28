@@ -222,7 +222,7 @@ def persist_colours(plot_df, all_colours):
     upcoming_titles_colour.update(new_titles_colours)
     if load_from_json:
         JSON(TITLE_COLOURS_LOCATION).write(upcoming_titles_colour)
-    Firestore(TITLE_COLOURS_LOCATION).set(upcoming_titles_colour)
+    Firestore(TITLE_COLOURS_LOCATION).write(upcoming_titles_colour)
     return upcoming_titles_colour
 
 
