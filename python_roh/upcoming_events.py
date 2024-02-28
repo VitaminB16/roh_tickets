@@ -4,19 +4,22 @@ from urllib.parse import unquote
 from cloud.utils import log
 from tools.parquet import Parquet
 from python_roh.src.config import *
-from python_roh.src.utils import force_list, enforce_schema
+from python_roh.src.utils import force_list
 from python_roh.src.src import (
     API,
     _query_soonest_performance_id,
     query_production_activities,
 )
+from cloud.utils import Firestore
 
 """
 This module contains the functions to handle the data for the upcoming events.
 """
 
 
-def handle_upcoming_events(query_dict, query_events_api=True, **kwargs):
+def handle_upcoming_events(
+    query_dict, query_events_api=True, store_soonest=False, **kwargs
+):
     """
     Entry point for the upcoming events
     """
@@ -44,8 +47,22 @@ def handle_upcoming_events(query_dict, query_events_api=True, **kwargs):
     today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
         events_df, today
     )
+    if store_soonest:
+        store_soonest_performances(events_df, today, n_events=10)
 
     return events_df, today_tomorrow_events_df, next_week_events_df
+
+
+def store_soonest_performances(events_df, today, n_events=10):
+    """
+    Store the soonest Main Stage performances in Firestore for quick query
+    """
+    soonest_10 = events_df.query("timestamp > @today and location == 'Main Stage'")
+    soonest_10 = soonest_10.sort_values(by=["timestamp"]).iloc[:n_events]
+    soonest_10.reset_index(drop=True, inplace=True)
+    json_to_write = soonest_10.performanceId.astype(str).to_dict()
+    Firestore(SOONEST_PERFORMANCES_LOCATION).write(json_to_write)
+    return None
 
 
 def get_locations_df(included_df):

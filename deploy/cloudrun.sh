@@ -41,7 +41,7 @@ LOCATION="europe-west2"
 URI="https://python-roh-jfzraqzsma-nw.a.run.app"
 SCHEDULE="0 9,12,15,18,21 * * *"
 TIME_ZONE="GMT"
-PAYLOAD='{"task_name": "events", "dont_save": false}'
+PAYLOAD='{"task_name": "events", "dont_save": false, "store_soonest": true}'
 OIDC_SERVICE_ACCOUNT_EMAIL="vitaminb16@vitaminb16.iam.gserviceaccount.com"
 
 configure_job() {
