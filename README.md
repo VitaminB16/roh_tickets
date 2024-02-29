@@ -2,9 +2,11 @@ A data engineering project for my personal use for working with the undocumented
 
 It is deployed to Google Cloud as a Cloud Function, and a Cloud Run service via Docker container. Cloud Scheduler service is set up to call the Cloud Run several times a day to check for updated data from the API and store it in a Google Cloud Storage bucket. It also updates the **Upcoming events** plot below.
 
-In order to maintain a low profile, the documentation for this repository is limited. The code is not intended for public use.
+GCP services used: Cloud Function, Cloud Run, Cloud Scheduler, Cloud Storage, BigQuery, Firestore, Secret Manager.
 
 The GCP-hosted Dash app is publicly available here: **https://artnosv.com/roh-events/**
+
+In order to maintain a low profile, the documentation for this repository is limited. The code is not intended for public use.
 
 ---
 
@@ -31,4 +33,5 @@ TODO:
 - [x] Add Firestore utils class to `cloud` module
 - [x] Move titles_colour.json from Storage into Firestore
 - [ ] Convert plotly.express to plotly.graph_objects in `graphics.py` for better control over the plot
+- [ ] Set up a dev GCP environment for testing new features before deploying to website
  -->

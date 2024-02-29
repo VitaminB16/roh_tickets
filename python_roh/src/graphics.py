@@ -83,7 +83,7 @@ def plot_hall(
         plot_df,
         x="x",
         y="y",
-        custom_data=["Price_print", "ZoneName", "SeatRow", "SeatNumber"],
+        custom_data=["Price_print", "ZoneName", "SeatRow", "SeatNumber", "SeatStatusId"],
         template="simple_white",
         color="Price_print",
         color_discrete_map=price_color_dict,
@@ -147,6 +147,7 @@ def plot_hall(
                 "%{customdata[0]}",
                 "%{customdata[1]}",
                 "Seat %{customdata[2]}%{customdata[3]}",
+                "(Status: %{customdata[4]})",
             ]
         )
         + "<extra></extra>",
@@ -272,7 +273,7 @@ def plot_events(
         x_start="timestamp_start",
         x_end="timestamp_end",
         y="time",
-        custom_data=["title", "url", "date_str", "performanceId"],
+        custom_data=["title", "url", "date_str", "performanceId", ""],
         color="title",
         title="Royal Opera House Events",
         template="simple_white",
