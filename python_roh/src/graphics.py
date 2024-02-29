@@ -273,7 +273,7 @@ def plot_events(
         x_start="timestamp_start",
         x_end="timestamp_end",
         y="time",
-        custom_data=["title", "url", "date_str", "performanceId", ""],
+        custom_data=["title", "url", "date_str", "performanceId"],
         color="title",
         title="Royal Opera House Events",
         template="simple_white",
