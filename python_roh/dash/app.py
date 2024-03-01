@@ -274,15 +274,17 @@ def load_events_calendar(n_intervals, theme_data):
     [Input("events-graph", "clickData")],
     [State("theme-store", "data")],
 )
-def display_seats_map(clickData, theme_data, point=None):
-    if clickData is None and point is None:
+def display_seats_map(clickData=None, theme_data=None, point=None, performance_id=None):
+    if clickData is None and point is None and performance_id is None:
         raise PreventUpdate
-    if point is None:
+    if point is None and clickData is not None:
         point = clickData["points"][0]
-    performance_id = point["customdata"][3]
-    event_title = point["customdata"][0]
-    event_time = pd.to_datetime(point["y"]).strftime("%H:%M")
-    event_date = pd.to_datetime(point["x"]).strftime("%A, %B %-d, %Y")
+    if performance_id is None:
+        performance_id = point["customdata"][3]
+    event = EVENTS_DF.query(f"performanceId == '{performance_id}'").iloc[0]
+    event_title = event["title"]
+    event_time = event["timestamp"].strftime("%H:%M")
+    event_date = event["timestamp"].strftime("%A, %B %-d, %Y")
     line_style = {"marginBottom": "0px", "marginTop": "0px"}
     box_style = {
         "display": "flex",
@@ -361,15 +363,20 @@ def display_seats_map(clickData, theme_data, point=None):
 
 
 @app.callback(
-    Output("current-performance-id", "data", allow_duplicate=True),
+    [
+        Output("current-performance-id", "data", allow_duplicate=True),
+        Output("seats-graph", "figure", allow_duplicate=True),
+        Output("seats-graph", "style", allow_duplicate=True),
+        Output("event-info-container", "children", allow_duplicate=True),
+    ],
     [
         Input("next-performance-btn", "n_clicks"),
         Input("prev-performance-btn", "n_clicks"),
     ],
-    [State("current-performance-id", "data")],
+    [State("current-performance-id", "data"), State("theme-store", "data")],
     prevent_initial_call=True,
 )
-def update_performance_id(next_clicks, prev_clicks, current_id):
+def update_performance_id(next_clicks, prev_clicks, current_id, theme_data):
     ctx = dash.callback_context
     if not ctx.triggered:
         raise PreventUpdate
@@ -386,8 +393,10 @@ def update_performance_id(next_clicks, prev_clicks, current_id):
     if updated_id is None:
         raise PreventUpdate
     print(f"Updated performance ID: {updated_id}")
-    # TODO: Trigger the seats map update
-    return updated_id
+    fig, visible_style, event_info_container, _ = display_seats_map(
+        performance_id=updated_id, theme_data=theme_data
+    )
+    return updated_id, fig, visible_style, event_info_container
 
 
 # Call to get the seats map
