@@ -258,7 +258,7 @@ def plot_events(
     plot_df["timestamp_start"] = plot_df.timestamp.dt.floor("D") + pd.Timedelta(hours=1)
     plot_df["timestamp_end"] = plot_df.timestamp.dt.ceil("D") - pd.Timedelta(hours=1)
 
-    plot_df["date_str"] = plot_df.timestamp.dt.strftime("%b %-d, %Y")
+    plot_df["date_str"] = plot_df.timestamp.dt.strftime("%A, %b %-d, %Y")
 
     colour_list = []
     for colour in colours:

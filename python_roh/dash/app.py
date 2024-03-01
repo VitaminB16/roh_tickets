@@ -36,6 +36,8 @@ DASH_PAYLOAD_DEFAULTS = {
     "autosize": True,  # autosize parameter
     "font_family": "Gotham SSm",  # font family
 }
+global EVENTS_DF
+EVENTS_DF = pd.DataFrame()
 
 
 # Helper Functions
@@ -165,7 +167,7 @@ def serve_layout(dark_mode):
                 "Events and Seats Dashboard",
                 style={"textAlign": "center", "margin-top": "30px", **style},
             ),
-            dcc.Store(id="selected-event"),
+            dcc.Store(id="current-performance-id", storage_type="memory"),
             dcc.Interval(
                 id="interval-component",
                 interval=0.1 * 1000,  # 0.1 seconds
@@ -253,10 +255,12 @@ def load_events_calendar(n_intervals, theme_data):
     if n_intervals == 0:
         raise PreventUpdate
     global DASH_PAYLOAD_DEFAULTS
+    global EVENTS_DF
     DASH_PAYLOAD_DEFAULTS["dark_mode"] = theme_data["dark_mode"]
     payload = {"task_name": "events", **DASH_PAYLOAD_DEFAULTS}
-    _, _, _, fig = main_entry(payload, return_output=True)
+    events_df, _, _, fig = main_entry(payload, return_output=True)
     visible_style = {"visibility": "visible", "display": "block"}
+    EVENTS_DF = events_df
     return fig, visible_style
 
 
@@ -265,14 +269,16 @@ def load_events_calendar(n_intervals, theme_data):
         Output("seats-graph", "figure"),
         Output("seats-graph", "style"),
         Output("event-info-container", "children"),
+        Output("current-performance-id", "data"),
     ],
     [Input("events-graph", "clickData")],
-    [State("selected-event", "data"), State("theme-store", "data")],
+    [State("theme-store", "data")],
 )
-def display_seats_map(clickData, _, theme_data):
-    if clickData is None:
+def display_seats_map(clickData, theme_data, point=None):
+    if clickData is None and point is None:
         raise PreventUpdate
-    point = clickData["points"][0]
+    if point is None:
+        point = clickData["points"][0]
     performance_id = point["customdata"][3]
     event_title = point["customdata"][0]
     event_time = pd.to_datetime(point["y"]).strftime("%H:%M")
@@ -297,6 +303,13 @@ def display_seats_map(clickData, _, theme_data):
         "flexDirection": "column",
         "alignItems": "right",
     }
+
+    all_events, _, _ = get_all_title_events(
+        performance_id=performance_id, event_title=event_title
+    )
+
+    fig = get_seats_map(performance_id)
+    visible_style = {"visibility": "visible", "display": "block"}
 
     event_info_box = html.Div(
         [
@@ -323,13 +336,58 @@ def display_seats_map(clickData, _, theme_data):
         ],
         style={"position": "absolute", "marginLeft": "75%", "textAlign": "right"},
     )
+    next_previous_buttons = html.Div(
+        [
+            html.Button(
+                "Previous Performance",
+                id="prev-performance-btn",
+                n_clicks=0,
+                style={"marginRight": "5px"},
+            ),
+            html.Button("Next Performance", id="next-performance-btn", n_clicks=0),
+        ],
+        style={
+            "display": "flex",
+            "justifyContent": "center",
+            "marginBottom": "10px",
+            "position": "absolute",
+        },
+    )
+    event_info_container = html.Div(
+        [event_info_box, event_urls, next_previous_buttons], style=box_style
+    )
 
-    event_info_container = html.Div([event_info_box, event_urls], style=box_style)
+    return fig, visible_style, event_info_container, performance_id
 
-    fig = get_seats_map(performance_id)
-    visible_style = {"visibility": "visible", "display": "block"}
 
-    return fig, visible_style, event_info_container
+@app.callback(
+    Output("current-performance-id", "data", allow_duplicate=True),
+    [
+        Input("next-performance-btn", "n_clicks"),
+        Input("prev-performance-btn", "n_clicks"),
+    ],
+    [State("current-performance-id", "data")],
+    prevent_initial_call=True,
+)
+def update_performance_id(next_clicks, prev_clicks, current_id):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        raise PreventUpdate
+    if next_clicks == 0 and prev_clicks == 0:
+        raise PreventUpdate
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    _, next_perf, prev_perf = get_all_title_events(performance_id=current_id)
+    if button_id == "next-performance-btn":
+        updated_id = next_perf
+    elif button_id == "prev-performance-btn":
+        updated_id = prev_perf
+    else:
+        raise PreventUpdate
+    if updated_id is None:
+        raise PreventUpdate
+    print(f"Updated performance ID: {updated_id}")
+    # TODO: Trigger the seats map update
+    return updated_id
 
 
 # Call to get the seats map
@@ -341,6 +399,29 @@ def get_seats_map(performance_id):
     }
     _, _, _, _, fig = main_entry(payload, return_output=True)
     return fig
+
+
+def get_all_title_events(performance_id, event_title=None):
+    if event_title is None:
+        event_title = EVENTS_DF.query(f"performanceId == '{performance_id}'").title
+        event_title = event_title.iloc[0]
+    today = pd.Timestamp.today(tz="Europe/London")
+    title_events = EVENTS_DF.query(f"title == '{event_title}' and timestamp >= @today")
+    title_events = title_events.sort_values(by=["date", "time"])
+    all_performances = list(title_events.performanceId)
+    print("All performances:", all_performances)
+    print("Current performance:", performance_id)
+    next_perf = all_performances.index(performance_id) + 1
+    previous_perf = all_performances.index(performance_id) - 1
+    next_perf = (
+        all_performances[next_perf] if next_perf < len(all_performances) else None
+    )
+    previous_perf = all_performances[previous_perf] if previous_perf >= 0 else None
+    title_events = title_events.loc[:, ["timestamp", "time", "performanceId"]]
+    title_events["date_str"] = title_events["timestamp"].dt.strftime(
+        "%a %B %-d, %-I:%M%p"
+    )
+    return title_events, next_perf, previous_perf
 
 
 if __name__ == "__main__":
