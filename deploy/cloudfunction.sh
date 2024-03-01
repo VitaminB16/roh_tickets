@@ -20,4 +20,5 @@ gcloud functions deploy $CLOUD_FUNCTION_NAME \
   --region=$REGION \
   --env-vars-file yamls/cloudfunction.env.yaml \
   --timeout=120s \
-  --memory=1024MB
+  --memory=1024MB \
+  --no-gen2
