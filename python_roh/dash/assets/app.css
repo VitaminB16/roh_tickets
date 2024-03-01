@@ -29,42 +29,52 @@ body {
 /* Adding styles for links to match the website's CSS */
 
 /* unvisited link */
-a:link {
+a:link,
+.link-button {
   color: #226db4;
+  background-color: transparent;
+  /* Ensure buttons have transparent background */
+  border: none;
+  /* Remove borders from buttons */
+  cursor: pointer;
+  /* Cursor as pointer */
 }
 
 /* visited link */
-a:visited {
+a:visited,
+.link-button {
   color: #226db4;
 }
 
 /* mouse over link */
-a:hover {
+a:hover,
+.link-button:hover {
   color: salmon;
 }
 
 /* selected link */
-a:active {
+a:active,
+.link-button:active {
   color: red;
 }
 
 @media (prefers-color-scheme: dark) {
-  /* Dark mode CSS */
+
+  /* Dark mode CSS for links and link-button class */
   a:link,
-  a:visited {
+  a:visited,
+  .link-button {
     color: #5193ff;
-    /* Lighter blue for links */
     text-decoration: none;
-    /* Removes underline from links */
   }
 
-  a:hover {
+  a:hover,
+  .link-button:hover {
     color: #ffa07a;
-    /* Lighter salmon for hover state */
   }
 
-  a:active {
+  a:active,
+  .link-button:active {
     color: #ff4500;
-    /* Brighter red for active state */
   }
 }

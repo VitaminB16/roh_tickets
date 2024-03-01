@@ -306,7 +306,7 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
         "alignItems": "right",
     }
 
-    all_events, _, _ = get_all_title_events(
+    all_events, next_event, previous_event = get_all_title_events(
         performance_id=performance_id, event_title=event_title
     )
 
@@ -341,18 +341,30 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
     next_previous_buttons = html.Div(
         [
             html.Button(
-                "Previous Performance",
                 id="prev-performance-btn",
+                children="← Previous",
                 n_clicks=0,
-                style={"marginRight": "5px"},
+                className="link-button",
+                style={"marginRight": "10px", **url_style, "font-size": "16px"},
+                **({"data-performance-id": previous_event} if previous_event else {}),
             ),
-            html.Button("Next Performance", id="next-performance-btn", n_clicks=0),
+            html.Button(
+                id="next-performance-btn",
+                children="Next →",
+                n_clicks=0,
+                className="link-button",
+                style={**url_style, "font-size": "16px"},
+                **({"data-performance-id": next_event} if next_event else {}),
+            ),
         ],
         style={
             "display": "flex",
             "justifyContent": "center",
-            "marginBottom": "10px",
+            "marginBottom": "auto",
+            "marginTop": "auto",
+            "margin-left": "25%",
             "position": "absolute",
+            **FONT_FAMILY
         },
     )
     event_info_container = html.Div(
