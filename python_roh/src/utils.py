@@ -112,6 +112,8 @@ def enforce_one_schema(df_col, col_schema):
                 break
             except Exception:
                 pass
+        else:
+            raise ValueError(f"Could not enforce schema {col_schema} on {df_col}")
     return df_col
 
 
