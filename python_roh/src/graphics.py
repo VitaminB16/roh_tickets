@@ -243,6 +243,7 @@ def plot_events(
     """
     Plot the timeline of the upcoming events on the Main Stage
     """
+    # All used columns: title, timestamp, location, url, performanceId, time
     plot_width, plot_height = (1200, 500) if not autosize else (None, None)
     if no_plot:
         log("Skipping the plot")

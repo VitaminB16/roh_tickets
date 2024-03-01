@@ -18,19 +18,40 @@ This module contains the functions to handle the data for the upcoming events.
 
 
 def handle_upcoming_events(
-    query_dict, query_events_api=True, store_soonest=False, **kwargs
+    query_dict,
+    query_events_api=True,
+    store_soonest=False,
+    use_firestore_events=True,
+    **kwargs,
 ):
     """
     Entry point for the upcoming events
     """
     if not query_events_api:
         log("Not querying the API for events. Using stored data.")
-        events_df = Parquet(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
-        today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
-        today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
-            events_df, today
-        )
+        if not use_firestore_events:
+            # Read events data from Parquet
+            events_df, today_tomorrow_events_df, next_week_events_df = (
+                get_events_from_parquet(EVENTS_PARQUET_LOCATION)
+            )
+        else:
+            # Read events data from Firestore (limited columns only, for Dash app plots)
+            events_df = Firestore(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
+            if not events_df or events_df == {}:
+                log("No events data found in Firestore. Querying the API instead.")
+                return handle_upcoming_events(
+                    query_dict,
+                    query_events_api=True,
+                    store_soonest=True,
+                    use_firestore_events=False,
+                    **kwargs,
+                )
+            today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
+            today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
+                events_df, today
+            )
         return events_df, today_tomorrow_events_df, next_week_events_df
+
     data = API(query_dict).query_all_data("events")
     events_df, included_df = data["events"]
 
@@ -50,6 +71,18 @@ def handle_upcoming_events(
     if store_soonest:
         store_soonest_performances(events_df, today, n_events=10)
 
+    return events_df, today_tomorrow_events_df, next_week_events_df
+
+
+def get_events_from_parquet(parquet_location):
+    """
+    Get the entire events data from a Parquet (slow and expensive)
+    """
+    events_df = Parquet(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
+    today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
+    today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
+        events_df, today
+    )
     return events_df, today_tomorrow_events_df, next_week_events_df
 
 
