@@ -4,6 +4,7 @@ import logging
 import requests
 import google.auth
 import concurrent.futures
+from pandas import DataFrame
 import google.auth.exceptions
 from google.oauth2 import id_token
 from google.cloud import pubsub_v1, firestore
@@ -97,8 +98,12 @@ class Firestore:
         print(f"Read from Firestore: {self.path}")
         return output
 
-    def write(self, data):
+    def write(self, data, columns=None):
         doc_ref = self.get_ref(method="set")
+        if isinstance(data, DataFrame):
+            if columns is not None:
+                data = data[columns]
+            data = json.loads(data.to_json())
         try:
             doc_ref.set(data)
         except ValueError as e:
