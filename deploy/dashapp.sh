@@ -27,5 +27,4 @@ gcloud run deploy ${CLOUD_FUNCTION_NAME} \
   --region ${REGION} \
   --project=${PROJECT_ID} \
   --env-vars-file ${YAML_FILE} \
-  --memory=${MEMORY} \
-  --min-instances=1
+  --memory=${MEMORY}
