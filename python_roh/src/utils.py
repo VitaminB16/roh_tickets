@@ -117,7 +117,7 @@ def enforce_one_schema(df_col, col_schema):
     return df_col
 
 
-def enforce_schema(df, schema):
+def enforce_schema(df, schema, errors="raise"):
     """
     Enforce a schema on a dataframe
     """
@@ -126,7 +126,12 @@ def enforce_schema(df, schema):
     for col, col_schema in schema.items():
         if col not in df.columns:
             df[col] = None
-        df[col] = enforce_one_schema(df[col], col_schema)
+        try:
+            df[col] = enforce_one_schema(df[col], col_schema)
+        except Exception as e:
+            log(f"Error enforcing schema {col_schema} on {col}: {e}")
+            if errors == "raise":
+                raise e
     return df
 
 
