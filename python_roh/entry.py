@@ -1,9 +1,9 @@
 import os
 import json
 
-from cloud.utils import log
 from tools.parquet import Parquet
 from python_roh.src.config import *
+from cloud.utils import Firestore, log
 from python_roh.src.graphics import Graphics
 from python_roh.src.api import get_query_dict
 from python_roh.src.src import API, print_performance_info
@@ -25,8 +25,15 @@ def upcoming_events_entry(dont_save=True, **kwargs):
     )
     fig = Graphics("events").plot(events_df, dont_save=dont_save, **kwargs)
     if not dont_save:
-        Parquet(EVENTS_PARQUET_LOCATION).write(
-            events_df, partition_cols=["location", "date", "time", "title"]
+        partition_cols = ["location", "date", "time", "title", "url"]
+        Parquet(EVENTS_PARQUET_LOCATION).write(events_df, partition_cols=partition_cols)
+        today = pd.Timestamp("today").date() - pd.Timedelta(hours=1)
+        recent_df = events_df.query(
+            "date >= @today & location == 'Main Stage'"
+        ).reset_index(drop=True)
+        Firestore(EVENTS_PARQUET_LOCATION).write(
+            recent_df,
+            columns=partition_cols + ["performanceId", "productionId", "timestamp"],
         )
     return events_df, today_tomorrow_events_df, next_week_events_df, fig
 

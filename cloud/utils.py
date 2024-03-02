@@ -90,12 +90,21 @@ class Firestore:
         print(f"Firestore {ref_type} reference: {self.path}")
         return doc_ref
 
-    def read(self, allow_empty=False):
+    def read(self, allow_empty=False, apply_schema=False):
+        from python_roh.src.config import FIRESTORE_SCHEMAS
+
         doc_ref = self.get_ref(method="get")
         output = doc_ref.get().to_dict()
         if output is None and allow_empty:
             output = {}
-        print(f"Read from Firestore: {self.path}")
+        if apply_schema:
+            schema = FIRESTORE_SCHEMAS.get(self.path, None)
+            df = DataFrame(output)
+            from python_roh.src.utils import enforce_schema
+
+            if schema is not None:
+                output = enforce_schema(df, schema)
+        log(f"Read from Firestore: {self.path}")
         return output
 
     def write(self, data, columns=None):
@@ -109,7 +118,7 @@ class Firestore:
         except ValueError as e:
             data = json.loads(json.dumps(data))
             doc_ref.set(data)
-        print(f"Written to Firestore: {self.path}")
+        log(f"Written to Firestore: {self.path}")
         return True
 
     def delete(self):

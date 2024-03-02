@@ -32,6 +32,7 @@ In order to maintain a low profile, the documentation for this repository is lim
 TODO:
 - [x] Add Firestore utils class to `cloud` module
 - [x] Move titles_colour.json from Storage into Firestore
+- [x] Store events data in Firestore during infrequent scheduled updates => read during frequent updates
 - [ ] Convert plotly.express to plotly.graph_objects in `graphics.py` for better control over the plot
 - [ ] Set up a dev GCP environment for testing new features before deploying to website
  -->

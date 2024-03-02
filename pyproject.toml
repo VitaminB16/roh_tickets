@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python_roh"
-version = "1.7.7"
+version = "1.8"
 description = "Ticket Helper for ROH"
 authors = ["Artem Nosov <artemiy.nosov@gmail.com>"]
 readme = "README.md"

@@ -36,8 +36,14 @@ def handle_upcoming_events(
             )
         else:
             # Read events data from Firestore (limited columns only, for Dash app plots)
-            events_df = Firestore(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
-            if not events_df or events_df == {}:
+            events_df = Firestore(EVENTS_PARQUET_LOCATION).read(
+                allow_empty=True, apply_schema=True
+            )
+            if (
+                events_df is None
+                or (isinstance(events_df, dict) and events_df == {})
+                or events_df.empty
+            ):
                 log("No events data found in Firestore. Querying the API instead.")
                 return handle_upcoming_events(
                     query_dict,
