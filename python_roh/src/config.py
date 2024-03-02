@@ -118,11 +118,18 @@ HALL_IMAGE_LOCATION = prefix_public + "output/images/ROH_hall.png"
 EVENTS_IMAGE_LOCATION = prefix_public + "output/images/ROH_events.png"
 
 EVENTS_PARQUET_SCHEMA = {
-    "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
+    "date": [
+        lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
+        lambda x: pd.to_datetime(x, unit="ms").dt.date,
+    ],
     "time": [
         lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
         lambda x: pd.to_datetime(x, format="%H:%M:%S").dt.time,
+        lambda x: pd.to_datetime(x, unit="ms").dt.time,
     ],
+    "timestamp": lambda x: pd.to_datetime(x, unit="ms", utc=True).dt.tz_convert(
+        "Europe/London"
+    ),
     "performanceId": lambda x: x.astype(str),
     "productionId": lambda x: x.astype(int),
 }
@@ -140,6 +147,7 @@ PARQUET_SCHEMAS = {
     EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
     PRODUCTIONS_PARQUET_LOCATION: PRODUCTIONS_PARQUET_SCHEMA,
 }
+FIRESTORE_SCHEMAS = {k.replace(prefix, ""): v for k, v in PARQUET_SCHEMAS.items()}
 
 PARQUET_TABLE_RELATIONS = {
     EVENTS_PARQUET_LOCATION: "clean.v_roh_events",
