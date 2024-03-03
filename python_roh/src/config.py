@@ -112,6 +112,7 @@ if PLATFORM.name != "Local":
 # Private --------------------------------
 SEAT_MAP_POSITIONS_CSV = prefix + "metadata/seat_positions.csv"
 TITLE_COLOURS_LOCATION = prefix + "metadata/titles_colour.json"
+SEAT_STATUSES_PATH = prefix + "metadata/seat_statuses.json"
 EVENTS_PARQUET_LOCATION = prefix + "output/roh_events.parquet"
 PRODUCTIONS_PARQUET_LOCATION = prefix + "output/roh_productions.parquet"
 SOONEST_PERFORMANCES_LOCATION = prefix + "metadata/soonest_performances.json"
