@@ -13,6 +13,7 @@ from python_roh.src.config import (
     AVAILABLE_SEAT_STATUS_IDS,
     PRODUCTIONS_PARQUET_LOCATION,
     ZONE_HIERARCHY,
+    ZONE_MAPPING,
     SEAT_STATUSES_PATH,
 )
 from cloud.utils import log
@@ -126,7 +127,11 @@ def post_process_all_data(data, data_types=None):
     )
     seats_price_df = seats_df.merge(prices_df, on="ZoneId")
     seats_price_df = seats_price_df.merge(zones_df, on="ZoneId")
-    seats_price_df.query("ZoneName in @ZONE_HIERARCHY.keys()", inplace=True)
+    seats_price_df = seats_price_df.assign(
+        ZoneNameGeneral=seats_price_df.ZoneName.apply(lambda x: ZONE_MAPPING.get(x, x))
+    )
+    seats_price_df.query("ZoneNameGeneral in @ZONE_HIERARCHY.keys()", inplace=True)
+
     # Fix YPosition so that it follows the zone hierarchy
     seats_price_df = _fix_xy_positions(seats_price_df)
     seats_price_df = enrich_seats_price_df(seats_price_df)
@@ -251,11 +256,12 @@ def _fix_xy_positions(df):
         load_positions()
     with PLATFORM.open(SEAT_MAP_POSITIONS_CSV, "rb") as f:
         seat_positions = pd.read_csv(f)
+    seat_positions.rename(columns={"ZoneName": "ZoneNameGeneral"}, inplace=True)
     log(f"Seat positions: {seat_positions.shape}")
-    df_zones = df.ZoneName.unique()
-    seat_positions.query("ZoneName in @df_zones", inplace=True)
+    df_zones = df.ZoneNameGeneral.unique()
+    seat_positions.query("ZoneNameGeneral in @df_zones", inplace=True)
     df.drop(columns=["x", "y"], inplace=True, errors="ignore")
-    df = df.merge(seat_positions, on=["SeatName", "ZoneName"], how="left")
+    df = df.merge(seat_positions, on=["SeatName", "ZoneNameGeneral"], how="left")
     df.query("x.notnull()", inplace=True)  # Remove seats with no position, e.g. aisles
     return df
 

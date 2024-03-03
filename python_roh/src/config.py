@@ -17,6 +17,11 @@ ZONE_HIERARCHY = {
     "WC Spaces": 6,
     "Companion Seat": 6,
 }
+ZONE_MAPPING = {
+    "Slips": "Amphitheatre",
+    "Donald Gordon Grand Tier Boxes": "Donald Gordon Grand Tier",
+    "Balcony Boxes": "Balcony",
+}
 
 
 SEATS_BASE_URL = f"https://www.roh.org.uk/api/proxy/TXN/Performances/{os.getenv('PERFORMANCE_ID')}/Seats"
@@ -148,7 +153,7 @@ PRODUCTIONS_PARQUET_SCHEMA = {
 
 PARQUET_SCHEMAS = {
     EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
-    PRODUCTIONS_PARQUET_LOCATION: PRODUCTIONS_PARQUET_SCHEMA
+    PRODUCTIONS_PARQUET_LOCATION: PRODUCTIONS_PARQUET_SCHEMA,
 }
 FIRESTORE_SCHEMAS = {k.replace(prefix, ""): v for k, v in PARQUET_SCHEMAS.items()}
 
