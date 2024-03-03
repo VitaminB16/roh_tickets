@@ -9,7 +9,7 @@ from urllib.parse import unquote
 from tools.parquet import Parquet
 from python_roh.src.config import (
     SEAT_MAP_POSITIONS_CSV,
-    TAKEN_SEAT_STATUS_IDS,
+    AVAILABLE_SEAT_STATUS_IDS,
     PRODUCTIONS_PARQUET_LOCATION,
     ZONE_HIERARCHY,
 )
@@ -137,7 +137,7 @@ def post_process_all_data(data, data_types=None):
         subset=["SeatId", "SectionId", "PerformanceId"], inplace=True
     )
     seats_price_df = seats_price_df.assign(
-        seat_available=(~seats_price_df.SeatStatusId.isin(TAKEN_SEAT_STATUS_IDS))
+        seat_available=(seats_price_df.SeatStatusId.isin(AVAILABLE_SEAT_STATUS_IDS))
     )
     data = {
         "seats": seats_price_df,

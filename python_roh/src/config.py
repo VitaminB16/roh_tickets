@@ -27,9 +27,11 @@ ZONE_ID_BASE_URL = (
 )
 ALL_EVENTS_URL = "https://www.roh.org.uk/api/events"
 TICKETS_AND_EVENTS_URL = "https://www.roh.org.uk/tickets-and-events"
+SEAT_STATUSES_URL = "https://www.roh.org.uk/api/proxy/ReferenceData/SeatStatuses"
 
 # TAKEN_SEAT_STATUS_IDS = [3, 4, 6, 7, 8, 13]
-TAKEN_SEAT_STATUS_IDS = [4, 5, 6, 7, 8, 13, 592]  # 3,
+# TAKEN_SEAT_STATUS_IDS = [4, 5, 6, 7, 8, 13, 592]  # 3,
+AVAILABLE_SEAT_STATUS_IDS = [0]
 PRICE_COLOR_LIST = [
     "rgb(250,53,38)",  # Most expensive
     "rgb(251,32,204)",
