@@ -424,10 +424,10 @@ def get_seats_map(performance_id):
 
 def get_all_title_events(performance_id, event_title=None):
     if event_title is None:
-        event_title = EVENTS_DF.query(f"performanceId == '{performance_id}'").title
+        event_title = EVENTS_DF.query(f"performanceId == @performance_id").title
         event_title = event_title.iloc[0]
     today = pd.Timestamp.today(tz="Europe/London")
-    title_events = EVENTS_DF.query(f"title == '{event_title}' and timestamp >= @today")
+    title_events = EVENTS_DF.query(f"title == @event_title and timestamp >= @today")
     title_events = title_events.sort_values(by=["date", "time"])
     all_performances = list(title_events.performanceId)
     print("All performances:", all_performances)
