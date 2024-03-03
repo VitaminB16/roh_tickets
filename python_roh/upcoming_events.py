@@ -10,7 +10,7 @@ from python_roh.src.src import (
     _query_soonest_performance_id,
     query_production_activities,
 )
-from cloud.utils import Firestore
+from tools.firestore import Firestore
 
 """
 This module contains the functions to handle the data for the upcoming events.

@@ -1,9 +1,10 @@
 import os
 import json
 
+from cloud.utils import log
 from tools.parquet import Parquet
 from python_roh.src.config import *
-from cloud.utils import Firestore, log
+from tools.firestore import Firestore
 from python_roh.src.graphics import Graphics
 from python_roh.src.api import get_query_dict
 from python_roh.src.src import API, print_performance_info
