@@ -7,11 +7,13 @@ from bs4 import BeautifulSoup
 from urllib.parse import unquote
 
 from tools.parquet import Parquet
+from tools.firestore import Firestore
 from python_roh.src.config import (
     SEAT_MAP_POSITIONS_CSV,
     AVAILABLE_SEAT_STATUS_IDS,
     PRODUCTIONS_PARQUET_LOCATION,
     ZONE_HIERARCHY,
+    SEAT_STATUSES_PATH,
 )
 from cloud.utils import log
 from cloud.platform import PLATFORM
@@ -127,6 +129,7 @@ def post_process_all_data(data, data_types=None):
     seats_price_df.query("ZoneName in @ZONE_HIERARCHY.keys()", inplace=True)
     # Fix YPosition so that it follows the zone hierarchy
     seats_price_df = _fix_xy_positions(seats_price_df)
+    seats_price_df = enrich_seats_price_df(seats_price_df)
     # Keep only the lowest price for each (SeatId, SectionId, PerformanceId)
     seats_price_df.sort_values(
         by=["SeatId", "SectionId", "PerformanceId", "Price"],
@@ -147,6 +150,54 @@ def post_process_all_data(data, data_types=None):
     }
 
     return data
+
+
+def enrich_seats_price_df(seats_price_df):
+    """
+    Enrich the seats_price_df with additional columns
+    """
+    seats_price_df = enrich_seats_price_statuses(seats_price_df)
+    return seats_price_df
+
+
+def enrich_seats_price_statuses(seats_price_df):
+    """
+    Enrich the seats_price_df with the seat statuses
+    """
+    seat_statuses = load_statuses_df()["seat_statuses"]
+    seats_statuses_df = pd.DataFrame(seat_statuses)
+    seats_statuses_df = seats_statuses_df.assign(
+        SeatStatusStr=seats_statuses_df.apply(
+            lambda x: f"{x.Id} ({x.StatusCode})", axis=1
+        )
+    )
+    seats_statuses_df.rename(columns={"Id": "SeatStatusId"}, inplace=True)
+    cols_to_drop = set(seats_statuses_df.columns) - {"SeatStatusId", "SeatStatusStr"}
+    seats_statuses_df.drop(columns=cols_to_drop, inplace=True, errors="raise")
+    seats_price_df = seats_price_df.merge(
+        seats_statuses_df, on="SeatStatusId", how="left"
+    )
+    return seats_price_df
+
+
+def load_statuses_df(errors="ignore"):
+    """
+    Load the seat statuses from Firestore
+    """
+    try:
+        seat_statuses_df = Firestore(SEAT_STATUSES_PATH).read(allow_empty=False)
+    except Exception as e:
+        if errors == "raise":
+            raise e
+        log(f"Error reading Firestore. Loading the seat to Firestore...")
+        from various.seat_statuses.load_seat_statuses import load_seat_statuses
+
+        success = load_seat_statuses()
+        if success:
+            load_statuses_df(errors="raise")
+        else:
+            raise ValueError("Failed to load seat statuses to Firestore")
+    return seat_statuses_df
 
 
 class API:

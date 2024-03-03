@@ -46,6 +46,8 @@ class Firestore:
 
             if schema is not None:
                 output = enforce_schema(df, schema)
+            else:
+                output = df
         log(f"Read from Firestore: {self.path}")
         return output
 

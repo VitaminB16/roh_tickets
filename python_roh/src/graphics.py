@@ -84,7 +84,7 @@ def plot_hall(
         plot_df,
         x="x",
         y="y",
-        custom_data=["Price_print", "ZoneName", "SeatRow", "SeatNumber", "SeatStatusId"],
+        custom_data=["Price_print", "ZoneName", "SeatRow", "SeatNumber", "SeatStatusStr"],
         template="simple_white",
         color="Price_print",
         color_discrete_map=price_color_dict,
@@ -148,7 +148,7 @@ def plot_hall(
                 "%{customdata[0]}",
                 "%{customdata[1]}",
                 "Seat %{customdata[2]}%{customdata[3]}",
-                "(Status: %{customdata[4]})",
+                "Status: %{customdata[4]}",
             ]
         )
         + "<extra></extra>",
