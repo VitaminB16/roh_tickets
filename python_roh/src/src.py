@@ -285,7 +285,7 @@ def print_performance_info(
         return None
     performance_id = (
         os.environ["PERFORMANCE_ID"]
-        if "soonest" in str(performance_id)
+        if "soonest" in str(performance_id) or performance_id is None
         else performance_id
     )
     performance_id = json.loads(str(performance_id))

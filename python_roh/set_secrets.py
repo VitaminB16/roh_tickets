@@ -15,7 +15,7 @@ def set_secrets():
     try:
         with open("secrets.txt") as f:
             for line in f:
-                key, value = line.strip().split(" = ")
+                key, value = line.strip().split("=")
                 os.environ[key] = value
     except FileNotFoundError:
         log("No secrets.txt file found. Continuing without these secrets.")
