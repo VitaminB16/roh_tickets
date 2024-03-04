@@ -5,16 +5,29 @@ from python_roh.set_secrets import set_secrets
 from cloud.utils import log
 from python_roh.src.src import API
 from python_roh.src.utils import JSON
+from tools.firestore import Firestore
 from python_roh.src.api import get_query_dict
-from python_roh.src.config import SEAT_MAP_POSITIONS_CSV
+from python_roh.src.config import (
+    SEAT_MAP_POSITIONS_CSV,
+    SEAT_POSITIONS_JSON_LOCATION,
+    PREFIX,
+)
 
 
 def load_positions():
     # JSON file with the seat map positions from the web page using extract_positions.js
-    seat_map_json = JSON("various/seat_map_positions/seat_positions.json").load()
+    try:
+        seat_map_json = JSON(SEAT_POSITIONS_JSON_LOCATION).load(allow_empty=False)
+    except OSError:
+        local_seat_path = SEAT_POSITIONS_JSON_LOCATION.replace(PREFIX, "")
+        with open(local_seat_path, "r") as f:
+            json_file = f.read()
+        Firestore(SEAT_POSITIONS_JSON_LOCATION).write(json_file)
+        seat_map_json = Firestore(SEAT_POSITIONS_JSON_LOCATION).read()
+
     if seat_map_json == {}:
         log(
-            "various/seat_map_positions/seat_positions.json not found!\n"
+            f"{SEAT_POSITIONS_JSON_LOCATION} not found!\n"
             + "Make sure to run extract_positions.js first."
         )
     seat_map = pd.DataFrame(seat_map_json)

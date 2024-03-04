@@ -109,21 +109,22 @@ def parse_args(args):
 
 CLOUD_BUCKET = "vitaminb16-clean/"
 PUBLIC_BUCKET = "vitaminb16-public/"
-prefix = PLATFORM.fs_prefix
-prefix_public = PLATFORM.fs_prefix
+PREFIX = PLATFORM.fs_prefix
+PREFIX_PUBLIC = PLATFORM.fs_prefix
 if PLATFORM.name != "Local":
-    prefix = prefix + CLOUD_BUCKET
-    prefix_public = prefix_public + PUBLIC_BUCKET
+    PREFIX = PREFIX + CLOUD_BUCKET
+    PREFIX_PUBLIC = PREFIX_PUBLIC + PUBLIC_BUCKET
 # Private --------------------------------
-SEAT_MAP_POSITIONS_CSV = prefix + "metadata/seat_positions.csv"
-TITLE_COLOURS_LOCATION = prefix + "metadata/titles_colour.json"
-SEAT_STATUSES_PATH = prefix + "metadata/seat_statuses.json"
-EVENTS_PARQUET_LOCATION = prefix + "output/roh_events.parquet"
-PRODUCTIONS_PARQUET_LOCATION = prefix + "output/roh_productions.parquet"
-SOONEST_PERFORMANCES_LOCATION = prefix + "metadata/soonest_performances.json"
+SEAT_MAP_POSITIONS_CSV = PREFIX + "metadata/seat_positions.csv"
+TITLE_COLOURS_LOCATION = PREFIX + "metadata/titles_colour.json"
+SEAT_STATUSES_PATH = PREFIX + "metadata/seat_statuses.json"
+SEAT_POSITIONS_JSON_LOCATION = PREFIX + "metadata/seat_positions.json"
+EVENTS_PARQUET_LOCATION = PREFIX + "output/roh_events.parquet"
+PRODUCTIONS_PARQUET_LOCATION = PREFIX + "output/roh_productions.parquet"
+SOONEST_PERFORMANCES_LOCATION = PREFIX + "metadata/soonest_performances.json"
 # Public  --------------------------------
-HALL_IMAGE_LOCATION = prefix_public + "output/images/ROH_hall.png"
-EVENTS_IMAGE_LOCATION = prefix_public + "output/images/ROH_events.png"
+HALL_IMAGE_LOCATION = PREFIX_PUBLIC + "output/images/ROH_hall.png"
+EVENTS_IMAGE_LOCATION = PREFIX_PUBLIC + "output/images/ROH_events.png"
 
 EVENTS_PARQUET_SCHEMA = {
     "date": [
@@ -155,7 +156,7 @@ PARQUET_SCHEMAS = {
     EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
     PRODUCTIONS_PARQUET_LOCATION: PRODUCTIONS_PARQUET_SCHEMA,
 }
-FIRESTORE_SCHEMAS = {k.replace(prefix, ""): v for k, v in PARQUET_SCHEMAS.items()}
+FIRESTORE_SCHEMAS = {k.replace(PREFIX, ""): v for k, v in PARQUET_SCHEMAS.items()}
 
 PARQUET_TABLE_RELATIONS = {
     EVENTS_PARQUET_LOCATION: "clean.v_roh_events",

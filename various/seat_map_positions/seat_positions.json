@@ -9132,18 +9132,6 @@
     "id": "seat-28-A-2"
   },
   {
-    "cx": "1433",
-    "cy": "932.3",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-30-B-2"
-  },
-  {
-    "cx": "1419.8",
-    "cy": "928.2",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-31-B-2"
-  },
-  {
     "cx": "1421.9",
     "cy": "963.3",
     "ZoneName": "Stalls Circle",
@@ -9340,6 +9328,24 @@
     "cy": "862.1",
     "ZoneName": "Stalls Circle",
     "id": "seat-39-C-2"
+  },
+  {
+    "cx": "1273.6",
+    "cy": "859.4",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-40-C-2"
+  },
+  {
+    "cx": "1260.2",
+    "cy": "856.8",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-41-C-2"
+  },
+  {
+    "cx": "1246.9",
+    "cy": "854.4",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-42-C-2"
   },
   {
     "cx": "1709.3",
@@ -9718,18 +9724,6 @@
     "cy": "935.6",
     "ZoneName": "Stalls Circle",
     "id": "seat-83-B-2"
-  },
-  {
-    "cx": "491.1",
-    "cy": "940.8",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-84-B-2"
-  },
-  {
-    "cx": "474.5",
-    "cy": "945.5",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-85-B-2"
   },
   {
     "cx": "702.6",
@@ -10164,18 +10158,6 @@
     "id": "syos-custom-icon-673984"
   },
   {
-    "cx": "1434.5",
-    "cy": "901.2499996185303",
-    "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-673667"
-  },
-  {
-    "cx": "1417.5",
-    "cy": "890.7499996185303",
-    "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-673666"
-  },
-  {
     "cx": "1322.3",
     "cy": "866.0499996185303",
     "ZoneName": "Stalls Circle",
@@ -10482,18 +10464,6 @@
     "id": "syos-custom-icon-673618"
   },
   {
-    "cx": "480.4",
-    "cy": "908.0499996185303",
-    "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-673617"
-  },
-  {
-    "cx": "463.1",
-    "cy": "905.0499996185303",
-    "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-673616"
-  },
-  {
     "cx": "327.8",
     "cy": "942.5499996185303",
     "ZoneName": "Stalls Circle",
@@ -10710,10 +10680,10 @@
     "id": "syos-custom-icon-687023"
   },
   {
-    "cx": "1255.4404198646546",
-    "cy": "850.3999999046325",
+    "cx": "1415.0404198646545",
+    "cy": "921.7999999046326",
     "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-686932"
+    "id": "syos-custom-icon-687021"
   },
   {
     "cx": "1451.1999997138978",
@@ -10722,10 +10692,22 @@
     "id": "syos-custom-icon-686943"
   },
   {
-    "cx": "1268.8999997138976",
-    "cy": "854.0999998092651",
+    "cx": "1434.2999997138977",
+    "cy": "901.2999998092652",
     "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-686933"
+    "id": "syos-custom-icon-686941"
+  },
+  {
+    "cx": "469.74041986465454",
+    "cy": "939.0999999046326",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-686988"
+  },
+  {
+    "cx": "480.1999997138977",
+    "cy": "908.0999998092651",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-686908"
   },
   {
     "cx": "1366.3",
@@ -11370,6 +11352,18 @@
     "id": "seat-38-B-3"
   },
   {
+    "cx": "631.2",
+    "cy": "738.1",
+    "ZoneName": "Donald Gordon Grand Tier",
+    "id": "seat-39-B-3"
+  },
+  {
+    "cx": "614.4",
+    "cy": "739.8",
+    "ZoneName": "Donald Gordon Grand Tier",
+    "id": "seat-40-B-3"
+  },
+  {
     "cx": "988.9",
     "cy": "706.4",
     "ZoneName": "Donald Gordon Grand Tier",
@@ -11482,6 +11476,18 @@
     "cy": "715.9",
     "ZoneName": "Donald Gordon Grand Tier",
     "id": "seat-39-C-3"
+  },
+  {
+    "cx": "626.1",
+    "cy": "716.9",
+    "ZoneName": "Donald Gordon Grand Tier",
+    "id": "seat-40-C-3"
+  },
+  {
+    "cx": "607.8",
+    "cy": "718",
+    "ZoneName": "Donald Gordon Grand Tier",
+    "id": "seat-41-C-3"
   },
   {
     "cx": "963.3",
@@ -11740,18 +11746,6 @@
     "cy": "735.4499996185302",
     "ZoneName": "Donald Gordon Grand Tier",
     "id": "syos-custom-icon-677291"
-  },
-  {
-    "cx": "609.6404198646545",
-    "cy": "733.3999999046325",
-    "ZoneName": "Donald Gordon Grand Tier",
-    "id": "syos-custom-icon-686513"
-  },
-  {
-    "cx": "621.3999997138977",
-    "cy": "711.5999998092651",
-    "ZoneName": "Donald Gordon Grand Tier",
-    "id": "syos-custom-icon-686433"
   },
   {
     "cx": "86",
@@ -12504,18 +12498,6 @@
     "id": "seat-60-B-5"
   },
   {
-    "cx": "638",
-    "cy": "594.5",
-    "ZoneName": "Balcony",
-    "id": "seat-61-B-5"
-  },
-  {
-    "cx": "617.2",
-    "cy": "594.1",
-    "ZoneName": "Balcony",
-    "id": "seat-62-B-5"
-  },
-  {
     "cx": "589.4",
     "cy": "567.9",
     "ZoneName": "Balcony",
@@ -12664,6 +12646,18 @@
     "cy": "590.7",
     "ZoneName": "Balcony",
     "id": "seat-28-B-5"
+  },
+  {
+    "cx": "1251.5",
+    "cy": "591.2",
+    "ZoneName": "Balcony",
+    "id": "seat-29-B-5"
+  },
+  {
+    "cx": "1232.6",
+    "cy": "591.8",
+    "ZoneName": "Balcony",
+    "id": "seat-30-B-5"
   },
   {
     "cx": "1231",
@@ -12882,6 +12876,12 @@
     "id": "syos-custom-icon-679022"
   },
   {
+    "cx": "1243.6",
+    "cy": "564.0499996185303",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679021"
+  },
+  {
     "cx": "1210.8",
     "cy": "565.8499996185303",
     "ZoneName": "Balcony",
@@ -13024,12 +13024,6 @@
     "cy": "565.8499996185303",
     "ZoneName": "Balcony",
     "id": "syos-custom-icon-678982"
-  },
-  {
-    "cx": "640.9",
-    "cy": "565.2499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-678981"
   },
   {
     "cx": "811.6",
@@ -13302,16 +13296,16 @@
     "id": "syos-custom-icon-680431"
   },
   {
-    "cx": "1246.7404198646545",
-    "cy": "584.7999999046326",
+    "cx": "612.4404198646546",
+    "cy": "587.6999999046326",
     "ZoneName": "Balcony",
-    "id": "syos-custom-icon-686053"
+    "id": "syos-custom-icon-686033"
   },
   {
-    "cx": "1227.8999997138976",
-    "cy": "586.4999998092651",
+    "cx": "633.2999997138977",
+    "cy": "589.1999998092651",
     "ZoneName": "Balcony",
-    "id": "syos-custom-icon-686052"
+    "id": "syos-custom-icon-686034"
   },
   {
     "cx": "1844.3",
