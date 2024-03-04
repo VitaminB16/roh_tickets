@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 
 from python_roh.set_secrets import set_secrets
@@ -21,7 +22,7 @@ def load_positions():
     except OSError:
         local_seat_path = SEAT_POSITIONS_JSON_LOCATION.replace(PREFIX, "")
         with open(local_seat_path, "r") as f:
-            json_file = f.read()
+            json_file = json.load(f)
         Firestore(SEAT_POSITIONS_JSON_LOCATION).write(json_file)
         seat_map_json = Firestore(SEAT_POSITIONS_JSON_LOCATION).read()
 
@@ -70,6 +71,7 @@ def load_positions():
 
     csv_name = SEAT_MAP_POSITIONS_CSV
     seat_map.to_csv(csv_name, index=False)
+    Firestore(SEAT_MAP_POSITIONS_CSV).write(seat_map)
     log(f"Written seat map positions to {csv_name}")
 
 

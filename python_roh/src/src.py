@@ -254,8 +254,9 @@ def _fix_xy_positions(df):
         from various.seat_map_positions.load_positions import load_positions
 
         load_positions()
-    with PLATFORM.open(SEAT_MAP_POSITIONS_CSV, "rb") as f:
-        seat_positions = pd.read_csv(f)
+    # with PLATFORM.open(SEAT_MAP_POSITIONS_CSV, "rb") as f:
+    #     seat_positions = pd.read_csv(f)
+    seat_positions = Firestore(SEAT_MAP_POSITIONS_CSV).read(apply_schema=True)
     seat_positions.rename(columns={"ZoneName": "ZoneNameGeneral"}, inplace=True)
     log(f"Seat positions: {seat_positions.shape}")
     df_zones = df.ZoneNameGeneral.unique()

@@ -29,7 +29,6 @@ class Firestore:
         while len(path_elements) > 0:
             doc_ref = getattr(doc_ref, ref_type)(path_elements.pop(0))
             ref_type = "document" if ref_type == "collection" else "collection"
-        print(f"Firestore {ref_type} reference: {self.path}")
         return doc_ref
 
     def read(self, allow_empty=False, apply_schema=False):
@@ -39,6 +38,8 @@ class Firestore:
         output = doc_ref.get().to_dict()
         if output is None and allow_empty:
             output = {}
+        if list(output.keys()) == ["data"]:
+            output = output["data"]
         if apply_schema:
             schema = FIRESTORE_SCHEMAS.get(self.path, None)
             df = DataFrame(output)
@@ -56,12 +57,19 @@ class Firestore:
         if isinstance(data, DataFrame):
             if columns is not None:
                 data = data[columns]
-            data = json.loads(data.to_json())
+            data.reset_index(drop=True, inplace=True)
+            data = data.to_json()
         try:
             doc_ref.set(data)
         except ValueError as e:
-            data = json.loads(json.dumps(data))
-            doc_ref.set(data)
+            # This happens if the data is a dictionary with integer keys
+            doc_ref.set(json.loads(json.dumps(data)))
+        except AttributeError as e:
+            # This happens if the data is a list of dictionaries
+            if isinstance(data, str):
+                # This happens if the data came from DataFrame.to_json()
+                data = json.loads(data)
+            doc_ref.set({"data": data})
         log(f"Written to Firestore: {self.path}")
         return True
 
