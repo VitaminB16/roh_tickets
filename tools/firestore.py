@@ -8,12 +8,31 @@ from cloud.utils import log
 
 
 class Firestore:
+    """
+    Class for operating Firestore
+    """
+
     def __init__(self, path=None, project=None):
+        """
+        Args:
+        - path (str): Path to the Firestore document or collection
+        - project (str): Project ID
+        
+        Examples:
+        - Firestore("bucket/path").read() -> Read from Firestore "bucket/path"
+        - Firestore("gs://project/bucket/path").read() -> Read from Firestore "bucket/path"
+        - Firestore("gs://project/bucket/path").write(data) -> Write to Firestore "bucket/path"
+        - Firestore("gs://project/bucket/path").delete() -> Delete from Firestore "bucket/path"
+        """
         self.project = project or os.getenv("PROJECT")
         self.client = firestore.Client(self.project)
         self.path = path
 
     def parse_path(self, method="get"):
+        """
+        Parse the path into project, bucket, and path.
+        This allows Firestore to be used in the same way as GCS.
+        """
         if "gs://" in self.path:
             # gs://project/bucket/path -> project, bucket, path
             # path -> collection/document/../collection/document
@@ -32,6 +51,12 @@ class Firestore:
         return doc_ref
 
     def read(self, allow_empty=False, apply_schema=False):
+        """
+        Read from Firestore
+        Args:
+        - allow_empty (bool): If True, return an empty DataFrame if the document is empty
+        - apply_schema (bool): If True, apply the schema from FIRESTORE_SCHEMAS. Also converts the output to a DataFrame.
+        """
         from python_roh.src.config import FIRESTORE_SCHEMAS
 
         doc_ref = self.get_ref(method="get")
@@ -53,6 +78,12 @@ class Firestore:
         return output
 
     def write(self, data, columns=None):
+        """
+        Write to Firestore
+        Args:
+        - data (DataFrame or dict): Data to write to Firestore
+        - columns (list): Columns to write from the DataFrame
+        """
         doc_ref = self.get_ref(method="set")
         if isinstance(data, DataFrame):
             if columns is not None:
