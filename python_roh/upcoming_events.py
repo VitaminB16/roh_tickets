@@ -12,6 +12,9 @@ from python_roh.src.src import (
 )
 from tools.firestore import Firestore
 
+if "src_secret.py" in os.listdir("python_roh/src"):
+    from python_roh.src.src_secret import secret_function_2
+
 """
 This module contains the functions to handle the data for the upcoming events.
 """
@@ -174,8 +177,7 @@ def enrich_events_with_productions(events_df, dont_read_from_storage=True):
         "productionId not in @existing_prod_ids"
     ).reset_index(drop=True)
 
-    if not added_productions.empty:
-        handle_added_productions(added_productions)
+    handle_added_productions(added_productions)
     events_df = merge_prouctions_into_events(
         events_df, dont_read_from_storage=dont_read_from_storage
     )
@@ -187,7 +189,13 @@ def handle_added_productions(added_productions):
     """
     Get the activities for the added productions and store them in a Parquet
     """
-    log(f"New productions: \n{added_productions.title.unique()}")
+    if not added_productions.empty:
+        return None
+
+    new_titles = added_productions.title.unique()
+    if "secret_function_2" in globals():
+        secret_function_2(new_titles)
+    log(f"New productions: \n{new_titles}")
     for production_i in added_productions.itertuples():
         production_url = production_i.url
         activities_df = query_production_activities(production_url)
