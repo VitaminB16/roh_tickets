@@ -173,8 +173,8 @@ def plot_hall(
             save_both=False,  # Prevent infinite recursion
             dont_show=dont_show,
             dont_save=dont_save,
-            plot_width=plot_width,
             autosize=autosize,
+            font_family=font_family,
             **kwargs,
         )
 

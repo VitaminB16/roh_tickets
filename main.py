@@ -61,5 +61,4 @@ if __name__ == "__main__":
         if len(args) > 0:
             args = parse_args(args)
             payload.update(args)
-        payload.update({"save_both": False})
         main_entry(payload)
