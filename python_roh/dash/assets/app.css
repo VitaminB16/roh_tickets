@@ -38,24 +38,28 @@ a:link,
   /* Remove borders from buttons */
   cursor: pointer;
   /* Cursor as pointer */
+  font-family: 'Gotham SSm', sans-serif;
 }
 
 /* visited link */
 a:visited,
 .link-button {
   color: #226db4;
+  font-family: 'Gotham SSm', sans-serif;
 }
 
 /* mouse over link */
 a:hover,
 .link-button:hover {
   color: salmon;
+  font-family: 'Gotham SSm', sans-serif;
 }
 
 /* selected link */
 a:active,
 .link-button:active {
   color: red;
+  font-family: 'Gotham SSm', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
