@@ -21,15 +21,16 @@ def upcoming_events_entry(dont_save=True, **kwargs):
     """
     Entry point for the upcoming events task and the events timeline plot
     """
-    events_df, today_tomorrow_events_df, next_week_events_df = handle_upcoming_events(
+    events_df, today_tomorrow_events_df, next_week_events_df, new_events_df = handle_upcoming_events(
         QUERY_DICT, **kwargs
     )
     fig = Graphics("events").plot(events_df, dont_save=dont_save, **kwargs)
-    if not dont_save:
+    if (not dont_save) and (not new_events_df.empty):
+        log(f"Saving to events parquet: {new_events_df.title.unique()}")
         partition_cols = ["location", "date", "time", "title"]
-        Parquet(EVENTS_PARQUET_LOCATION).write(events_df, partition_cols=partition_cols)
+        Parquet(EVENTS_PARQUET_LOCATION).write(new_events_df, partition_cols=partition_cols)
         today = pd.Timestamp("today").date() - pd.Timedelta(hours=1)
-        recent_df = events_df.query(
+        recent_df = new_events_df.query(
             "date >= @today & location == 'Main Stage'"
         ).reset_index(drop=True)
         Firestore(EVENTS_PARQUET_LOCATION).write(

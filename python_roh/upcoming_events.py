@@ -71,7 +71,7 @@ def handle_upcoming_events(
     events_df = pd.concat([events_df, performances_df], axis=1)
     events_df.drop(columns=["performances", "date"], inplace=True)
 
-    events_df = enrich_events_df(events_df)
+    events_df, new_events_df = enrich_events_df(events_df)
 
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
     today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
@@ -80,7 +80,7 @@ def handle_upcoming_events(
     if store_soonest:
         store_soonest_performances(events_df, today, n_events=10)
 
-    return events_df, today_tomorrow_events_df, next_week_events_df
+    return events_df, today_tomorrow_events_df, next_week_events_df, new_events_df
 
 
 def get_events_from_parquet(parquet_location):
@@ -152,9 +152,9 @@ def enrich_events_df(events_df):
         lambda x: f"{TICKETS_AND_EVENTS_URL}/{x}-dates"
     )
     events_df["productionId"] = events_df.productionId.astype(int)
-    events_df = enrich_events_with_productions(events_df)
+    events_df, added_productions_df = enrich_events_with_productions(events_df)
     events_df.reset_index(drop=True, inplace=True)
-    return events_df
+    return events_df, added_productions_df
 
 
 def enrich_events_with_productions(events_df, dont_read_from_storage=True):
@@ -181,8 +181,11 @@ def enrich_events_with_productions(events_df, dont_read_from_storage=True):
     events_df = merge_prouctions_into_events(
         events_df, dont_read_from_storage=dont_read_from_storage
     )
+    added_productions = events_df.query(
+        "productionId in @added_productions.productionId"
+    )
 
-    return events_df
+    return events_df, added_productions
 
 
 def handle_added_productions(added_productions):
