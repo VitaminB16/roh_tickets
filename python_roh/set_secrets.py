@@ -25,11 +25,15 @@ def set_gcp_secrets(service="python-roh"):
     from google.cloud import secretmanager
     import google.auth
 
-    project = google.auth.default()[1]
-    secret_client = secretmanager.SecretManagerServiceClient()
-    secrets = secret_client.list_secrets(
-        request={"parent": f"projects/{project}", "filter": f"labels.{service}:*"}
-    )
+    project, credentials = google.auth.default()
+    try:
+        secret_client = secretmanager.SecretManagerServiceClient()
+        secrets = secret_client.list_secrets(
+            request={"parent": f"projects/{project}", "filter": f"labels.{service}:*"}
+        )
+    except Exception as e:
+        print(f"Failed to grab secrets. Exception: {e}")
+        return
     for secret in secrets:
         name = secret.name
         try:
