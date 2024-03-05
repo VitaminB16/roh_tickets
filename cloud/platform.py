@@ -52,7 +52,7 @@ class GCPPlatform(BasePlatform):
         return self.fs.open(path, mode, **kwargs)
 
     def makedirs(self, path, exist_ok=True):
-        self.fs.makedirs(path, exist_ok=exist_ok)
+        return self.fs.makedirs(path, exist_ok=exist_ok)
 
     def exists(self, path):
         return self.fs.exists(path)
@@ -70,20 +70,23 @@ class GCPPlatform(BasePlatform):
         return df
 
     def create_table(self, table, df, **kwargs):
-        df.to_gbq(table, if_exists="replace", **kwargs)
+        return df.to_gbq(table, if_exists="replace", **kwargs)
 
     def insert_rows(self, df, table, if_exists="append", **kwargs):
-        df.to_gbq(table, if_exists=if_exists, **kwargs)
+        return df.to_gbq(table, if_exists=if_exists, **kwargs)
 
     def download(self, path, local_path):
         log(f"Downloading {path} to {local_path}")
-        self.fs.get(path, local_path)
+        return self.fs.get(path, local_path)
 
     def glob(self, path):
         return self.fs.glob(path)
-    
+
     def walk(self, path):
         return self.fs.walk(path)
+
+    def rm(self, path, recursive=True):
+        return self.fs.rm(path, recursive=recursive)
 
 
 class LocalPlatform(BasePlatform):
@@ -100,7 +103,7 @@ class LocalPlatform(BasePlatform):
         return open(path, mode)
 
     def makedirs(self, path, exist_ok=True):
-        os.makedirs(path, exist_ok=exist_ok)
+        return os.makedirs(path, exist_ok=exist_ok)
 
     def isfile(self, path):
         return os.path.isfile(path)
@@ -110,9 +113,14 @@ class LocalPlatform(BasePlatform):
 
     def glob(self, path):
         return glob.glob(path)
-    
+
     def walk(self, path):
         return os.walk(path)
+
+    def rm(self, path):
+        import shutil
+
+        shutil.rmtree(path)
 
 
 def Platform():
