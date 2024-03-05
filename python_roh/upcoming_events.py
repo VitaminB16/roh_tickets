@@ -189,7 +189,7 @@ def handle_added_productions(added_productions):
     """
     Get the activities for the added productions and store them in a Parquet
     """
-    if not added_productions.empty:
+    if added_productions.empty:
         return None
 
     new_titles = added_productions.title.unique()
