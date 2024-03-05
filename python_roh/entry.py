@@ -26,7 +26,7 @@ def upcoming_events_entry(dont_save=True, **kwargs):
     )
     fig = Graphics("events").plot(events_df, dont_save=dont_save, **kwargs)
     if not dont_save:
-        partition_cols = ["location", "date", "time", "title", "url"]
+        partition_cols = ["location", "date", "time", "title"]
         Parquet(EVENTS_PARQUET_LOCATION).write(events_df, partition_cols=partition_cols)
         today = pd.Timestamp("today").date() - pd.Timedelta(hours=1)
         recent_df = events_df.query(
@@ -34,7 +34,7 @@ def upcoming_events_entry(dont_save=True, **kwargs):
         ).reset_index(drop=True)
         Firestore(EVENTS_PARQUET_LOCATION).write(
             recent_df,
-            columns=partition_cols + ["performanceId", "productionId", "timestamp"],
+            columns=partition_cols + ["performanceId", "productionId", "timestamp", "url"],
         )
     return events_df, today_tomorrow_events_df, next_week_events_df, fig
 
