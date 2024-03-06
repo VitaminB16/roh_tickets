@@ -176,12 +176,15 @@ def enrich_seats_price_statuses(seats_price_df):
             lambda x: f"{x.Id} ({x.StatusCode})", axis=1
         )
     )
+
     seats_statuses_df.rename(columns={"Id": "SeatStatusId"}, inplace=True)
     cols_to_drop = set(seats_statuses_df.columns) - {"SeatStatusId", "SeatStatusStr"}
     seats_statuses_df.drop(columns=cols_to_drop, inplace=True, errors="raise")
     seats_price_df = seats_price_df.merge(
         seats_statuses_df, on="SeatStatusId", how="left"
     )
+    not_enabled = (seats_price_df.SeatStatusId == 0) & (seats_price_df.Price.isnull())
+    seats_price_df.loc[not_enabled, "SeatStatusStr"] = "Not enabled"
     return seats_price_df
 
 
