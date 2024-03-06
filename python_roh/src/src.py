@@ -46,7 +46,7 @@ def _pre_process_prices_df(input_json):
     prices_df = pd.DataFrame(input_json)
     if prices_df.empty:
         raise ValueError("No prices available for this performance!")
-    prices_df = prices_df.query("Enabled == True").reset_index(drop=True)
+    prices_df.loc[~prices_df.Enabled, "Price"] = None
     return prices_df
 
 
