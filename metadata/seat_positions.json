@@ -84,6 +84,18 @@
     "id": "seat-41-E-7"
   },
   {
+    "cx": "672.7",
+    "cy": "449.4",
+    "ZoneName": "Amphitheatre",
+    "id": "seat-75-B-7"
+  },
+  {
+    "cx": "658",
+    "cy": "447.1",
+    "ZoneName": "Amphitheatre",
+    "id": "seat-76-B-7"
+  },
+  {
     "cx": "687.7",
     "cy": "431",
     "ZoneName": "Amphitheatre",
@@ -3910,18 +3922,6 @@
     "cy": "442.2499996185303",
     "ZoneName": "Amphitheatre",
     "id": "syos-custom-icon-683525"
-  },
-  {
-    "cx": "668.2",
-    "cy": "444.04999961853025",
-    "ZoneName": "Amphitheatre",
-    "id": "syos-custom-icon-683455"
-  },
-  {
-    "cx": "653.5",
-    "cy": "441.7499996185303",
-    "ZoneName": "Amphitheatre",
-    "id": "syos-custom-icon-683454"
   },
   {
     "cx": "638.7",
@@ -9132,6 +9132,30 @@
     "id": "seat-28-A-2"
   },
   {
+    "cx": "1461.1",
+    "cy": "940.6",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-28-B-2"
+  },
+  {
+    "cx": "1447.1",
+    "cy": "936.6",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-29-B-2"
+  },
+  {
+    "cx": "1433",
+    "cy": "932.3",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-30-B-2"
+  },
+  {
+    "cx": "1419.8",
+    "cy": "928.2",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-31-B-2"
+  },
+  {
     "cx": "1421.9",
     "cy": "963.3",
     "ZoneName": "Stalls Circle",
@@ -9328,24 +9352,6 @@
     "cy": "862.1",
     "ZoneName": "Stalls Circle",
     "id": "seat-39-C-2"
-  },
-  {
-    "cx": "1273.6",
-    "cy": "859.4",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-40-C-2"
-  },
-  {
-    "cx": "1260.2",
-    "cy": "856.8",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-41-C-2"
-  },
-  {
-    "cx": "1246.9",
-    "cy": "854.4",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-42-C-2"
   },
   {
     "cx": "1709.3",
@@ -10158,6 +10164,30 @@
     "id": "syos-custom-icon-673984"
   },
   {
+    "cx": "1468.1",
+    "cy": "904.6499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673669"
+  },
+  {
+    "cx": "1451.4",
+    "cy": "906.1499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673668"
+  },
+  {
+    "cx": "1434.5",
+    "cy": "901.2499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673667"
+  },
+  {
+    "cx": "1417.5",
+    "cy": "890.7499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673666"
+  },
+  {
     "cx": "1322.3",
     "cy": "866.0499996185303",
     "ZoneName": "Stalls Circle",
@@ -10674,28 +10704,16 @@
     "id": "syos-custom-icon-673536"
   },
   {
-    "cx": "1456.3404198646545",
-    "cy": "934.1999999046326",
+    "cx": "1255.4404198646546",
+    "cy": "850.3999999046325",
     "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-687023"
+    "id": "syos-custom-icon-686932"
   },
   {
-    "cx": "1415.0404198646545",
-    "cy": "921.7999999046326",
+    "cx": "1268.8999997138976",
+    "cy": "854.0999998092651",
     "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-687021"
-  },
-  {
-    "cx": "1451.1999997138978",
-    "cy": "906.1999998092651",
-    "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-686943"
-  },
-  {
-    "cx": "1434.2999997138977",
-    "cy": "901.2999998092652",
-    "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-686941"
+    "id": "syos-custom-icon-686933"
   },
   {
     "cx": "469.74041986465454",
@@ -12474,6 +12492,24 @@
     "id": "seat-60-A-5"
   },
   {
+    "cx": "659.1",
+    "cy": "614.3",
+    "ZoneName": "Balcony",
+    "id": "seat-61-A-5"
+  },
+  {
+    "cx": "644.9",
+    "cy": "614",
+    "ZoneName": "Balcony",
+    "id": "seat-62-A-5"
+  },
+  {
+    "cx": "630.6",
+    "cy": "613.7",
+    "ZoneName": "Balcony",
+    "id": "seat-63-A-5"
+  },
+  {
     "cx": "710.8",
     "cy": "595.2",
     "ZoneName": "Balcony",
@@ -12498,6 +12534,48 @@
     "id": "seat-60-B-5"
   },
   {
+    "cx": "616.4",
+    "cy": "613.2",
+    "ZoneName": "Balcony",
+    "id": "seat-64-A-5"
+  },
+  {
+    "cx": "602.1",
+    "cy": "612.6",
+    "ZoneName": "Balcony",
+    "id": "seat-65-A-5"
+  },
+  {
+    "cx": "587.9",
+    "cy": "612.1",
+    "ZoneName": "Balcony",
+    "id": "seat-66-A-5"
+  },
+  {
+    "cx": "573.7",
+    "cy": "611.5",
+    "ZoneName": "Balcony",
+    "id": "seat-67-A-5"
+  },
+  {
+    "cx": "602",
+    "cy": "593.1",
+    "ZoneName": "Balcony",
+    "id": "seat-63-B-5"
+  },
+  {
+    "cx": "588.4",
+    "cy": "592.7",
+    "ZoneName": "Balcony",
+    "id": "seat-64-B-5"
+  },
+  {
+    "cx": "574.4",
+    "cy": "591.7",
+    "ZoneName": "Balcony",
+    "id": "seat-65-B-5"
+  },
+  {
     "cx": "589.4",
     "cy": "567.9",
     "ZoneName": "Balcony",
@@ -12508,6 +12586,30 @@
     "cy": "566.7",
     "ZoneName": "Balcony",
     "id": "seat-67-C-5"
+  },
+  {
+    "cx": "537.2",
+    "cy": "610.4",
+    "ZoneName": "Balcony",
+    "id": "seat-68-A-5"
+  },
+  {
+    "cx": "517.9",
+    "cy": "610.5",
+    "ZoneName": "Balcony",
+    "id": "seat-69-A-5"
+  },
+  {
+    "cx": "498.7",
+    "cy": "609.2",
+    "ZoneName": "Balcony",
+    "id": "seat-70-A-5"
+  },
+  {
+    "cx": "479.4",
+    "cy": "608.4",
+    "ZoneName": "Balcony",
+    "id": "seat-71-A-5"
   },
   {
     "cx": "511.2",
@@ -12532,6 +12634,36 @@
     "cy": "586",
     "ZoneName": "Balcony",
     "id": "seat-69-B-5"
+  },
+  {
+    "cx": "1463.5",
+    "cy": "603.5",
+    "ZoneName": "Balcony",
+    "id": "seat-15-A-5"
+  },
+  {
+    "cx": "1445.7",
+    "cy": "604.3",
+    "ZoneName": "Balcony",
+    "id": "seat-16-A-5"
+  },
+  {
+    "cx": "1428.1",
+    "cy": "604.9",
+    "ZoneName": "Balcony",
+    "id": "seat-17-A-5"
+  },
+  {
+    "cx": "1411.5",
+    "cy": "605.8",
+    "ZoneName": "Balcony",
+    "id": "seat-18-A-5"
+  },
+  {
+    "cx": "1328.6",
+    "cy": "608.7",
+    "ZoneName": "Balcony",
+    "id": "seat-22-A-5"
   },
   {
     "cx": "1484.1",
@@ -12580,6 +12712,24 @@
     "cy": "566.6",
     "ZoneName": "Balcony",
     "id": "seat-23-C-5"
+  },
+  {
+    "cx": "1315.4",
+    "cy": "609.3",
+    "ZoneName": "Balcony",
+    "id": "seat-23-A-5"
+  },
+  {
+    "cx": "1301.7",
+    "cy": "609.6",
+    "ZoneName": "Balcony",
+    "id": "seat-24-A-5"
+  },
+  {
+    "cx": "1287.6",
+    "cy": "610.2",
+    "ZoneName": "Balcony",
+    "id": "seat-25-A-5"
   },
   {
     "cx": "1273.2",
@@ -12702,30 +12852,6 @@
     "id": "syos-custom-icon-679357"
   },
   {
-    "cx": "1459",
-    "cy": "598.1499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679356"
-  },
-  {
-    "cx": "1441.2",
-    "cy": "598.9499996185302",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679355"
-  },
-  {
-    "cx": "1423.6",
-    "cy": "599.5499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679354"
-  },
-  {
-    "cx": "1407",
-    "cy": "600.4499996185302",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679353"
-  },
-  {
     "cx": "1366.5",
     "cy": "601.8499996185303",
     "ZoneName": "Balcony",
@@ -12742,30 +12868,6 @@
     "cy": "602.8499996185303",
     "ZoneName": "Balcony",
     "id": "syos-custom-icon-679187"
-  },
-  {
-    "cx": "1324.1",
-    "cy": "603.3499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679186"
-  },
-  {
-    "cx": "1310.9",
-    "cy": "603.9499996185302",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679185"
-  },
-  {
-    "cx": "1297.2",
-    "cy": "604.2499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679184"
-  },
-  {
-    "cx": "1283.1",
-    "cy": "604.8499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679183"
   },
   {
     "cx": "1135.9",
@@ -12930,24 +13032,6 @@
     "id": "syos-custom-icon-678752"
   },
   {
-    "cx": "654.6",
-    "cy": "608.9499996185302",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679142"
-  },
-  {
-    "cx": "640.4",
-    "cy": "608.6499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679141"
-  },
-  {
-    "cx": "626.1",
-    "cy": "608.3499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679140"
-  },
-  {
     "cx": "809.5",
     "cy": "591.4499996185302",
     "ZoneName": "Balcony",
@@ -13032,54 +13116,6 @@
     "id": "syos-custom-icon-678511"
   },
   {
-    "cx": "611.9",
-    "cy": "607.8499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679139"
-  },
-  {
-    "cx": "597.6",
-    "cy": "607.2499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679138"
-  },
-  {
-    "cx": "583.4",
-    "cy": "606.7499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679137"
-  },
-  {
-    "cx": "569.2",
-    "cy": "606.1499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679136"
-  },
-  {
-    "cx": "532.7",
-    "cy": "605.0499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679293"
-  },
-  {
-    "cx": "513.4",
-    "cy": "605.1499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679292"
-  },
-  {
-    "cx": "494.2",
-    "cy": "603.8499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679291"
-  },
-  {
-    "cx": "474.9",
-    "cy": "603.0499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679290"
-  },
-  {
     "cx": "455.7",
     "cy": "602.0499996185303",
     "ZoneName": "Balcony",
@@ -13120,24 +13156,6 @@
     "cy": "597.0499996185303",
     "ZoneName": "Balcony",
     "id": "syos-custom-icon-679528"
-  },
-  {
-    "cx": "597.5",
-    "cy": "587.7499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679058"
-  },
-  {
-    "cx": "583.9",
-    "cy": "587.3499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679057"
-  },
-  {
-    "cx": "569.9",
-    "cy": "586.3499996185303",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679056"
   },
   {
     "cx": "441.6999999046326",
