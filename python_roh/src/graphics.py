@@ -17,7 +17,7 @@ class Graphics:
         if plot_function is None:
             raise ValueError(f"Invalid plot type: {self.plot_type}")
         fig = plot_function(*args, **kwargs)
-        if kwargs.get("dont_save", False):
+        if not kwargs.get("dont_save", True):
             purge_image_cache()
         return fig
 
