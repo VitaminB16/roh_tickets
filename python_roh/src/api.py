@@ -6,6 +6,20 @@ from python_roh.src.config import *
 from python_roh.upcoming_events import query_soonest_performance_id
 
 
+def configure_query_dict(**kwargs):
+    query_dict_args = {
+        "performance_id": os.getenv("PERFORMANCE_ID"),
+        "mode_of_sale_id": os.getenv("MODE_OF_SALE_ID"),
+        "constituent_id": os.getenv("CONSTITUENT_ID"),
+        "source_id": os.getenv("SOURCE_ID"),
+        **kwargs,
+    }
+    query_dict_args = {k: v for k, v in query_dict_args.items() if v is not None}
+    # Merge the query dict with the provided keyword arguments
+    query_dict_args.update(kwargs)
+    return query_dict_args
+
+
 def get_query_dict(
     performance_id=None,
     constituent_id=None,
@@ -23,9 +37,7 @@ def get_query_dict(
 
     if isinstance(performance_id, str) and performance_id.startswith("soonest"):
         n_soonest = int(performance_id.split("_")[1]) if "_" in performance_id else 1
-        performance_id = query_soonest_performance_id(
-            n_soonest=n_soonest, **kwargs
-        )
+        performance_id = query_soonest_performance_id(n_soonest=n_soonest, **kwargs)
     os.environ["PERFORMANCE_ID"] = json.dumps(performance_id)  # In case it's a list
     os.environ["MODE_OF_SALE_ID"] = str(mode_of_sale_id)
     os.environ["CONSTITUENT_ID"] = str(constituent_id)

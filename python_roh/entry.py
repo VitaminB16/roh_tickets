@@ -6,12 +6,16 @@ from tools.parquet import Parquet
 from python_roh.src.config import *
 from tools.firestore import Firestore
 from python_roh.src.graphics import Graphics
-from python_roh.src.api import get_query_dict
 from python_roh.src.src import API, print_performance_info
 from python_roh.upcoming_events import handle_upcoming_events
+from python_roh.src.api import get_query_dict, configure_query_dict
 
-if "src_secret.py" in os.listdir("python_roh/src"):
+try:
     from python_roh.src.src_secret import secret_function
+
+    HAS_SECRET = True
+except ImportError:
+    HAS_SECRET = False
 
 
 global QUERY_DICT
@@ -68,16 +72,7 @@ def task_scheduler(task_name, **kwargs):
     if task_fun is None:
         raise ValueError(f"Task {task_name} not found")
 
-    query_dict_args = {
-        "performance_id": os.getenv("PERFORMANCE_ID"),
-        "mode_of_sale_id": os.getenv("MODE_OF_SALE_ID"),
-        "constituent_id": os.getenv("CONSTITUENT_ID"),
-        "source_id": os.getenv("SOURCE_ID"),
-        **kwargs,
-    }
-    query_dict_args = {k: v for k, v in query_dict_args.items() if v is not None}
-    # Merge the query dict with the provided keyword arguments
-    query_dict_args.update(kwargs)
+    query_dict_args = configure_query_dict(**kwargs)
 
     global QUERY_DICT  # Querying all data relating to the performance
     QUERY_DICT = get_query_dict(**query_dict_args)
@@ -93,7 +88,7 @@ def main(task_name, **kwargs):
 
 
 def main_entry(payload, return_output=False):
-    if "secret_function" in globals() and payload.get("secret_function", False):
+    if HAS_SECRET and payload.get("secret_function", False):
         task_scheduler(**payload)  # Sets the QUERY_DICT without executing the task
         secret_function(QUERY_DICT)
     else:
