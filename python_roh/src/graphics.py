@@ -28,6 +28,7 @@ def process_hall_plot_df(seats_price_df, prices_df):
     """
     # Set the price bands to their colors
     price_bands = prices_df.Price.unique()
+    price_bands = price_bands[~pd.isnull(price_bands)]
     price_bands.sort()
     price_bands = price_bands[::-1].astype(str)
     price_bands = ["£" + price for price in price_bands]
