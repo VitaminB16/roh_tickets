@@ -15,17 +15,19 @@ from python_roh.src.config import (
 )
 
 
-def load_positions():
+def load_positions(from_local=False):
     # JSON file with the seat map positions from the web page using extract_positions.js
+    seat_map_path = SEAT_POSITIONS_JSON_LOCATION
+    if from_local:
+        seat_map_path = seat_map_path.replace(PREFIX, "")
     try:
-        seat_map_json = JSON(SEAT_POSITIONS_JSON_LOCATION).load(allow_empty=False)
+        seat_map_json = JSON(seat_map_path).load(allow_empty=False)
+        print(1)
     except OSError:
-        local_seat_path = SEAT_POSITIONS_JSON_LOCATION.replace(PREFIX, "")
-        with open(local_seat_path, "r") as f:
+        with open(seat_map_path, "r") as f:
             json_file = json.load(f)
         Firestore(SEAT_POSITIONS_JSON_LOCATION).write(json_file)
         seat_map_json = Firestore(SEAT_POSITIONS_JSON_LOCATION).read()
-
     if seat_map_json == {}:
         log(
             f"{SEAT_POSITIONS_JSON_LOCATION} not found!\n"
@@ -76,4 +78,10 @@ def load_positions():
 
 
 if __name__ == "__main__":
-    load_positions()
+    import sys
+
+    args = sys.argv[1:]
+    kwargs = {}
+    if args[-1] == "local":
+        kwargs["from_local"] = True
+    load_positions(**kwargs)
