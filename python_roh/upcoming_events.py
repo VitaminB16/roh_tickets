@@ -59,7 +59,7 @@ def handle_upcoming_events(
             today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
                 events_df, today
             )
-        return events_df, today_tomorrow_events_df, next_week_events_df
+        return events_df, today_tomorrow_events_df, next_week_events_df, pd.DataFrame()
 
     data = API(query_dict).query_all_data("events")
     events_df, included_df = data["events"]
