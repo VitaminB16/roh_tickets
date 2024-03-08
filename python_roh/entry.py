@@ -88,11 +88,12 @@ def main(task_name, **kwargs):
 
 
 def main_entry(payload, return_output=False):
+    task_name = payload.pop("task_name", None)
     if HAS_SECRET and payload.get("secret_function", False):
-        task_scheduler(**payload)  # Sets the QUERY_DICT without executing the task
+        task_scheduler(task_name, **payload)  # Sets the QUERY_DICT only
         secret_function(QUERY_DICT)
     else:
-        output = main(**payload)
+        output = main(task_name, **payload)
         if return_output:
             return output
     log("Execution finished")
