@@ -15,6 +15,7 @@ from python_roh.src.config import (
     ZONE_HIERARCHY,
     ZONE_MAPPING,
     SEAT_STATUSES_PATH,
+    VIEW_FROM_SEAT_URL,
 )
 from cloud.utils import log
 from cloud.platform import PLATFORM
@@ -39,6 +40,13 @@ def _pre_process_seats_df(input_json):
     seats_df = pd.DataFrame(input_json)
     seats_df.rename(columns={"Id": "SeatId"}, inplace=True)
     seats_df = seats_df.assign(SeatName=seats_df.SeatRow + seats_df.SeatNumber)
+    seat_slug = seats_df.apply(
+        lambda x: f"{x.SeatNumber}-{x.SeatRow}-{x.ScreenId}", axis=1
+    )
+    seats_view_url = seat_slug.apply(
+        lambda x: f"{VIEW_FROM_SEAT_URL}/seat-{x}.jpg"
+    )
+    seats_df = seats_df.assign(SeatsViewUrl=seats_view_url)
     return seats_df
 
 
@@ -226,7 +234,7 @@ class API:
             data_types = self.query_dict.keys()
         for data_type in force_list(data_types):
             self.all_data[data_type] = self.query_one_data(data_type)
-            time.sleep(0.05)
+            time.sleep(0.01)
         log(f"Queried the following from the API: {data_types}")
         if post_process:
             self.all_data = post_process_all_data(self.all_data)

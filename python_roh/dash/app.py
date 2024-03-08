@@ -227,6 +227,7 @@ def serve_layout(dark_mode):
                             )
                         ],
                     ),
+                    html.Div(id="seat-view-image-container"),
                 ],
                 style={
                     "textAlign": "center",
@@ -234,6 +235,7 @@ def serve_layout(dark_mode):
                     **AUTO_MARGIN,
                     "maxWidth": "1400px",
                     "maxHeight": "1000px",
+                    "position": "relative",
                 },
             ),
         ],
@@ -281,6 +283,7 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
         point = clickData["points"][0]
     if performance_id is None:
         performance_id = point["customdata"][3]
+
     event = EVENTS_DF.query(f"performanceId == '{performance_id}'").iloc[0]
     event_title = event["title"]
     event_time = event["timestamp"].strftime("%H:%M")
@@ -364,7 +367,7 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
             "marginTop": "auto",
             "margin-left": "25%",
             "position": "absolute",
-            **FONT_FAMILY
+            **FONT_FAMILY,
         },
     )
     event_info_container = html.Div(
@@ -372,6 +375,19 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
     )
 
     return fig, visible_style, event_info_container, performance_id
+
+
+@app.callback(
+    Output("seat-view-image-container", "children"),
+    [Input("seats-graph", "clickData")],
+)
+def display_seat_view_image(clickData):
+    if clickData is None:
+        raise PreventUpdate
+    point = clickData["points"][0]
+    image_url = point["customdata"][5]
+    image = html.Img(src=image_url, style={"maxWidth": "50%", "maxHeight": "50%"})
+    return html.Div(image, style={"display": "block"})
 
 
 @app.callback(
