@@ -386,7 +386,7 @@ def display_seat_view_image(clickData):
         raise PreventUpdate
     point = clickData["points"][0]
     image_url = point["customdata"][5]
-    image = html.Img(src=image_url, style={"maxWidth": "50%", "maxHeight": "50%"})
+    image = html.Img(src=image_url, style={"maxWidth": "70%", "maxHeight": "70%"})
     return html.Div(image, style={"display": "block"})
 
 
