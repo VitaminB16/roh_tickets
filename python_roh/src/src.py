@@ -44,7 +44,7 @@ def _pre_process_seats_df(input_json):
         lambda x: f"{x.SeatNumber}-{x.SeatRow}-{x.ScreenId}", axis=1
     )
     seats_view_url = seat_slug.apply(
-        lambda x: f"{VIEW_FROM_SEAT_URL}/seat-{x}.jpg"
+        lambda x: f"{VIEW_FROM_SEAT_URL}/seat-{x.replace(' ', '_')}.jpg"
     )
     seats_df = seats_df.assign(SeatsViewUrl=seats_view_url)
     return seats_df
