@@ -2,6 +2,11 @@ import os
 import glob
 import pandas as pd
 
+try:
+    import shutil
+except ImportError:
+    pass
+
 from cloud.utils import log, SQLBuilder
 
 
@@ -88,6 +93,12 @@ class GCPPlatform(BasePlatform):
     def rm(self, path, recursive=True):
         return self.fs.rm(path, recursive=recursive)
 
+    def copy(self, src, dst, recursive=True):
+        return self.fs.copy(src, dst, recursive=recursive)
+
+    def move(self, src, dst, recursive=True):
+        return self.fs.move(src, dst, recursive=recursive)
+
 
 class LocalPlatform(BasePlatform):
     """Local file system specific methods"""
@@ -118,9 +129,13 @@ class LocalPlatform(BasePlatform):
         return os.walk(path)
 
     def rm(self, path):
-        import shutil
+        return shutil.rmtree(path)
 
-        shutil.rmtree(path)
+    def copy(self, src, dst):
+        return shutil.copy(src, dst)
+
+    def move(self, src, dst):
+        return shutil.move(src, dst)
 
 
 def Platform():

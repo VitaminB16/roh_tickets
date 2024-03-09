@@ -1,8 +1,7 @@
 import os
 import sys
 import json
-from flask import Flask, jsonify
-from flask import request as flask_request
+from flask import Flask, jsonify, request as flask_request
 
 from python_roh.set_secrets import set_secrets
 
