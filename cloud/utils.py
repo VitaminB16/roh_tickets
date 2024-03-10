@@ -11,7 +11,7 @@ from google.cloud import pubsub_v1
 from google.cloud import logging as gcp_logging
 from google.auth.transport.requests import Request
 
-if os.getenv("SERVE_AS", "gcp") not in ["azure_job"]:
+if os.getenv("PLATFORM", "GCP") in ["GCP", "local"]:
     client = gcp_logging.Client()
     client.get_default_handler()
     client.setup_logging()
