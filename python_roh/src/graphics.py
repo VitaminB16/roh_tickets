@@ -53,6 +53,15 @@ def process_hall_plot_df(seats_price_df, prices_df):
     return plot_df, price_color_dict
 
 
+def process_text_df():
+    text_df = Firestore(TEXT_MAP_POSITIONS_CSV).read(
+        allow_empty=True, apply_schema=True
+    )
+    text_df.x = text_df.x
+    text_df.y = text_df.y - 1.5
+    return text_df
+
+
 def plot_hall(
     seats_price_df,
     prices_df,
@@ -80,6 +89,7 @@ def plot_hall(
     stage_y_min = middle_y + 120
     stage_y_max = middle_y + 60
     plot_df, price_color_dict = process_hall_plot_df(seats_price_df, prices_df)
+    text_df = process_text_df()
 
     fig = px.scatter(
         plot_df,
@@ -161,6 +171,25 @@ def plot_hall(
         )
         + "<extra></extra>",
     )
+
+    text = px.scatter(
+        x=text_df["x"],
+        y=text_df["y"],
+        text=text_df["text"],
+    )
+    # Remove the points and only keep the text
+    text.data[0].update(
+        mode="text",
+        textposition="middle right",
+        textfont=dict(
+            size=9,
+            family=font_family,
+            color="rgb(150,150,150)" if dark_mode else "rgb(135,135,135)",
+        ),
+        hoverinfo="skip",
+        hovertemplate=None,
+    )
+    fig.add_trace(text.data[0])
 
     # circle: occupied, circle-open: available
     for trace in fig.data:
