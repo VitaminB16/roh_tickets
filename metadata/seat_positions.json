@@ -1,5 +1,17 @@
 [
   {
+    "cx": "1284",
+    "cy": "444.5",
+    "ZoneName": "Amphitheatre",
+    "id": "seat-39-B-7"
+  },
+  {
+    "cx": "1269.5",
+    "cy": "446.5",
+    "ZoneName": "Amphitheatre",
+    "id": "seat-40-B-7"
+  },
+  {
     "cx": "1313.5",
     "cy": "419.3",
     "ZoneName": "Amphitheatre",
@@ -3802,18 +3814,6 @@
     "cy": "436.84999961853026",
     "ZoneName": "Amphitheatre",
     "id": "syos-custom-icon-683500"
-  },
-  {
-    "cx": "1279.5",
-    "cy": "439.1499996185303",
-    "ZoneName": "Amphitheatre",
-    "id": "syos-custom-icon-683499"
-  },
-  {
-    "cx": "1265",
-    "cy": "441.1499996185303",
-    "ZoneName": "Amphitheatre",
-    "id": "syos-custom-icon-683498"
   },
   {
     "cx": "1353.5",
@@ -9132,18 +9132,6 @@
     "id": "seat-28-A-2"
   },
   {
-    "cx": "1461.1",
-    "cy": "940.6",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-28-B-2"
-  },
-  {
-    "cx": "1447.1",
-    "cy": "936.6",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-29-B-2"
-  },
-  {
     "cx": "1433",
     "cy": "932.3",
     "ZoneName": "Stalls Circle",
@@ -9354,6 +9342,24 @@
     "id": "seat-39-C-2"
   },
   {
+    "cx": "1273.6",
+    "cy": "859.4",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-40-C-2"
+  },
+  {
+    "cx": "1260.2",
+    "cy": "856.8",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-41-C-2"
+  },
+  {
+    "cx": "1246.9",
+    "cy": "854.4",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-42-C-2"
+  },
+  {
     "cx": "1709.3",
     "cy": "1078.9",
     "ZoneName": "Stalls Circle",
@@ -9496,36 +9502,6 @@
     "cy": "953.5",
     "ZoneName": "Stalls Circle",
     "id": "seat-27-B-2"
-  },
-  {
-    "cx": "1559.9",
-    "cy": "933.6",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-22-C-2"
-  },
-  {
-    "cx": "1545.7",
-    "cy": "929.9",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-23-C-2"
-  },
-  {
-    "cx": "1531.3",
-    "cy": "925.9",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-24-C-2"
-  },
-  {
-    "cx": "1517.4",
-    "cy": "921.8",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-25-C-2"
-  },
-  {
-    "cx": "1503.7",
-    "cy": "917.8",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-26-C-2"
   },
   {
     "cx": "1757.1",
@@ -9730,6 +9706,18 @@
     "cy": "935.6",
     "ZoneName": "Stalls Circle",
     "id": "seat-83-B-2"
+  },
+  {
+    "cx": "491.1",
+    "cy": "940.8",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-84-B-2"
+  },
+  {
+    "cx": "474.5",
+    "cy": "945.5",
+    "ZoneName": "Stalls Circle",
+    "id": "seat-85-B-2"
   },
   {
     "cx": "702.6",
@@ -9972,36 +9960,6 @@
     "id": "seat-97-B-2"
   },
   {
-    "cx": "424.5",
-    "cy": "921.9",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-87-C-2"
-  },
-  {
-    "cx": "409.6",
-    "cy": "926.6",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-88-C-2"
-  },
-  {
-    "cx": "394.6",
-    "cy": "931",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-89-C-2"
-  },
-  {
-    "cx": "380",
-    "cy": "935.2",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-90-C-2"
-  },
-  {
-    "cx": "364.4",
-    "cy": "939.7",
-    "ZoneName": "Stalls Circle",
-    "id": "seat-91-C-2"
-  },
-  {
     "cx": "1851",
     "cy": "1140.7499996185302",
     "ZoneName": "Stalls Circle",
@@ -10164,16 +10122,34 @@
     "id": "syos-custom-icon-673984"
   },
   {
-    "cx": "1468.1",
-    "cy": "904.6499996185303",
+    "cx": "1555.4",
+    "cy": "928.2499996185303",
     "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-673669"
+    "id": "syos-custom-icon-673981"
   },
   {
-    "cx": "1451.4",
-    "cy": "906.1499996185303",
+    "cx": "1541.2",
+    "cy": "924.5499996185303",
     "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-673668"
+    "id": "syos-custom-icon-673980"
+  },
+  {
+    "cx": "1526.8",
+    "cy": "920.5499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673979"
+  },
+  {
+    "cx": "1512.9",
+    "cy": "916.4499996185302",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673978"
+  },
+  {
+    "cx": "1499.2",
+    "cy": "912.4499996185302",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673977"
   },
   {
     "cx": "1434.5",
@@ -10494,6 +10470,48 @@
     "id": "syos-custom-icon-673618"
   },
   {
+    "cx": "480.4",
+    "cy": "908.0499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673617"
+  },
+  {
+    "cx": "463.1",
+    "cy": "905.0499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673616"
+  },
+  {
+    "cx": "420",
+    "cy": "916.5499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673948"
+  },
+  {
+    "cx": "405.1",
+    "cy": "921.2499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673947"
+  },
+  {
+    "cx": "390.1",
+    "cy": "925.6499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673946"
+  },
+  {
+    "cx": "375.5",
+    "cy": "929.8499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673945"
+  },
+  {
+    "cx": "359.9",
+    "cy": "934.3499996185303",
+    "ZoneName": "Stalls Circle",
+    "id": "syos-custom-icon-673944"
+  },
+  {
     "cx": "327.8",
     "cy": "942.5499996185303",
     "ZoneName": "Stalls Circle",
@@ -10704,28 +10722,16 @@
     "id": "syos-custom-icon-673536"
   },
   {
-    "cx": "1255.4404198646546",
-    "cy": "850.3999999046325",
+    "cx": "1456.3404198646545",
+    "cy": "934.1999999046326",
     "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-686932"
+    "id": "syos-custom-icon-687023"
   },
   {
-    "cx": "1268.8999997138976",
-    "cy": "854.0999998092651",
+    "cx": "1451.1999997138978",
+    "cy": "906.1999998092651",
     "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-686933"
-  },
-  {
-    "cx": "469.74041986465454",
-    "cy": "939.0999999046326",
-    "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-686988"
-  },
-  {
-    "cx": "480.1999997138977",
-    "cy": "908.0999998092651",
-    "ZoneName": "Stalls Circle",
-    "id": "syos-custom-icon-686908"
+    "id": "syos-custom-icon-686943"
   },
   {
     "cx": "1366.3",
@@ -12534,6 +12540,18 @@
     "id": "seat-60-B-5"
   },
   {
+    "cx": "638",
+    "cy": "594.5",
+    "ZoneName": "Balcony",
+    "id": "seat-61-B-5"
+  },
+  {
+    "cx": "617.2",
+    "cy": "594.1",
+    "ZoneName": "Balcony",
+    "id": "seat-62-B-5"
+  },
+  {
     "cx": "616.4",
     "cy": "613.2",
     "ZoneName": "Balcony",
@@ -12576,18 +12594,6 @@
     "id": "seat-65-B-5"
   },
   {
-    "cx": "589.4",
-    "cy": "567.9",
-    "ZoneName": "Balcony",
-    "id": "seat-66-C-5"
-  },
-  {
-    "cx": "575",
-    "cy": "566.7",
-    "ZoneName": "Balcony",
-    "id": "seat-67-C-5"
-  },
-  {
     "cx": "537.2",
     "cy": "610.4",
     "ZoneName": "Balcony",
@@ -12612,106 +12618,34 @@
     "id": "seat-71-A-5"
   },
   {
-    "cx": "511.2",
-    "cy": "588.7",
+    "cx": "1531.4",
+    "cy": "600.1",
     "ZoneName": "Balcony",
-    "id": "seat-66-B-5"
+    "id": "seat-11-A-5"
   },
   {
-    "cx": "494.1",
-    "cy": "587.8",
+    "cx": "1514.2",
+    "cy": "600.9",
     "ZoneName": "Balcony",
-    "id": "seat-67-B-5"
+    "id": "seat-12-A-5"
   },
   {
-    "cx": "477.3",
-    "cy": "587",
+    "cx": "1497.5",
+    "cy": "602.3",
     "ZoneName": "Balcony",
-    "id": "seat-68-B-5"
+    "id": "seat-13-A-5"
   },
   {
-    "cx": "461.1",
-    "cy": "586",
+    "cx": "1479.7",
+    "cy": "602.9",
     "ZoneName": "Balcony",
-    "id": "seat-69-B-5"
-  },
-  {
-    "cx": "1463.5",
-    "cy": "603.5",
-    "ZoneName": "Balcony",
-    "id": "seat-15-A-5"
-  },
-  {
-    "cx": "1445.7",
-    "cy": "604.3",
-    "ZoneName": "Balcony",
-    "id": "seat-16-A-5"
-  },
-  {
-    "cx": "1428.1",
-    "cy": "604.9",
-    "ZoneName": "Balcony",
-    "id": "seat-17-A-5"
-  },
-  {
-    "cx": "1411.5",
-    "cy": "605.8",
-    "ZoneName": "Balcony",
-    "id": "seat-18-A-5"
+    "id": "seat-14-A-5"
   },
   {
     "cx": "1328.6",
     "cy": "608.7",
     "ZoneName": "Balcony",
     "id": "seat-22-A-5"
-  },
-  {
-    "cx": "1484.1",
-    "cy": "581.3",
-    "ZoneName": "Balcony",
-    "id": "seat-5-B-5"
-  },
-  {
-    "cx": "1465.1",
-    "cy": "582.6",
-    "ZoneName": "Balcony",
-    "id": "seat-6-B-5"
-  },
-  {
-    "cx": "1446.9",
-    "cy": "583.7",
-    "ZoneName": "Balcony",
-    "id": "seat-7-B-5"
-  },
-  {
-    "cx": "1426.9",
-    "cy": "584.9",
-    "ZoneName": "Balcony",
-    "id": "seat-8-B-5"
-  },
-  {
-    "cx": "1370.1",
-    "cy": "564.2",
-    "ZoneName": "Balcony",
-    "id": "seat-20-C-5"
-  },
-  {
-    "cx": "1354.9",
-    "cy": "565",
-    "ZoneName": "Balcony",
-    "id": "seat-21-C-5"
-  },
-  {
-    "cx": "1339.6",
-    "cy": "565.8",
-    "ZoneName": "Balcony",
-    "id": "seat-22-C-5"
-  },
-  {
-    "cx": "1324.4",
-    "cy": "566.6",
-    "ZoneName": "Balcony",
-    "id": "seat-23-C-5"
   },
   {
     "cx": "1315.4",
@@ -12810,46 +12744,34 @@
     "id": "seat-30-B-5"
   },
   {
-    "cx": "1231",
-    "cy": "549.2",
-    "ZoneName": "Balcony",
-    "id": "seat-30-D-5"
-  },
-  {
-    "cx": "1215.3",
-    "cy": "549.9",
-    "ZoneName": "Balcony",
-    "id": "seat-31-D-5"
-  },
-  {
     "cx": "1543.4",
     "cy": "594.1499996185303",
     "ZoneName": "Balcony",
     "id": "syos-custom-icon-679361"
   },
   {
-    "cx": "1526.9",
-    "cy": "594.7499996185303",
+    "cx": "1459",
+    "cy": "598.1499996185303",
     "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679360"
+    "id": "syos-custom-icon-679356"
   },
   {
-    "cx": "1509.7",
-    "cy": "595.5499996185303",
+    "cx": "1441.2",
+    "cy": "598.9499996185302",
     "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679359"
+    "id": "syos-custom-icon-679355"
   },
   {
-    "cx": "1493",
-    "cy": "596.9499996185302",
+    "cx": "1423.6",
+    "cy": "599.5499996185303",
     "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679358"
+    "id": "syos-custom-icon-679354"
   },
   {
-    "cx": "1475.2",
-    "cy": "597.5499996185303",
+    "cx": "1407",
+    "cy": "600.4499996185302",
     "ZoneName": "Balcony",
-    "id": "syos-custom-icon-679357"
+    "id": "syos-custom-icon-679353"
   },
   {
     "cx": "1366.5",
@@ -12954,6 +12876,54 @@
     "id": "syos-custom-icon-679277"
   },
   {
+    "cx": "1480.1999999046325",
+    "cy": "576.1499999046325",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679276"
+  },
+  {
+    "cx": "1461.1999999046325",
+    "cy": "577.4499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679275"
+  },
+  {
+    "cx": "1442.9999999046327",
+    "cy": "578.5499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679274"
+  },
+  {
+    "cx": "1422.9999999046327",
+    "cy": "579.7499999046325",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679273"
+  },
+  {
+    "cx": "1366.1999999046325",
+    "cy": "559.0499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679030"
+  },
+  {
+    "cx": "1350.9999999046327",
+    "cy": "559.8499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679029"
+  },
+  {
+    "cx": "1335.6999999046325",
+    "cy": "560.6499999046325",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679028"
+  },
+  {
+    "cx": "1320.4999999046327",
+    "cy": "561.4499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679027"
+  },
+  {
     "cx": "1304.6",
     "cy": "561.7499996185303",
     "ZoneName": "Balcony",
@@ -13006,6 +12976,18 @@
     "cy": "567.7499996185303",
     "ZoneName": "Balcony",
     "id": "syos-custom-icon-678613"
+  },
+  {
+    "cx": "1227.0999999046326",
+    "cy": "544.0499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-678939"
+  },
+  {
+    "cx": "1211.3999999046325",
+    "cy": "544.7499999046325",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-678938"
   },
   {
     "cx": "1195.9999999046327",
@@ -13110,6 +13092,12 @@
     "id": "syos-custom-icon-678982"
   },
   {
+    "cx": "640.9",
+    "cy": "565.2499996185303",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-678981"
+  },
+  {
     "cx": "811.6",
     "cy": "552.1499996185303",
     "ZoneName": "Balcony",
@@ -13158,6 +13146,30 @@
     "id": "syos-custom-icon-679528"
   },
   {
+    "cx": "507.29999990463256",
+    "cy": "583.5499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679213"
+  },
+  {
+    "cx": "490.1999999046326",
+    "cy": "582.6499999046325",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679212"
+  },
+  {
+    "cx": "473.3999999046326",
+    "cy": "581.8499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679211"
+  },
+  {
+    "cx": "457.1999999046326",
+    "cy": "580.8499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-679210"
+  },
+  {
     "cx": "441.6999999046326",
     "cy": "580.4499999046326",
     "ZoneName": "Balcony",
@@ -13192,6 +13204,18 @@
     "cy": "563.5499999046326",
     "ZoneName": "Balcony",
     "id": "syos-custom-icon-678977"
+  },
+  {
+    "cx": "585.4999999046325",
+    "cy": "562.7499999046325",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-678976"
+  },
+  {
+    "cx": "571.0999999046326",
+    "cy": "561.5499999046326",
+    "ZoneName": "Balcony",
+    "id": "syos-custom-icon-678975"
   },
   {
     "cx": "142.3",
@@ -13314,18 +13338,6 @@
     "id": "syos-custom-icon-680431"
   },
   {
-    "cx": "612.4404198646546",
-    "cy": "587.6999999046326",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-686033"
-  },
-  {
-    "cx": "633.2999997138977",
-    "cy": "589.1999998092651",
-    "ZoneName": "Balcony",
-    "id": "syos-custom-icon-686034"
-  },
-  {
     "cx": "1844.3",
     "cy": "554.1499996185303",
     "ZoneName": "Balcony",
@@ -13444,5 +13456,1481 @@
     "cy": "533.8499996185303",
     "ZoneName": "Balcony",
     "id": "syos-custom-icon-680288"
+  },
+  {
+    "cx": "808.53",
+    "cy": "429.183",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "824.314",
+    "cy": "450.805",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "836.171",
+    "cy": "470.574",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "849.48",
+    "cy": "491.61",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "796.156",
+    "cy": "408.176",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "787.586",
+    "cy": "388.595",
+    "ZoneName": "F",
+    "id": "Text"
+  },
+  {
+    "cx": "816.164",
+    "cy": "373.642",
+    "ZoneName": "G",
+    "id": "Text"
+  },
+  {
+    "cx": "838.327",
+    "cy": "360.897",
+    "ZoneName": "H",
+    "id": "Text"
+  },
+  {
+    "cx": "821.888",
+    "cy": "341.723",
+    "ZoneName": "J",
+    "id": "Text"
+  },
+  {
+    "cx": "809.751",
+    "cy": "323.14",
+    "ZoneName": "K",
+    "id": "Text"
+  },
+  {
+    "cx": "799.651",
+    "cy": "304.14",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "790.368",
+    "cy": "285.655",
+    "ZoneName": "M",
+    "id": "Text"
+  },
+  {
+    "cx": "783.462",
+    "cy": "268.154",
+    "ZoneName": "N",
+    "id": "Text"
+  },
+  {
+    "cx": "775.528",
+    "cy": "250.295",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "770.042",
+    "cy": "231.702",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "763.665",
+    "cy": "214.302",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "766.52",
+    "cy": "198.592",
+    "ZoneName": "T",
+    "id": "Text"
+  },
+  {
+    "cx": "750.629",
+    "cy": "178.573",
+    "ZoneName": "U",
+    "id": "Text"
+  },
+  {
+    "cx": "749.922",
+    "cy": "159.5439",
+    "ZoneName": "V",
+    "id": "Text"
+  },
+  {
+    "cx": "747.966",
+    "cy": "140.2571",
+    "ZoneName": "W",
+    "id": "Text"
+  },
+  {
+    "cx": "1166.64",
+    "cy": "161.61",
+    "ZoneName": "V",
+    "id": "Text"
+  },
+  {
+    "cx": "1162.3719",
+    "cy": "144.204",
+    "ZoneName": "W",
+    "id": "Text"
+  },
+  {
+    "cx": "1160.6479",
+    "cy": "247.631",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "1167.4301",
+    "cy": "229.708",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "1168.995",
+    "cy": "211.964",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "1169.714",
+    "cy": "194.037",
+    "ZoneName": "T",
+    "id": "Text"
+  },
+  {
+    "cx": "1117.1021",
+    "cy": "372.171",
+    "ZoneName": "G",
+    "id": "Text"
+  },
+  {
+    "cx": "1097.662",
+    "cy": "358.416",
+    "ZoneName": "H",
+    "id": "Text"
+  },
+  {
+    "cx": "1115.172",
+    "cy": "337.568",
+    "ZoneName": "J",
+    "id": "Text"
+  },
+  {
+    "cx": "1125.548",
+    "cy": "321.32",
+    "ZoneName": "K",
+    "id": "Text"
+  },
+  {
+    "cx": "1135.73",
+    "cy": "303.055",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "1140.8781",
+    "cy": "284.77",
+    "ZoneName": "M",
+    "id": "Text"
+  },
+  {
+    "cx": "1150.593",
+    "cy": "265.36",
+    "ZoneName": "N",
+    "id": "Text"
+  },
+  {
+    "cx": "1122.405",
+    "cy": "428.54",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "1107.647",
+    "cy": "449.524",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1095.566",
+    "cy": "469.278",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1083.387",
+    "cy": "488.687",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1132.803",
+    "cy": "408.124",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "1144.308",
+    "cy": "388.719",
+    "ZoneName": "F",
+    "id": "Text"
+  },
+  {
+    "cx": "1669.882",
+    "cy": "280.958",
+    "ZoneName": "AA",
+    "id": "Text"
+  },
+  {
+    "cx": "1693.439",
+    "cy": "352.082",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1663.887",
+    "cy": "263.402",
+    "ZoneName": "BB",
+    "id": "Text"
+  },
+  {
+    "cx": "276.363",
+    "cy": "286.1",
+    "ZoneName": "CC",
+    "id": "Text"
+  },
+  {
+    "cx": "235.77",
+    "cy": "349.691",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "276.86",
+    "cy": "266.425",
+    "ZoneName": "DD",
+    "id": "Text"
+  },
+  {
+    "cx": "1167.8879",
+    "cy": "177.627",
+    "ZoneName": "U",
+    "id": "Text"
+  },
+  {
+    "cx": "513.485",
+    "cy": "447.123",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "233.417",
+    "cy": "389.412",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1701.0179",
+    "cy": "386.285",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1421.115",
+    "cy": "444.844",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1157.365",
+    "cy": "557.28",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "1157.6169",
+    "cy": "577.346",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1157.7371",
+    "cy": "598.487",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1157.3101",
+    "cy": "617.645",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1386.786",
+    "cy": "568.318",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1386.906",
+    "cy": "589.92",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1386.48",
+    "cy": "610.068",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "775.868",
+    "cy": "562.196",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "775.69",
+    "cy": "581.121",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "775.81",
+    "cy": "601.62",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "775.384",
+    "cy": "621.484",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "551.532",
+    "cy": "570.89",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "551.652",
+    "cy": "595.344",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1597.906",
+    "cy": "579.92",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1597.48",
+    "cy": "601.068",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "322.441",
+    "cy": "583.368",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "322.015",
+    "cy": "604.943",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "551.226",
+    "cy": "615.919",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1149.424",
+    "cy": "693.26",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "1149.676",
+    "cy": "713.486",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1149.796",
+    "cy": "732.795",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1149.37",
+    "cy": "752.157",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "785.149",
+    "cy": "695.477",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "785.4",
+    "cy": "714.788",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "785.521",
+    "cy": "734.687",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "785.095",
+    "cy": "754.161",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1380.676",
+    "cy": "721.486",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1380.796",
+    "cy": "741.795",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1380.37",
+    "cy": "762.157",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "552.4",
+    "cy": "723.788",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "552.521",
+    "cy": "744.687",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "552.095",
+    "cy": "766.161",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1225.671",
+    "cy": "835.994",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "1222.1541",
+    "cy": "857.704",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1218.603",
+    "cy": "884.312",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1212.835",
+    "cy": "906.31",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "712.924",
+    "cy": "832.858",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "714.176",
+    "cy": "859.2",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "717.297",
+    "cy": "883.755",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "719.87",
+    "cy": "908.447",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1482.053",
+    "cy": "887.073",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "1482.3051",
+    "cy": "917.455",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1482.425",
+    "cy": "953.33",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1485.999",
+    "cy": "993.605",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1684.67",
+    "cy": "974.67",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1684.791",
+    "cy": "1023.689",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1684.365",
+    "cy": "1072.877",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "439.837",
+    "cy": "888.487",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "440.088",
+    "cy": "919.77",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "440.208",
+    "cy": "957.206",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "439.783",
+    "cy": "998.408",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "241.467",
+    "cy": "978.518",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "240.11",
+    "cy": "1030.447",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1882.67",
+    "cy": "1031.67",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1882.791",
+    "cy": "1093.689",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1882.365",
+    "cy": "1163.877",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "56.198",
+    "cy": "1039.4351",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "54.84",
+    "cy": "1101.364",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "55.213",
+    "cy": "1162.653",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "789.447",
+    "cy": "958.514",
+    "ZoneName": "W",
+    "id": "Text"
+  },
+  {
+    "cx": "1131.447",
+    "cy": "958.514",
+    "ZoneName": "W",
+    "id": "Text"
+  },
+  {
+    "cx": "1152.272",
+    "cy": "976.132",
+    "ZoneName": "V",
+    "id": "Text"
+  },
+  {
+    "cx": "772.272",
+    "cy": "976.132",
+    "ZoneName": "V",
+    "id": "Text"
+  },
+  {
+    "cx": "755.472",
+    "cy": "995.598",
+    "ZoneName": "U",
+    "id": "Text"
+  },
+  {
+    "cx": "1168.472",
+    "cy": "995.598",
+    "ZoneName": "U",
+    "id": "Text"
+  },
+  {
+    "cx": "1189.822",
+    "cy": "1015.068",
+    "ZoneName": "T",
+    "id": "Text"
+  },
+  {
+    "cx": "742.974",
+    "cy": "1015.068",
+    "ZoneName": "T",
+    "id": "Text"
+  },
+  {
+    "cx": "724.174",
+    "cy": "1035.23",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "1210.174",
+    "cy": "1035.23",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "1223.543",
+    "cy": "1052.83",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "1237.818",
+    "cy": "1070.8361",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "1248.204",
+    "cy": "1090.807",
+    "ZoneName": "N",
+    "id": "Text"
+  },
+  {
+    "cx": "1261.0179",
+    "cy": "1110.986",
+    "ZoneName": "M",
+    "id": "Text"
+  },
+  {
+    "cx": "1273.933",
+    "cy": "1129.1801",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "1283.167",
+    "cy": "1148.045",
+    "ZoneName": "K",
+    "id": "Text"
+  },
+  {
+    "cx": "1292.375",
+    "cy": "1166.035",
+    "ZoneName": "J",
+    "id": "Text"
+  },
+  {
+    "cx": "1300.976",
+    "cy": "1184.7271",
+    "ZoneName": "H",
+    "id": "Text"
+  },
+  {
+    "cx": "1308.574",
+    "cy": "1204.559",
+    "ZoneName": "G",
+    "id": "Text"
+  },
+  {
+    "cx": "1319.647",
+    "cy": "1223.573",
+    "ZoneName": "F",
+    "id": "Text"
+  },
+  {
+    "cx": "1325.207",
+    "cy": "1242.0551",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "1324.4041",
+    "cy": "1262.0551",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "1316.442",
+    "cy": "1279.6071",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1307.5649",
+    "cy": "1298.629",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1297.78",
+    "cy": "1318.2841",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "710.348",
+    "cy": "1052.83",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "697.994",
+    "cy": "1070.8361",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "685.323",
+    "cy": "1091.807",
+    "ZoneName": "N",
+    "id": "Text"
+  },
+  {
+    "cx": "671.184",
+    "cy": "1111.986",
+    "ZoneName": "M",
+    "id": "Text"
+  },
+  {
+    "cx": "663.453",
+    "cy": "1130.1801",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "650.11",
+    "cy": "1148.045",
+    "ZoneName": "K",
+    "id": "Text"
+  },
+  {
+    "cx": "641",
+    "cy": "1168.035",
+    "ZoneName": "J",
+    "id": "Text"
+  },
+  {
+    "cx": "629.578",
+    "cy": "1185.884",
+    "ZoneName": "H",
+    "id": "Text"
+  },
+  {
+    "cx": "623.14",
+    "cy": "1204.559",
+    "ZoneName": "G",
+    "id": "Text"
+  },
+  {
+    "cx": "615.444",
+    "cy": "1223.573",
+    "ZoneName": "F",
+    "id": "Text"
+  },
+  {
+    "cx": "610.832",
+    "cy": "1242.0551",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "612.791",
+    "cy": "1262.0551",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "621.586",
+    "cy": "1279.6071",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "630.347",
+    "cy": "1298.629",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "637.68",
+    "cy": "1318.2841",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "901.358",
+    "cy": "117.825",
+    "ZoneName": "AMPHITHEATRE",
+    "id": "Text"
+  },
+  {
+    "cx": "1752.8051",
+    "cy": "340.2522",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "1762.0396",
+    "cy": "338.2244",
+    "ZoneName": "O",
+    "id": "Text"
+  },
+  {
+    "cx": "1774.955",
+    "cy": "335.3883",
+    "ZoneName": "W",
+    "id": "Text"
+  },
+  {
+    "cx": "1790.6271",
+    "cy": "331.9469",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "1801.702",
+    "cy": "329.5149",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "1818.3064",
+    "cy": "325.8688",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "1829.3813",
+    "cy": "323.4368",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "1838.616",
+    "cy": "321.409",
+    "ZoneName": "I",
+    "id": "Text"
+  },
+  {
+    "cx": "1843.2292",
+    "cy": "320.396",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "1854.3042",
+    "cy": "317.964",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "1755.1124",
+    "cy": "212.7175",
+    "ZoneName": "U",
+    "id": "Text"
+  },
+  {
+    "cx": "1766.9982",
+    "cy": "209.6433",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "1777.9758",
+    "cy": "206.804",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "1788.9535",
+    "cy": "203.9646",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "1799.931",
+    "cy": "201.1252",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "1816.3894",
+    "cy": "196.8683",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "1827.3671",
+    "cy": "194.0289",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "1836.5203",
+    "cy": "191.6614",
+    "ZoneName": "I",
+    "id": "Text"
+  },
+  {
+    "cx": "1841.093",
+    "cy": "190.4786",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "1852.0707",
+    "cy": "187.6393",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "123.835",
+    "cy": "198.3552",
+    "ZoneName": "U",
+    "id": "Text"
+  },
+  {
+    "cx": "135.7439",
+    "cy": "201.3386",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "146.7428",
+    "cy": "204.0941",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "157.7418",
+    "cy": "206.8495",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "168.7408",
+    "cy": "209.605",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "185.2312",
+    "cy": "213.7362",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "196.2302",
+    "cy": "216.4916",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "205.4013",
+    "cy": "218.7892",
+    "ZoneName": "I",
+    "id": "Text"
+  },
+  {
+    "cx": "209.9829",
+    "cy": "219.937",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "220.9819",
+    "cy": "222.6924",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "112.535",
+    "cy": "318.8553",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "121.7062",
+    "cy": "321.1528",
+    "ZoneName": "O",
+    "id": "Text"
+  },
+  {
+    "cx": "134.533",
+    "cy": "324.3662",
+    "ZoneName": "W",
+    "id": "Text"
+  },
+  {
+    "cx": "150.0974",
+    "cy": "328.2654",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "161.0963",
+    "cy": "331.0208",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "177.5868",
+    "cy": "335.152",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "188.5857",
+    "cy": "337.9075",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "197.7569",
+    "cy": "340.205",
+    "ZoneName": "I",
+    "id": "Text"
+  },
+  {
+    "cx": "202.3384",
+    "cy": "341.3528",
+    "ZoneName": "P",
+    "id": "Text"
+  },
+  {
+    "cx": "213.3374",
+    "cy": "344.1082",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "928.897",
+    "cy": "537.825",
+    "ZoneName": "BALCONY",
+    "id": "Text"
+  },
+  {
+    "cx": "1716.2017",
+    "cy": "454.8929",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1727.4271",
+    "cy": "453.2928",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1738.6525",
+    "cy": "451.6927",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "1748.0125",
+    "cy": "450.3586",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "1760.1664",
+    "cy": "448.6261",
+    "ZoneName": "O",
+    "id": "Text"
+  },
+  {
+    "cx": "1773.2572",
+    "cy": "446.7601",
+    "ZoneName": "N",
+    "id": "Text"
+  },
+  {
+    "cx": "1785.4113",
+    "cy": "445.0276",
+    "ZoneName": "Y",
+    "id": "Text"
+  },
+  {
+    "cx": "1801.3126",
+    "cy": "442.761",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1812.538",
+    "cy": "441.1609",
+    "ZoneName": "O",
+    "id": "Text"
+  },
+  {
+    "cx": "1825.6288",
+    "cy": "439.295",
+    "ZoneName": "X",
+    "id": "Text"
+  },
+  {
+    "cx": "1836.8541",
+    "cy": "437.6949",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "1848.0796",
+    "cy": "436.0948",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "124.0677",
+    "cy": "450.9862",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "135.2754",
+    "cy": "452.7061",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "146.483",
+    "cy": "454.426",
+    "ZoneName": "L",
+    "id": "Text"
+  },
+  {
+    "cx": "155.8282",
+    "cy": "455.86",
+    "ZoneName": "C",
+    "id": "Text"
+  },
+  {
+    "cx": "167.9631",
+    "cy": "457.7222",
+    "ZoneName": "O",
+    "id": "Text"
+  },
+  {
+    "cx": "181.0332",
+    "cy": "459.7279",
+    "ZoneName": "N",
+    "id": "Text"
+  },
+  {
+    "cx": "193.168",
+    "cy": "461.59",
+    "ZoneName": "Y",
+    "id": "Text"
+  },
+  {
+    "cx": "209.0442",
+    "cy": "464.0263",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "220.2518",
+    "cy": "465.7462",
+    "ZoneName": "O",
+    "id": "Text"
+  },
+  {
+    "cx": "233.322",
+    "cy": "467.7519",
+    "ZoneName": "X",
+    "id": "Text"
+  },
+  {
+    "cx": "244.5297",
+    "cy": "469.4717",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "255.7374",
+    "cy": "471.1916",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "827.977",
+    "cy": "665.799",
+    "ZoneName": "DONALD GORDON GRAND TIER",
+    "id": "Text"
+  },
+  {
+    "cx": "1686.1948",
+    "cy": "665.5626",
+    "ZoneName": "G",
+    "id": "Text"
+  },
+  {
+    "cx": "1699.4119",
+    "cy": "665.9671",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "1711.683",
+    "cy": "666.3427",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "1723.0166",
+    "cy": "666.6895",
+    "ZoneName": "N",
+    "id": "Text"
+  },
+  {
+    "cx": "1735.2877",
+    "cy": "667.065",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "1752.2797",
+    "cy": "667.585",
+    "ZoneName": "T",
+    "id": "Text"
+  },
+  {
+    "cx": "1762.6591",
+    "cy": "667.9026",
+    "ZoneName": "I",
+    "id": "Text"
+  },
+  {
+    "cx": "1767.38",
+    "cy": "668.0471",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "1778.7136",
+    "cy": "668.394",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "1795.7057",
+    "cy": "668.914",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "1807.0392",
+    "cy": "669.2608",
+    "ZoneName": "O",
+    "id": "Text"
+  },
+  {
+    "cx": "1820.2561",
+    "cy": "669.6653",
+    "ZoneName": "X",
+    "id": "Text"
+  },
+  {
+    "cx": "1831.5897",
+    "cy": "670.0121",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "1842.9233",
+    "cy": "670.359",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "116.4204",
+    "cy": "674.8412",
+    "ZoneName": "G",
+    "id": "Text"
+  },
+  {
+    "cx": "129.641",
+    "cy": "674.5793",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "141.9154",
+    "cy": "674.3363",
+    "ZoneName": "A",
+    "id": "Text"
+  },
+  {
+    "cx": "153.2521",
+    "cy": "674.1118",
+    "ZoneName": "N",
+    "id": "Text"
+  },
+  {
+    "cx": "165.5266",
+    "cy": "673.8688",
+    "ZoneName": "D",
+    "id": "Text"
+  },
+  {
+    "cx": "182.5232",
+    "cy": "673.5322",
+    "ZoneName": "T",
+    "id": "Text"
+  },
+  {
+    "cx": "192.9054",
+    "cy": "673.3266",
+    "ZoneName": "I",
+    "id": "Text"
+  },
+  {
+    "cx": "197.6277",
+    "cy": "673.2331",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "208.9643",
+    "cy": "673.0086",
+    "ZoneName": "R",
+    "id": "Text"
+  },
+  {
+    "cx": "225.961",
+    "cy": "672.6721",
+    "ZoneName": "B",
+    "id": "Text"
+  },
+  {
+    "cx": "237.2976",
+    "cy": "672.4476",
+    "ZoneName": "O",
+    "id": "Text"
+  },
+  {
+    "cx": "250.5182",
+    "cy": "672.1858",
+    "ZoneName": "X",
+    "id": "Text"
+  },
+  {
+    "cx": "261.8548",
+    "cy": "671.9613",
+    "ZoneName": "E",
+    "id": "Text"
+  },
+  {
+    "cx": "273.1914",
+    "cy": "671.7368",
+    "ZoneName": "S",
+    "id": "Text"
+  },
+  {
+    "cx": "903.491",
+    "cy": "787.799",
+    "ZoneName": "STALLS CIRCLE",
+    "id": "Text"
+  },
+  {
+    "cx": "879.096",
+    "cy": "928.587",
+    "ZoneName": "ORCHESTRA STALLS",
+    "id": "Text"
   }
 ]
