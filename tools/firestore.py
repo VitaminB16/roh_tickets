@@ -17,7 +17,7 @@ class Firestore:
         Args:
         - path (str): Path to the Firestore document or collection
         - project (str): Project ID
-        
+
         Examples:
         - Firestore("bucket/path").read() -> Read from Firestore "bucket/path"
         - Firestore("gs://project/bucket/path").read() -> Read from Firestore "bucket/path"
@@ -61,19 +61,18 @@ class Firestore:
 
         doc_ref = self.get_ref(method="get")
         output = doc_ref.get().to_dict()
+        dtypes = {}
         if output is None and allow_empty:
             output = {}
-        if list(output.keys()) == ["data"]:
-            output = output["data"]
+        if set(output.keys()) in [{"data"}, {"data", "dtypes"}]:
+            dtypes = output.get("dtypes", dtypes)
+            output = output.get("data", output)
         if apply_schema:
-            schema = FIRESTORE_SCHEMAS.get(self.path, None)
+            schema = FIRESTORE_SCHEMAS.get(self.path, {})
             df = DataFrame(output)
             from python_roh.src.utils import enforce_schema
 
-            if schema is not None:
-                output = enforce_schema(df, schema)
-            else:
-                output = df
+            output = enforce_schema(df, schema=schema, dtypes=dtypes)
         log(f"Read from Firestore: {self.path}")
         return output
 
@@ -85,10 +84,12 @@ class Firestore:
         - columns (list): Columns to write from the DataFrame
         """
         doc_ref = self.get_ref(method="set")
+        dtypes = None
         if isinstance(data, DataFrame):
             if columns is not None:
                 data = data[columns]
             data.reset_index(drop=True, inplace=True)
+            dtypes = data.dtypes.astype(str).to_dict()
             data = data.to_json()
         try:
             doc_ref.set(data)
@@ -100,7 +101,10 @@ class Firestore:
             if isinstance(data, str):
                 # This happens if the data came from DataFrame.to_json()
                 data = json.loads(data)
-            doc_ref.set({"data": data})
+            output = {"data": data}
+            if dtypes is not None:
+                output["dtypes"] = dtypes
+            doc_ref.set(output)
         log(f"Written to Firestore: {self.path}")
         return True
 
