@@ -117,11 +117,12 @@ def enforce_one_schema(df_col, col_schema):
     return df_col
 
 
-def enforce_schema(df, schema, errors="raise"):
+def enforce_schema(df, schema={}, dtypes={}, errors="raise"):
     """
     Enforce a schema on a dataframe
     """
-    if schema is None:
+    schema = {**dtypes, **schema}  # schema takes precedence over dtypes
+    if schema == {}:
         return df
     for col, col_schema in schema.items():
         if col not in df.columns:

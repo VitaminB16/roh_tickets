@@ -37,8 +37,8 @@ def load_positions(from_local=False):
     seat_map = pd.DataFrame(seat_map_json)
     text_map, seat_map = seat_map.query("id == 'Text'"), seat_map.query("id != 'Text'")
 
-    seat_map = process_seat_map(seat_map)
-    text_map = process_text_map(text_map)
+    seat_map = _process_seat_map(seat_map)
+    text_map = _process_text_map(text_map)
 
     csv_name = SEAT_MAP_POSITIONS_CSV
     seat_map.to_csv(csv_name, index=False)
@@ -47,15 +47,16 @@ def load_positions(from_local=False):
     log(f"Written seat map positions to {csv_name}")
 
 
-def process_text_map(text_map):
+def _process_text_map(text_map):
     text_map.rename(columns={"cx": "x", "cy": "y", "ZoneName": "text"}, inplace=True)
     text_map.drop(columns=["id"], inplace=True)
     text_map.x = text_map.x.astype(float)
     text_map.y = text_map.y.astype(float)
+    text_map.reset_index(drop=True, inplace=True)
     return text_map
 
 
-def process_seat_map(seat_map):
+def _process_seat_map(seat_map):
     seat_map.rename(columns={"cx": "x", "cy": "y"}, inplace=True)
 
     # Get the seats data from the API
@@ -92,6 +93,7 @@ def process_seat_map(seat_map):
     seat_map = pd.concat([seat_map_syos, seat_map_other], axis=0)
     seat_map.x = seat_map.x.astype(float)
     seat_map.y = seat_map.y.astype(float)
+    seat_map.reset_index(drop=True, inplace=True)
     return seat_map
 
 
