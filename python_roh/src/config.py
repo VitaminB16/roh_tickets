@@ -117,6 +117,7 @@ if PLATFORM.name != "Local":
     PREFIX_PUBLIC = PREFIX_PUBLIC + PUBLIC_BUCKET
 # Private --------------------------------
 SEAT_MAP_POSITIONS_CSV = PREFIX + "metadata/seat_positions.csv"
+TEXT_MAP_POSITIONS_CSV = PREFIX + "metadata/text_positions.csv"
 TITLE_COLOURS_LOCATION = PREFIX + "metadata/titles_colour.json"
 SEAT_STATUSES_PATH = PREFIX + "metadata/seat_statuses.json"
 SEAT_POSITIONS_JSON_LOCATION = PREFIX + "metadata/seat_positions.json"

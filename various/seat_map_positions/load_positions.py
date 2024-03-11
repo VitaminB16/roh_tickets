@@ -12,6 +12,7 @@ from python_roh.src.config import (
     SEAT_MAP_POSITIONS_CSV,
     SEAT_POSITIONS_JSON_LOCATION,
     PREFIX,
+    TEXT_MAP_POSITIONS_CSV,
 )
 
 
@@ -34,6 +35,27 @@ def load_positions(from_local=False):
             + "Make sure to run extract_positions.js first."
         )
     seat_map = pd.DataFrame(seat_map_json)
+    text_map, seat_map = seat_map.query("id == 'Text'"), seat_map.query("id != 'Text'")
+
+    seat_map = process_seat_map(seat_map)
+    text_map = process_text_map(text_map)
+
+    csv_name = SEAT_MAP_POSITIONS_CSV
+    seat_map.to_csv(csv_name, index=False)
+    Firestore(SEAT_MAP_POSITIONS_CSV).write(seat_map)
+    Firestore(TEXT_MAP_POSITIONS_CSV).write(text_map)
+    log(f"Written seat map positions to {csv_name}")
+
+
+def process_text_map(text_map):
+    text_map.rename(columns={"cx": "x", "cy": "y", "ZoneName": "text"}, inplace=True)
+    text_map.drop(columns=["id"], inplace=True)
+    text_map.x = text_map.x.astype(float)
+    text_map.y = text_map.y.astype(float)
+    return text_map
+
+
+def process_seat_map(seat_map):
     seat_map.rename(columns={"cx": "x", "cy": "y"}, inplace=True)
 
     # Get the seats data from the API
@@ -70,11 +92,7 @@ def load_positions(from_local=False):
     seat_map = pd.concat([seat_map_syos, seat_map_other], axis=0)
     seat_map.x = seat_map.x.astype(float)
     seat_map.y = seat_map.y.astype(float)
-
-    csv_name = SEAT_MAP_POSITIONS_CSV
-    seat_map.to_csv(csv_name, index=False)
-    Firestore(SEAT_MAP_POSITIONS_CSV).write(seat_map)
-    log(f"Written seat map positions to {csv_name}")
+    return seat_map
 
 
 if __name__ == "__main__":
