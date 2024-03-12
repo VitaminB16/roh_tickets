@@ -184,7 +184,7 @@ def plot_hall(
         textfont=dict(
             size=9,
             family=font_family,
-            color="rgb(150,150,150)" if dark_mode else "rgb(135,135,135)",
+            color="rgb(170,170,170)" if dark_mode else "rgb(110,110,110)",
         ),
         hoverinfo="skip",
         hovertemplate=None,
