@@ -1,8 +1,8 @@
 import dash
 import pandas as pd
-from dash import dcc, html, no_update
+from dash import dcc, html
+from dash_svg import Svg, G, Path
 from dash.exceptions import PreventUpdate
-from dash_svg import Svg, G, Path, Circle
 from dash.dependencies import Input, Output, State, ClientsideFunction
 
 

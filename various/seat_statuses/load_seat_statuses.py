@@ -1,7 +1,5 @@
-import requests
-
+from tools import Firestore
 from python_roh.src.src import API
-from tools.firestore import Firestore
 from python_roh.src.config import SEAT_STATUSES_URL, SEAT_STATUSES_PATH
 
 

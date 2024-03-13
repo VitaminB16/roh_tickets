@@ -6,8 +6,6 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
 
-from tools.parquet import Parquet
-from tools.firestore import Firestore
 from python_roh.src.config import (
     SEAT_MAP_POSITIONS_CSV,
     AVAILABLE_SEAT_STATUS_IDS,
@@ -19,6 +17,7 @@ from python_roh.src.config import (
 )
 from cloud.utils import log
 from cloud.platform import PLATFORM
+from tools import Parquet, Firestore
 from python_roh.src.utils import force_list
 
 
@@ -265,8 +264,6 @@ def _fix_xy_positions(df):
         from various.seat_map_positions.load_positions import load_positions
 
         load_positions()
-    # with PLATFORM.open(SEAT_MAP_POSITIONS_CSV, "rb") as f:
-    #     seat_positions = pd.read_csv(f)
     seat_positions = Firestore(SEAT_MAP_POSITIONS_CSV).read(apply_schema=True)
     seat_positions.rename(columns={"ZoneName": "ZoneNameGeneral"}, inplace=True)
     log(f"Seat positions: {seat_positions.shape}")
@@ -276,31 +273,6 @@ def _fix_xy_positions(df):
     df = df.merge(seat_positions, on=["SeatName", "ZoneNameGeneral"], how="left")
     df.query("x.notnull()", inplace=True)  # Remove seats with no position, e.g. aisles
     return df
-
-
-# def _fix_y_positions(df):
-#     """
-#     Fix the YPosition so that it follows the zone hierarchy
-#     """
-#     df = df.assign(zone_hierarchy=df.ZoneName.map(ZONE_HIERARCHY).astype(int))
-#     max_y_positions = df.groupby(["zone_hierarchy"]).YPosition.max().reset_index()
-#     # Calculate cumulative sum of seats in each zone
-#     max_y_positions.sort_values(by=["zone_hierarchy"], inplace=True)
-#     cum_sum = max_y_positions.YPosition.cumsum()[:-1]
-#     cum_sum = pd.concat([pd.Series([0]), cum_sum], axis=0).reset_index(drop=True)
-#     max_y_positions["y_absolute_shift"] = cum_sum
-#     max_y_positions.rename(columns={"YPosition": "max_zone_y_position"}, inplace=True)
-#     # Merge the max YPosition back into the df
-#     df.drop(
-#         columns=["max_zone_y_position", "y_absolute_shift"],
-#         inplace=True,
-#         errors="ignore",
-#     )
-#     df = df.merge(max_y_positions, on="zone_hierarchy")
-#     df["YPosition"] = df["max_zone_y_position"] - df["YPosition"]
-#     df["YPosition"] = df["YPosition"] + df["y_absolute_shift"]
-#     df.drop(columns=["max_zone_y_position", "y_absolute_shift"], inplace=True)
-#     return df
 
 
 def _query_production_activities(production_url):

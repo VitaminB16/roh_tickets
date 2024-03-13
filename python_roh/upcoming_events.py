@@ -1,16 +1,14 @@
 import pandas as pd
-from urllib.parse import unquote
 
 from cloud.utils import log
-from tools.parquet import Parquet
 from python_roh.src.config import *
+from tools import Parquet, Firestore
 from python_roh.src.utils import force_list
 from python_roh.src.src import (
     API,
     _query_soonest_performance_id,
     query_production_activities,
 )
-from tools.firestore import Firestore
 
 if "src_secret.py" in os.listdir("python_roh/src"):
     from python_roh.src.src_secret import secret_function_2

@@ -3,13 +3,10 @@ import json
 import logging
 import requests
 import google.auth
-import concurrent.futures
-from pandas import DataFrame
 import google.auth.exceptions
 from google.oauth2 import id_token
-from google.cloud import pubsub_v1
-from google.cloud import logging as gcp_logging
 from google.auth.transport.requests import Request
+from google.cloud import pubsub_v1, logging as gcp_logging
 
 if os.getenv("PLATFORM", "GCP") in ["GCP", "local"]:
     client = gcp_logging.Client()

@@ -3,10 +3,10 @@ import pandas as pd
 
 from python_roh.set_secrets import set_secrets
 
+from tools import Firestore
 from cloud.utils import log
 from python_roh.src.src import API
 from python_roh.src.utils import JSON
-from tools.firestore import Firestore
 from python_roh.src.api import get_query_dict
 from python_roh.src.config import (
     SEAT_MAP_POSITIONS_CSV,
