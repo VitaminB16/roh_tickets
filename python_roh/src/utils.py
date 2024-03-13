@@ -26,6 +26,16 @@ def jprint(x):
     log(json.dumps(x, indent=3))
 
 
+def is_series(obj):
+    """Check if an object is a pandas Series without importing pandas."""
+    return type(obj).__name__ == "Series"
+
+
+def is_dataframe(obj):
+    """Check if an object is a pandas DataFrame without importing pandas."""
+    return type(obj).__name__ == "DataFrame"
+
+
 class JSON:
     """
     Class for operating json files

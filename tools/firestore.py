@@ -1,10 +1,10 @@
 import os
 import json
 import concurrent.futures
-from pandas import DataFrame
 from google.cloud import firestore
 
 from cloud.utils import log
+from python_roh.src.utils import is_dataframe
 
 
 class Firestore:
@@ -61,18 +61,26 @@ class Firestore:
 
         doc_ref = self.get_ref(method="get")
         output = doc_ref.get().to_dict()
-        dtypes = {}
+        metadata = {}
+        object_type = None
+        dtypes = None
         if output is None and allow_empty:
             output = {}
-        if set(output.keys()) in [{"data"}, {"data", "dtypes"}]:
-            dtypes = output.get("dtypes", dtypes)
+        if set(output.keys()) in [{"data"}, {"data", "metadata"}]:
+            metadata = output.get("metadata", {})
+            object_type = metadata.get("object_type", None)
+            dtypes = metadata.get("dtypes", None)
             output = output.get("data", output)
         if apply_schema:
             schema = FIRESTORE_SCHEMAS.get(self.path, {})
-            df = DataFrame(output)
+            print(object_type)
+            if object_type == "<class 'pandas.core.frame.DataFrame'>":
+                from pandas import DataFrame
+
+                output = DataFrame(output)
             from python_roh.src.utils import enforce_schema
 
-            output = enforce_schema(df, schema=schema, dtypes=dtypes)
+            output = enforce_schema(output, schema=schema, dtypes=dtypes)
         log(f"Read from Firestore: {self.path}")
         return output
 
@@ -84,8 +92,9 @@ class Firestore:
         - columns (list): Columns to write from the DataFrame
         """
         doc_ref = self.get_ref(method="set")
-        dtypes = None
-        if isinstance(data, DataFrame):
+        dtypes, object_type = None, None
+        object_type = str(type(data))
+        if is_dataframe(data):
             if columns is not None:
                 data = data[columns]
             data.reset_index(drop=True, inplace=True)
@@ -101,9 +110,11 @@ class Firestore:
             if isinstance(data, str):
                 # This happens if the data came from DataFrame.to_json()
                 data = json.loads(data)
-            output = {"data": data}
+            output = {"data": data, "metadata": {}}
             if dtypes is not None:
-                output["dtypes"] = dtypes
+                output["metadata"]["dtypes"] = dtypes
+            if object_type is not None:
+                output["metadata"]["object_type"] = object_type
             doc_ref.set(output)
         log(f"Written to Firestore: {self.path}")
         return True
