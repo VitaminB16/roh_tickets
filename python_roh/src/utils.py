@@ -185,7 +185,6 @@ def enforce_schema(df, schema={}, dtypes={}, errors="raise"):
     if schema == {}:
         return df
     for col, col_schema in schema.items():
-        print(df)
         if col not in df:
             df[col] = None
         try:
