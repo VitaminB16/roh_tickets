@@ -132,23 +132,34 @@ EVENTS_PARQUET_SCHEMA = {
     "date": [
         lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
         lambda x: pd.to_datetime(x, unit="ms").dt.date,
+        lambda x: pd.to_datetime(x, format="%Y-%m-%d").date,
+        lambda x: pd.to_datetime(x, unit="ms").date,
     ],
     "time": [
         lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
         lambda x: pd.to_datetime(x, format="%H:%M:%S").dt.time,
         lambda x: pd.to_datetime(x, unit="ms").dt.time,
+        lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").time,
+        lambda x: pd.to_datetime(x, format="%H:%M:%S").time,
+        lambda x: pd.to_datetime(x, unit="ms").time,
     ],
-    "timestamp": lambda x: pd.to_datetime(x, unit="ms", utc=True).dt.tz_convert(
-        "Europe/London"
-    ),
+    "timestamp": [
+        lambda x: pd.to_datetime(x, unit="ms", utc=True).dt.tz_convert("Europe/London"),
+        lambda x: pd.to_datetime(x, unit="ms", utc=True).tz_convert("Europe/London"),
+    ],
     "performanceId": lambda x: x.astype(str),
     "productionId": lambda x: x.astype(int),
 }
 PRODUCTIONS_PARQUET_SCHEMA = {
-    "date": lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
+    "date": [
+        lambda x: pd.to_datetime(x, format="%Y-%m-%d").dt.date,
+        lambda x: pd.to_datetime(x, format="%Y-%m-%d").date,
+    ],
     "time": [
         lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").dt.time,
         lambda x: pd.to_datetime(x, format="%H:%M:%S").dt.time,
+        lambda x: pd.to_datetime(x, format="%H:%M:%S.000000").time,
+        lambda x: pd.to_datetime(x, format="%H:%M:%S").time,
     ],
     "performanceId": lambda x: x.astype(str),
     "productionId": lambda x: x.astype(int),
