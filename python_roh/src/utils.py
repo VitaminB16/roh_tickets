@@ -101,41 +101,92 @@ def ensure_types(df, types_dict):
     return df
 
 
-def enforce_one_schema(df_col, col_schema):
+def dtype_str_to_type(dtype_str):
     """
-    Enforce a schema on a dataframe
+    Map a string representation of a dtype to its corresponding Python type
+    or return the string if it's a Pandas-specific type.
     """
-    if isinstance(col_schema, type(lambda x: x)):
-        # e.g. lambda x: x.strip()
-        df_col = col_schema(df_col)
-    elif isinstance(col_schema, dict):
-        # e.g. {"a": int, "b": str}
-        df_col = df_col.map(col_schema)
-    elif isinstance(col_schema, type):
-        # e.g. int, str, float
-        df_col = df_col.astype(col_schema)
-    elif isinstance(col_schema, (list)):
-        # If it is a list of possible schemas, try each one until one works
+    python_types = {
+        "int": int,
+        "int64": int,
+        "float": float,
+        "float64": float,
+        "str": str,
+        "bool": bool,
+    }
+    return python_types.get(dtype_str, dtype_str)
+
+
+def enforce_schema_on_series(series, schema):
+    """Enforce a schema on a pandas Series."""
+    if callable(schema):
+        # For callable schemas, apply directly
+        return schema(series)
+    elif isinstance(schema, dict):
+        # For dictionary schemas, use map (assuming intention is to map values based on keys)
+        return series.map(lambda x: schema.get(x, x))
+    elif isinstance(schema, (type, str)):
+        # For type schemas, cast the Series to the specified type
+        return series.astype(schema)
+    else:
+        raise TypeError("Unsupported schema type.")
+
+
+def enforce_schema_on_list(lst, schema):
+    """Enforce a schema on a list."""
+    if callable(schema):
+        return [schema(x) for x in lst]
+    elif isinstance(schema, dict):
+        return [schema.get(x, x) for x in lst]
+    elif isinstance(schema, type):
+        return [schema(x) for x in lst]
+    elif isinstance(schema, str):
+        schema = dtype_str_to_type(schema)
+        for i, x in enumerate(lst):
+            try:
+                lst[i] = schema(x)
+            except ValueError:
+                pass
+        return lst
+    else:
+        raise TypeError("Unsupported schema type.")
+
+
+def enforce_one_schema(data, col_schema):
+    """
+    Enforce a schema on a dataframe column or a list of data.
+    Args:
+    - data (Series|List): The data to enforce the schema on.
+    - col_schema (type|dict|callable|list): The schema to enforce.
+    """
+
+    if isinstance(col_schema, list):
+        # Attempt to enforce each schema in the list until one succeeds
         for schema in col_schema:
             try:
-                df_col = enforce_one_schema(df_col, schema)
-                break
+                return enforce_one_schema(data, schema)
             except Exception:
-                pass
+                continue
         else:
-            raise ValueError(f"Could not enforce schema {col_schema} on {df_col}")
-    return df_col
+            raise ValueError(f"Could not enforce schema {col_schema} on {data}")
+    else:
+        if is_series(data):
+            return enforce_schema_on_series(data, col_schema)
+        else:
+            data = force_list(data)
+            return enforce_schema_on_list(data, col_schema)
 
 
 def enforce_schema(df, schema={}, dtypes={}, errors="raise"):
     """
-    Enforce a schema on a dataframe
+    Enforce a schema on a dataframe or dictionary
     """
     schema = {**dtypes, **schema}  # schema takes precedence over dtypes
     if schema == {}:
         return df
     for col, col_schema in schema.items():
-        if col not in df.columns:
+        print(df)
+        if col not in df:
             df[col] = None
         try:
             df[col] = enforce_one_schema(df[col], col_schema)
