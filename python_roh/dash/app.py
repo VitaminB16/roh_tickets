@@ -384,10 +384,18 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
 def display_seat_view_image(clickData):
     if clickData is None:
         raise PreventUpdate
+    print(clickData)
     point = clickData["points"][0]
     image_url = point["customdata"][5]
     image = html.Img(src=image_url, style={"maxWidth": "70%", "maxHeight": "70%"})
-    return html.Div(image, style={"display": "block"})
+    price, zone, row, seat = point["customdata"][0:4]
+    seat_info_str = f"View from seat: {row}{seat} ({zone})"
+    seat_price_str = f"Price | {price}" if price != "Not available" else "Seat not available"
+    image_div = html.Div(image, style={"display": "block"})
+    seat_info = html.Div(seat_info_str, style={"textAlign": "center"})
+    seat_price = html.Div(seat_price_str, style={"textAlign": "center"})
+    output = html.Div([image_div, seat_info, seat_price], style={"textAlign": "center"})
+    return output
 
 
 @app.callback(
