@@ -28,56 +28,57 @@ def handle_upcoming_events(
     """
     Entry point for the upcoming events
     """
-    if not query_events_api:
-        log("Not querying the API for events. Using stored data.")
-        if not use_firestore_events:
-            # Read events data from Parquet
-            events_df, today_tomorrow_events_df, next_week_events_df = (
-                get_events_from_parquet(EVENTS_PARQUET_LOCATION)
-            )
-        else:
-            # Read events data from Firestore (limited columns only, for Dash app plots)
-            events_df = Firestore(EVENTS_PARQUET_LOCATION).read(
-                allow_empty=True, apply_schema=True
-            )
-            if (
-                events_df is None
-                or (isinstance(events_df, dict) and events_df == {})
-                or events_df.empty
-            ):
-                log("No events data found in Firestore. Querying the API instead.")
-                return handle_upcoming_events(
-                    query_dict,
-                    query_events_api=True,
-                    store_soonest=True,
-                    use_firestore_events=False,
-                    **kwargs,
-                )
-            today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
-            today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
-                events_df, today
-            )
-        return events_df, today_tomorrow_events_df, next_week_events_df, pd.DataFrame()
+    if query_events_api:
+        data = API(query_dict).query_all_data("events")
+        events_df, included_df = data["events"]
 
-    data = API(query_dict).query_all_data("events")
-    events_df, included_df = data["events"]
+        locations_df = get_locations_df(included_df)
+        events_df = events_df.merge(locations_df, on="locationId", how="left")
 
-    locations_df = get_locations_df(included_df)
-    events_df = events_df.merge(locations_df, on="locationId", how="left")
+        performances_df = get_performances_df(events_df)
+        events_df = pd.concat([events_df, performances_df], axis=1)
+        events_df.drop(columns=["performances", "date"], inplace=True)
 
-    performances_df = get_performances_df(events_df)
-    events_df = pd.concat([events_df, performances_df], axis=1)
-    events_df.drop(columns=["performances", "date"], inplace=True)
+        events_df, new_events_df = enrich_events_df(events_df)
 
-    events_df, new_events_df = enrich_events_df(events_df)
+        today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
+        today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
+            events_df, today
+        )
+        if store_soonest:
+            store_soonest_performances(events_df, today, n_events=10)
 
+        return events_df, today_tomorrow_events_df, next_week_events_df, new_events_df
+
+    log("Not querying the API for events. Using stored data.")
+    new_events_df = pd.DataFrame()
+    if not use_firestore_events:
+        # Read events data from Parquet
+        events_df, today_tomorrow_events_df, next_week_events_df = (
+            get_events_from_parquet(EVENTS_PARQUET_LOCATION)
+        )
+        return events_df, today_tomorrow_events_df, next_week_events_df, new_events_df
+
+    events_df = Firestore(EVENTS_PARQUET_LOCATION).read(
+        allow_empty=True, apply_schema=True
+    )
+    if (
+        events_df is None
+        or (isinstance(events_df, dict) and events_df == {})
+        or events_df.empty
+    ):
+        log("No events data found in Firestore. Querying the API instead.")
+        return handle_upcoming_events(
+            query_dict,
+            query_events_api=True,
+            store_soonest=True,
+            use_firestore_events=False,
+            **kwargs,
+        )
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
     today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
         events_df, today
     )
-    if store_soonest:
-        store_soonest_performances(events_df, today, n_events=10)
-
     return events_df, today_tomorrow_events_df, next_week_events_df, new_events_df
 
 
