@@ -28,7 +28,8 @@ gcloud run deploy ${CLOUD_FUNCTION_NAME} \
   --project=${PROJECT_ID} \
   --env-vars-file ${YAML_FILE} \
   --memory=${MEMORY} \
-  --min-instances=0
+  --min-instances=0 \
+  --no-allow-unauthenticated
 
 ####################
 # Cloud Scheduler  #

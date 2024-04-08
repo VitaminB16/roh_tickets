@@ -21,4 +21,5 @@ gcloud functions deploy $CLOUD_FUNCTION_NAME \
   --env-vars-file yamls/cloudfunction.env.yaml \
   --timeout=120s \
   --memory=1024MB \
-  --no-gen2
+  --no-gen2 \
+  --no-allow-unauthenticated
