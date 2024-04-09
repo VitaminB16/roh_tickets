@@ -16,11 +16,10 @@ if __name__ == "__main__":
         args = parse_args(args)
         payload.update(args)
     serve_as = payload.get("serve_as", False)
-    if serve_as:
-        url_env = {
-            "cloud_run": "CLOUD_RUN_URL",
-            "cloud_function": "CLOUD_FUNCTION_URL",
-        }.get(serve_as, "CLOUD_FUNCTION_URL")
+    url_env = {
+        "cloud_run": "CLOUD_RUN_URL",
+        "cloud_function": "CLOUD_FUNCTION_URL",
+    }.get(serve_as, "CLOUD_FUNCTION_URL")
     url = os.getenv(url_env, os.getenv("CLOUD_FUNCTION_URL"))
     log(f"Sending {payload} to {url}")
     response = GCPRequest(url).post(payload)

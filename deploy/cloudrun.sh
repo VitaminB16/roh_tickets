@@ -54,7 +54,8 @@ configure_job() {
     --uri "$URI" \
     --http-method POST \
     --message-body "$PAYLOAD" \
-    --oidc-service-account-email $OIDC_SERVICE_ACCOUNT_EMAIL
+    --oidc-service-account-email $OIDC_SERVICE_ACCOUNT_EMAIL \
+    --oidc-token-audience $URI
 }
 
 # If the job exists, use update, otherwise use create
