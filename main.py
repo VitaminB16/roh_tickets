@@ -45,14 +45,15 @@ def flask_entry_point():
 if __name__ == "__main__":
     serve_as = os.environ.get("SERVE_AS", "local")
     port = int(os.environ.get("PORT", 8080))
+    host = os.environ.get("HOST", "0.0.0.0")
     if serve_as == "cloud_run":
         log("Starting the Flask app for Cloud Run")
-        app.run(host="0.0.0.0", port=port)
+        app.run(host=host, port=port)
     elif serve_as == "dash_app":
         log("Starting the Dash app")
         from python_roh.dash.app import app
 
-        app.run_server(host="0.0.0.0", port=port)
+        app.run_server(host=host, port=port)
     else:
         with open("payload.json", "r") as f:
             payload = json.load(f)
