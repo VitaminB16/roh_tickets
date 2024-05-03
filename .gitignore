@@ -10,7 +10,8 @@ secrets.txt
 *.parquet
 *.ttf
 *.env*
-*payload.json
+*payload*.json
+*secret*.json
 fonts/
 .vscode
 _includes/

@@ -161,22 +161,44 @@ def enrich_events_with_productions(events_df, dont_read_from_storage=True):
     Enriches the events_df with the production_id
     """
     unique_productions = events_df.drop_duplicates(subset=["productionId"])
+    adhoc_performance_id = events_df.apply(
+        lambda x: f"{x.productionId}-{x.date}-{x.time}", axis=1
+    )
+    unique_performances = events_df.assign(adhoc_performance_id=adhoc_performance_id)
+    unique_performances = unique_performances.drop_duplicates(
+        subset=["adhoc_performance_id"]
+    )
 
     if dont_read_from_storage:
         # Get the existing partitions without reading the parquet
-        existing_prods = PLATFORM.glob(f"{PRODUCTIONS_PARQUET_LOCATION}/*/*")
-        existing_prods = [x.split("/")[-1] for x in existing_prods]
-        existing_prods = [x.replace("productionId=", "") for x in existing_prods]
-        existing_prod_ids = [int(x) for x in existing_prods if x.isdigit()]
+        existing_performances = PLATFORM.glob(f"{PRODUCTIONS_PARQUET_LOCATION}/*/*/*/*")
+        existing_performances = [x.split("/")[-3:] for x in existing_performances]
+        existing_performances = [
+            [x[0], x[1], x[2].replace("%3A", ":").replace(".000000", "")]
+            for x in existing_performances
+        ]
+        existing_performances = [
+            "-".join([x[0].split("=")[1], x[1].split("=")[1], x[2].split("=")[1]])
+            for x in existing_performances
+        ]
+        existing_prod_ids = set([int(x.split("-")[0]) for x in existing_performances])
     else:
         # Get the existing productions from the Parquet
         existing_prods = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(allow_empty=True)
         existing_prod_ids = existing_prods.productionId.unique()
+        existing_performances = existing_prods.apply(
+            lambda x: f"{x.productionId}-{x.date}-{x.time}", axis=1
+        )
+
     added_productions = unique_productions.query(
         "productionId not in @existing_prod_ids"
     ).reset_index(drop=True)
 
-    handle_added_productions(added_productions)
+    added_performances = unique_performances.query(
+        "adhoc_performance_id not in @existing_performances"
+    ).reset_index(drop=True)
+
+    handle_added_performances_productions(added_performances, added_productions)
     events_df = merge_prouctions_into_events(
         events_df, dont_read_from_storage=dont_read_from_storage
     )
@@ -187,18 +209,28 @@ def enrich_events_with_productions(events_df, dont_read_from_storage=True):
     return events_df, added_productions
 
 
-def handle_added_productions(added_productions):
+def handle_added_performances_productions(added_performances, added_productions):
     """
-    Get the activities for the added productions and store them in a Parquet
+    Get the activities for the added performances and store them in a Parquet
     """
-    if added_productions.empty:
+    if added_performances.empty and added_productions.empty:
         return None
 
-    new_titles = added_productions.title.unique()
+    new_performances = set(added_performances.title)
+    new_productions = set(added_productions.title)
+    new_productions = new_productions & new_performances
+    new_performances = new_performances - new_productions
+
     if "secret_function_2" in globals():
-        secret_function_2(new_titles)
-    log(f"New productions: \n{new_titles}")
-    for production_i in added_productions.itertuples():
+        secret_function_2(new_productions, new_performances)
+    log(f"New productions: \n{new_productions}")
+    log(f"New performances: \n{new_performances}")
+
+    # The URL from performance will query all activities in the production
+    # So we only need to query the activities once per production
+    added_performances = added_performances.drop_duplicates(subset=["url"])
+
+    for production_i in added_performances.itertuples():
         production_url = production_i.url
         activities_df = query_production_activities(production_url)
         activities_df.rename(
@@ -218,6 +250,7 @@ def handle_added_productions(added_productions):
             performances_df,
             partition_cols=["title", "productionId", "date", "time", "performanceId"],
         )
+        log(f"Stored performances for {production_i.title} in Productions Parquet.")
     return None
 
 
