@@ -98,7 +98,8 @@ def store_soonest_performances(events_df, today, n_events=10):
     """
     Store the soonest Main Stage performances in Firestore for quick query
     """
-    soonest_10 = events_df.query("timestamp > @today and location == 'Main Stage'")
+    query_str = "timestamp > @today and location == 'Main Stage' and title != 'Friends Rehearsals'"
+    soonest_10 = events_df.query(query_str)
     soonest_10 = soonest_10.sort_values(by=["timestamp"]).iloc[:n_events]
     soonest_10.reset_index(drop=True, inplace=True)
     json_to_write = soonest_10.performanceId.astype(str).to_dict()
