@@ -288,8 +288,9 @@ def plot_events(
         return
 
     today = pd.Timestamp.today(tz="Europe/London")
+    time_min = today - pd.Timedelta(hours=3.5)
     if filter_recent:
-        sub_query = "location == 'Main Stage' & timestamp >= @today"
+        sub_query = "location == 'Main Stage' & timestamp >= @time_min"
     else:
         sub_query = "location == 'Main Stage'"
     plot_df = events_df.query(sub_query).reset_index(drop=True)
