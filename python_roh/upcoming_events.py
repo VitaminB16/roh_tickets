@@ -311,7 +311,7 @@ def query_soonest_performance_id(n_soonest=1, use_stored=True, **kwargs):
         soonest_perf_ids = force_list(soonest_ids)[:n_soonest]
         log(f"Soonest performance id: {soonest_perf_ids}")
     else:
-        events_df, _, _ = handle_upcoming_events(query_dict)
+        events_df, _, _, _ = handle_upcoming_events(query_dict)
         today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
         events_df_sub = events_df.query(
             "location == 'Main Stage' & timestamp >= @today"
