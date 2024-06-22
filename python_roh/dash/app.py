@@ -352,6 +352,14 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
                 **({"data-performance-id": previous_event} if previous_event else {}),
             ),
             html.Button(
+                id="refresh-performance-btn",
+                children="Refresh",
+                n_clicks=0,
+                className="link-button",
+                style={"marginRight": "10px", **url_style, "font-size": "16px"},
+                **({"data-performance-id": performance_id} if performance_id else {}),
+            ),
+            html.Button(
                 id="next-performance-btn",
                 children="Next →",
                 n_clicks=0,
@@ -365,8 +373,9 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
             "justifyContent": "center",
             "marginBottom": "auto",
             "marginTop": "auto",
-            "margin-left": "25%",
+            "margin-left": "18%",
             "position": "absolute",
+            "textAlign": "right",
             **FONT_FAMILY,
         },
     )
@@ -390,7 +399,9 @@ def display_seat_view_image(clickData):
     image = html.Img(src=image_url, style={"maxWidth": "70%", "maxHeight": "70%"})
     price, zone, row, seat = point["customdata"][0:4]
     seat_info_str = f"View from seat: {row}{seat} ({zone})"
-    seat_price_str = f"Price | {price}" if price != "Not available" else "Seat not available"
+    seat_price_str = (
+        f"Price | {price}" if price != "Not available" else "Seat not available"
+    )
     image_div = html.Div(image, style={"display": "block"})
     seat_info = html.Div(seat_info_str, style={"textAlign": "center"})
     seat_price = html.Div(seat_price_str, style={"textAlign": "center"})
@@ -409,10 +420,18 @@ def display_seat_view_image(clickData):
         Input("next-performance-btn", "n_clicks"),
         Input("prev-performance-btn", "n_clicks"),
     ],
-    [State("current-performance-id", "data"), State("theme-store", "data")],
+    [
+        State("current-performance-id", "data"),
+        State("theme-store", "data"),
+    ],
     prevent_initial_call=True,
 )
-def update_performance_id(next_clicks, prev_clicks, current_id, theme_data):
+def update_performance_id(
+    next_clicks,
+    prev_clicks,
+    current_id,
+    theme_data,
+):
     ctx = dash.callback_context
     if not ctx.triggered:
         raise PreventUpdate
@@ -435,6 +454,19 @@ def update_performance_id(next_clicks, prev_clicks, current_id, theme_data):
     return updated_id, fig, visible_style, event_info_container
 
 
+@app.callback(
+    Output("seats-graph", "figure", allow_duplicate=True),
+    [Input("refresh-performance-btn", "n_clicks")],
+    [State("current-performance-id", "data"), State("theme-store", "data")],
+    prevent_initial_call=True,
+)
+def refresh_seats_map(refresh_clicks, performance_id, theme_data):
+    if refresh_clicks == 0:
+        raise PreventUpdate
+    fig = get_seats_map(performance_id)
+    return fig
+
+
 # Call to get the seats map
 def get_seats_map(performance_id):
     payload = {
@@ -450,7 +482,7 @@ def get_all_title_events(performance_id, event_title=None):
     if event_title is None:
         event_title = EVENTS_DF.query(f"performanceId == @performance_id").title
         event_title = event_title.iloc[0]
-    today = pd.Timestamp.today(tz="Europe/London")
+    today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=3.5)
     title_events = EVENTS_DF.query(f"title == @event_title and timestamp >= @today")
     title_events = title_events.sort_values(by=["date", "time"])
     all_performances = list(title_events.performanceId)
