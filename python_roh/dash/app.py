@@ -2,6 +2,7 @@ import dash
 import pandas as pd
 from dash import dcc, html
 from dash_svg import Svg, G, Path
+from python_roh.src.config import *
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output, State, ClientsideFunction
 
@@ -132,7 +133,7 @@ def serve_layout(dark_mode):
                                 viewBox="0 0 16 16",
                                 fill="#000000" if not dark_mode else "#FFFFFF",
                             ),
-                            href="https://github.com/VitaminB16/roh_tickets",
+                            href=PYTHON_ROH_REPO_URL,
                             target="_blank",
                             style={
                                 "display": "inline-block",
@@ -144,7 +145,7 @@ def serve_layout(dark_mode):
                     html.Div(  # GitHub repo link
                         html.A(
                             "Source code",
-                            href="https://github.com/VitaminB16/roh_tickets",
+                            href=PYTHON_ROH_REPO_URL,
                             target="_blank",
                             style={
                                 "display": "inline-block",
@@ -328,13 +329,13 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
         [
             dcc.Link(
                 "Book tickets",
-                href=f"https://www.rbo.org.uk/checkout/interstitial/{performance_id}",
+                href=f"{INTERSTITIAL_URL}/{performance_id}",
                 target="_blank",
                 style=url_style,
             ),
             dcc.Link(
                 "View seat map",
-                href=f"https://www.rbo.org.uk/seatmap?performanceId={performance_id}",
+                href=f"{SEATMAP_URL}?performanceId={performance_id}",
                 target="_blank",
                 style=url_style,
             ),
