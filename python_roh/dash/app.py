@@ -328,13 +328,13 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
         [
             dcc.Link(
                 "Book tickets",
-                href=f"https://www.roh.org.uk/checkout/interstitial/{performance_id}",
+                href=f"https://www.rbo.org.uk/checkout/interstitial/{performance_id}",
                 target="_blank",
                 style=url_style,
             ),
             dcc.Link(
                 "View seat map",
-                href=f"https://www.roh.org.uk/seatmap?performanceId={performance_id}",
+                href=f"https://www.rbo.org.uk/seatmap?performanceId={performance_id}",
                 target="_blank",
                 style=url_style,
             ),

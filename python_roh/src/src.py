@@ -277,7 +277,7 @@ def _fix_xy_positions(df):
 
 def _query_production_activities(production_url):
     """
-    production_url: str, e.g. "https://www.roh.org.uk/tickets-and-events/tosca-by-jonathan-kent-dates"
+    production_url: str, e.g. "https://www.rbo.org.uk/tickets-and-events/tosca-by-jonathan-kent-dates"
     """
     production_data = requests.get(production_url).text
     soup = BeautifulSoup(production_data, "html.parser")
@@ -297,7 +297,7 @@ def _query_production_activities(production_url):
 
 def query_production_activities(production_url):
     """
-    production_url: str, e.g. "https://www.roh.org.uk/tickets-and-events/tosca-by-jonathan-kent-dates"
+    production_url: str, e.g. "https://www.rbo.org.uk/tickets-and-events/tosca-by-jonathan-kent-dates"
     """
     activities_df = _query_production_activities(production_url)
     activities_df.date = pd.to_datetime(activities_df.date, utc=True)
@@ -308,7 +308,7 @@ def query_production_activities(production_url):
 
 def _query_soonest_performance_id(production_url):
     """
-    production_url: str, e.g. "https://www.roh.org.uk/tickets-and-events/tosca-by-jonathan-kent-dates"
+    production_url: str, e.g. "https://www.rbo.org.uk/tickets-and-events/tosca-by-jonathan-kent-dates"
     """
     activities_df = query_production_activities(production_url)
     today = pd.Timestamp.today(tz="Europe/London") + pd.Timedelta(hours=1)
