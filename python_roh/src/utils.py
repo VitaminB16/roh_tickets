@@ -5,6 +5,7 @@ import collections.abc
 
 from cloud.utils import log
 from cloud.platform import PLATFORM
+from python_roh.src.config import PYTHON_ROH_REPO_URL
 
 LIST_LIKE_TYPES = (list, tuple, set, frozenset, collections.abc.KeysView)
 
@@ -196,7 +197,7 @@ def enforce_schema(df, schema={}, dtypes={}, errors="raise"):
     return df
 
 
-def purge_image_cache(repo_url="https://github.com/VitaminB16/roh_tickets"):
+def purge_image_cache(repo_url=PYTHON_ROH_REPO_URL):
     """
     Purge the image cache of a github repository. This is useful when the image is updated and the old one is still cached.
     """
