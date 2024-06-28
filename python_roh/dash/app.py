@@ -59,9 +59,15 @@ def update_toggle_button_style(is_dark_mode):
 app.layout = html.Div(
     [
         dcc.Store(id="theme-store"),
+        dcc.Store(id="refresh-toggle-store", data={"refresh_enabled": False}),
         html.Div(id="dynamic-content"),
         dcc.Interval(
             id="interval-component-init", interval=100, n_intervals=0, max_intervals=1
+        ),
+        dcc.Interval(
+            id="interval-component-refresh",
+            interval=10 * 1000,
+            n_intervals=0,  # every 1 minute
         ),
     ]
 )
@@ -102,6 +108,19 @@ def toggle_dark_mode(n_clicks, current_state):
     return {"dark_mode": is_dark_mode}
 
 
+@app.callback(
+    Output("refresh-toggle-store", "data"),
+    [Input("refresh-toggle-button", "n_clicks")],
+    [State("refresh-toggle-store", "data")],
+    prevent_initial_call=True,
+)
+def toggle_refresh(n_clicks, current_state):
+    if n_clicks is None:
+        raise PreventUpdate
+    refresh_enabled = not current_state["refresh_enabled"]
+    return {"refresh_enabled": refresh_enabled}
+
+
 def serve_layout(dark_mode):
     style = create_dynamic_style(dark_mode)
 
@@ -121,6 +140,11 @@ def serve_layout(dark_mode):
                 "Toggle Dark/Light Mode",
                 id="dark-mode-toggle",
                 style=update_toggle_button_style(dark_mode),
+            ),
+            html.Button(
+                "Toggle Auto-Refresh",
+                id="refresh-toggle-button",
+                style={**update_toggle_button_style(dark_mode), "bottom": "30px"},
             ),
             html.Div(
                 [
@@ -276,6 +300,7 @@ def load_events_calendar(n_intervals, theme_data):
     ],
     [Input("events-graph", "clickData")],
     [State("theme-store", "data")],
+    prevent_initial_call=False,
 )
 def display_seats_map(clickData=None, theme_data=None, point=None, performance_id=None):
     if clickData is None and point is None and performance_id is None:
@@ -457,12 +482,23 @@ def update_performance_id(
 
 @app.callback(
     Output("seats-graph", "figure", allow_duplicate=True),
-    [Input("refresh-performance-btn", "n_clicks")],
-    [State("current-performance-id", "data"), State("theme-store", "data")],
+    [
+        Input("refresh-performance-btn", "n_clicks"),
+        Input("interval-component-refresh", "n_intervals"),
+    ],
+    [
+        State("refresh-toggle-store", "data"),
+        State("current-performance-id", "data"),
+        State("theme-store", "data"),
+    ],
     prevent_initial_call=True,
 )
-def refresh_seats_map(refresh_clicks, performance_id, theme_data):
-    if refresh_clicks == 0:
+def refresh_seats_map(
+    refresh_clicks, refresh_intervals, refresh_toggle, performance_id, theme_data
+):
+    if refresh_clicks == 0 and (
+        refresh_intervals == 0 or not refresh_toggle["refresh_enabled"]
+    ):
         raise PreventUpdate
     fig = get_seats_map(performance_id)
     return fig
