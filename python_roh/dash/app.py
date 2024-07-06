@@ -482,10 +482,7 @@ def update_performance_id(
 
 @app.callback(
     Output("seats-graph", "figure", allow_duplicate=True),
-    [
-        Input("refresh-performance-btn", "n_clicks"),
-        Input("interval-component-refresh", "n_intervals"),
-    ],
+    [Input("interval-component-refresh", "n_intervals")],
     [
         State("refresh-toggle-store", "data"),
         State("current-performance-id", "data"),
@@ -493,13 +490,31 @@ def update_performance_id(
     ],
     prevent_initial_call=True,
 )
-def refresh_seats_map(
-    refresh_clicks, refresh_intervals, refresh_toggle, performance_id, theme_data
+def refresh_seats_map_auto(
+    refresh_intervals, refresh_toggle, performance_id, theme_data
 ):
-    if refresh_clicks == 0 and (
-        refresh_intervals == 0 or not refresh_toggle["refresh_enabled"]
-    ):
-        raise PreventUpdate
+    refresh_enabled = refresh_toggle["refresh_enabled"]
+    if refresh_intervals == 0 or not refresh_enabled:
+        return dash.no_update
+    print("Auto refreshing seats map...")
+    fig = get_seats_map(performance_id)
+    return fig
+
+
+@app.callback(
+    Output("seats-graph", "figure", allow_duplicate=True),
+    [Input("refresh-performance-btn", "n_clicks")],
+    [
+        State("current-performance-id", "data"),
+        State("theme-store", "data"),
+    ],
+    prevent_initial_call=True,
+)
+def refresh_seats_map_manual(refresh_clicks, performance_id, theme_data):
+    print(refresh_clicks)
+    if refresh_clicks == 0:
+        return dash.no_update
+    print("Manually refreshing seats map...")
     fig = get_seats_map(performance_id)
     return fig
 
