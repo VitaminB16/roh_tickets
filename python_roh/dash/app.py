@@ -496,7 +496,6 @@ def refresh_seats_map_auto(
     refresh_enabled = refresh_toggle["refresh_enabled"]
     if refresh_intervals == 0 or not refresh_enabled:
         return dash.no_update
-    print("Auto refreshing seats map...")
     fig = get_seats_map(performance_id)
     return fig
 
@@ -511,10 +510,8 @@ def refresh_seats_map_auto(
     prevent_initial_call=True,
 )
 def refresh_seats_map_manual(refresh_clicks, performance_id, theme_data):
-    print(refresh_clicks)
     if refresh_clicks == 0:
         return dash.no_update
-    print("Manually refreshing seats map...")
     fig = get_seats_map(performance_id)
     return fig
 
