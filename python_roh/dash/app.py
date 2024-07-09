@@ -66,7 +66,7 @@ app.layout = html.Div(
         ),
         dcc.Interval(
             id="interval-component-refresh",
-            interval=10 * 1000,
+            interval=10 * 60 * 1000,
             n_intervals=0,  # every 1 minute
         ),
     ]
@@ -109,16 +109,21 @@ def toggle_dark_mode(n_clicks, current_state):
 
 
 @app.callback(
-    Output("refresh-toggle-store", "data"),
+    [
+        Output("refresh-toggle-store", "data"),
+        Output("interval-component-refresh", "interval"),
+    ],
     [Input("refresh-toggle-button", "n_clicks")],
     [State("refresh-toggle-store", "data")],
     prevent_initial_call=True,
 )
 def toggle_refresh(n_clicks, current_state):
+    print("Toggling refresh")
     if n_clicks is None:
         raise PreventUpdate
     refresh_enabled = not current_state["refresh_enabled"]
-    return {"refresh_enabled": refresh_enabled}
+    new_interval = 10 * 1000 if refresh_enabled else 10 * 60 * 1000
+    return {"refresh_enabled": refresh_enabled}, new_interval
 
 
 def serve_layout(dark_mode):
