@@ -59,6 +59,7 @@ def update_toggle_button_style(is_dark_mode):
 app.layout = html.Div(
     [
         dcc.Store(id="theme-store"),
+        dcc.Store(id="screen-width-store"),
         dcc.Store(id="refresh-toggle-store", data={"refresh_enabled": False}),
         html.Div(id="dynamic-content"),
         dcc.Interval(
@@ -73,10 +74,15 @@ app.layout = html.Div(
 )
 
 
-# Callbacks
+# JavaScript clientside callbacks (.js files within assets folder)
 app.clientside_callback(
     ClientsideFunction(namespace="clientside", function_name="detectTheme"),
     Output("theme-store", "data"),
+    [Input("interval-component-init", "n_intervals")],
+)
+app.clientside_callback(
+    ClientsideFunction(namespace="clientside", function_name="detectScreenWidth"),
+    Output("screen-width-store", "data"),
     [Input("interval-component-init", "n_intervals")],
 )
 
@@ -281,13 +287,14 @@ def update_layout(theme_data):
 @app.callback(
     [Output("events-graph", "figure"), Output("events-graph", "style")],
     [Input("interval-component", "n_intervals")],
-    [State("theme-store", "data")],
+    [State("theme-store", "data"), State("screen-width-store", "data")],
 )
-def load_events_calendar(n_intervals, theme_data):
+def load_events_calendar(n_intervals, theme_data, screen_width):
     if n_intervals == 0:
         raise PreventUpdate
     global DASH_PAYLOAD_DEFAULTS
     global EVENTS_DF
+    print(f"Screen width: {screen_width}")
     DASH_PAYLOAD_DEFAULTS["dark_mode"] = theme_data["dark_mode"]
     payload = {"task_name": "events", **DASH_PAYLOAD_DEFAULTS}
     events_df, _, _, fig = main_entry(payload, return_output=True)
