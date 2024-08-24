@@ -17,6 +17,15 @@ from python_roh.src.config import (
 
 
 def load_positions(from_local=False):
+    """
+    Load the seat map positions from the JSON file and write them to a CSV file.
+
+    Args:
+    - from_local (bool): If True, the JSON file is loaded from the local file system.
+
+    Returns:
+    - csv_name (str): The name of the CSV file where the seat map positions are written.
+    """
     # JSON file with the seat map positions from the web page using extract_positions.js
     seat_map_path = SEAT_POSITIONS_JSON_LOCATION
     if from_local:
@@ -45,9 +54,19 @@ def load_positions(from_local=False):
     Firestore(SEAT_MAP_POSITIONS_CSV).write(seat_map)
     Firestore(TEXT_MAP_POSITIONS_CSV).write(text_map)
     log(f"Written seat map positions to {csv_name}")
+    return csv_name
 
 
 def _process_text_map(text_map):
+    """
+    Process the text map data.
+
+    Args:
+    - text_map (pd.DataFrame): The text map data.
+
+    Returns:
+    - text_map (pd.DataFrame): The processed text map data.
+    """
     text_map.rename(columns={"cx": "x", "cy": "y", "ZoneName": "text"}, inplace=True)
     text_map.drop(columns=["id"], inplace=True)
     text_map.x = text_map.x.astype(float)
@@ -57,6 +76,15 @@ def _process_text_map(text_map):
 
 
 def _process_seat_map(seat_map):
+    """
+    Process the seat map data.
+
+    Args:
+    - seat_map (pd.DataFrame): The seat map data.
+
+    Returns:
+    - seat_map (pd.DataFrame): The processed seat map data.
+    """
     seat_map.rename(columns={"cx": "x", "cy": "y"}, inplace=True)
 
     # Get the seats data from the API
