@@ -528,12 +528,23 @@ def refresh_seats_map_manual(refresh_clicks, performance_id, theme_data):
     return fig
 
 
+def get_event_title(performance_id):
+    event_title = EVENTS_DF.query(f"performanceId == @performance_id").title
+    event_title = event_title.iloc[0]
+    return event_title
+
+
 # Call to get the seats map
 def get_seats_map(performance_id):
+    event_title = get_event_title(performance_id)
+    mos_override = {}
+    if event_title == "Friends Rehearsals":
+        mos_override["mode_of_sale_id"] = 8
     payload = {
         "task_name": "seats",
         "performance_id": performance_id,
         **DASH_PAYLOAD_DEFAULTS,
+        **mos_override,
     }
     _, _, _, _, fig = main_entry(payload, return_output=True)
     return fig
@@ -541,8 +552,7 @@ def get_seats_map(performance_id):
 
 def get_all_title_events(performance_id, event_title=None):
     if event_title is None:
-        event_title = EVENTS_DF.query(f"performanceId == @performance_id").title
-        event_title = event_title.iloc[0]
+        event_title = get_event_title(performance_id)
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=3.5)
     title_events = EVENTS_DF.query(f"title == @event_title and timestamp >= @today")
     title_events = title_events.sort_values(by=["date", "time"])
