@@ -8,7 +8,7 @@ from dash.dependencies import Input, Output, State, ClientsideFunction
 
 
 from main import main_entry
-from .assets.vars import GITHUB_LOGO_SVG_PATH
+from python_roh.dash.assets.vars import GITHUB_LOGO_SVG_PATH
 
 app = dash.Dash(__name__)
 
