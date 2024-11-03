@@ -50,7 +50,9 @@ def seats_availability_entry(**kwargs):
     if isinstance(json.loads(str(os.getenv("PERFORMANCE_ID"))), list):
         raise ValueError("List performance IDs are not supported for `seats` task.")
     all_data = API(QUERY_DICT).query_all_data(
-        data_types=["seats", "prices", "zone_ids", "price_types"], post_process=True
+        data_types=["seats", "prices", "zone_ids", "price_types"],
+        post_process=True,
+        **kwargs,
     )
     seats_price_df, prices_df, zones_df, price_types_df = (
         all_data["seats"],
