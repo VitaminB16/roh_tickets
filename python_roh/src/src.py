@@ -122,10 +122,11 @@ def pre_process_df(input_json, df_type):
     return pre_process_fun.get(df_type, do_nothing)(input_json)
 
 
-def post_process_all_data(data, data_types=None):
+def post_process_all_data(data, data_types=None, available_seat_status_ids=None):
     """
     Merge the different dataframes together and do some post-processing
     """
+    available_seat_status_ids = available_seat_status_ids or AVAILABLE_SEAT_STATUS_IDS
     seats_df, prices_df, zones_df, price_types_df = (
         data["seats"],
         data["prices"],
@@ -152,7 +153,7 @@ def post_process_all_data(data, data_types=None):
         subset=["SeatId", "SectionId", "PerformanceId"], inplace=True
     )
     seats_price_df = seats_price_df.assign(
-        seat_available=(seats_price_df.SeatStatusId.isin(AVAILABLE_SEAT_STATUS_IDS))
+        seat_available=(seats_price_df.SeatStatusId.isin(available_seat_status_ids))
     )
     data = {
         "seats": seats_price_df,
@@ -220,7 +221,13 @@ class API:
         self.query_dict = query_dict
         self.all_data = all_data
 
-    def query_all_data(self, data_types=None, post_process=False):
+    def query_all_data(
+        self,
+        data_types=None,
+        post_process=False,
+        available_seat_status_ids=None,
+        **kwargs,
+    ):
         """
         Query all data from the query_dict
         Args:
@@ -236,7 +243,9 @@ class API:
             time.sleep(0.01)
         log(f"Queried the following from the API: {data_types}")
         if post_process:
-            self.all_data = post_process_all_data(self.all_data)
+            self.all_data = post_process_all_data(
+                self.all_data, available_seat_status_ids=available_seat_status_ids
+            )
         return self.all_data
 
     def query_one_data(self, data_type=None):
