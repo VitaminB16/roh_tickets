@@ -36,6 +36,7 @@ DASH_PAYLOAD_DEFAULTS = {
     "print_performance_info": False,  # print performance info?
     "autosize": True,  # autosize parameter
     "font_family": "Gotham SSm",  # font family
+    "available_seat_status_ids": [0, 4],  # available seat status IDs
 }
 global EVENTS_DF
 EVENTS_DF = pd.DataFrame()
@@ -61,6 +62,7 @@ app.layout = html.Div(
         dcc.Store(id="theme-store"),
         dcc.Store(id="screen-width-store"),
         dcc.Store(id="refresh-toggle-store", data={"refresh_enabled": False}),
+        dcc.Store(id="seat-status-store", data=[0]),  # Store for seat status IDs
         html.Div(id="dynamic-content"),
         dcc.Interval(
             id="interval-component-init", interval=100, n_intervals=0, max_intervals=1
@@ -285,6 +287,33 @@ def update_layout(theme_data):
 
 
 @app.callback(
+    Output("seat-status-store", "data"),
+    [Input("seat-status-input", "value")],
+)
+def update_seat_status_ids(input_value):
+    status_ids = []
+    negative = False
+    for s in input_value.split(","):
+        s = s.strip()
+        if s:
+            try:
+                s = int(s)
+            except ValueError:
+                pass  # Skip invalid entries
+            if s < 0:
+                negative = True
+                s = -s
+            status_ids.append(s)
+    if not status_ids:
+        # Handle case where no valid entries were found
+        status_ids = [0, 4]  # Default value
+    if negative:
+        full_array = list(range(0, 20))
+        status_ids = [x for x in full_array if x not in status_ids]
+    return status_ids
+
+
+@app.callback(
     [Output("events-graph", "figure"), Output("events-graph", "style")],
     [Input("interval-component", "n_intervals")],
     [State("theme-store", "data"), State("screen-width-store", "data")],
@@ -311,10 +340,16 @@ def load_events_calendar(n_intervals, theme_data, screen_width):
         Output("current-performance-id", "data"),
     ],
     [Input("events-graph", "clickData")],
-    [State("theme-store", "data")],
+    [State("theme-store", "data"), State("seat-status-store", "data")],
     prevent_initial_call=False,
 )
-def display_seats_map(clickData=None, theme_data=None, point=None, performance_id=None):
+def display_seats_map(
+    clickData=None,
+    theme_data=None,
+    seat_status_ids=None,
+    point=None,
+    performance_id=None,
+):
     if clickData is None and point is None and performance_id is None:
         raise PreventUpdate
     if point is None and clickData is not None:
@@ -346,13 +381,28 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
         "flexDirection": "column",
         "alignItems": "right",
     }
-
     all_events, next_event, previous_event = get_all_title_events(
         performance_id=performance_id, event_title=event_title
     )
-
-    fig = get_seats_map(performance_id)
-    visible_style = {"visibility": "visible", "display": "block"}
+    seat_status_input = html.Div(
+        [
+            html.Label("Seat Status Filter:"),
+            html.Br(),
+            dcc.Input(
+                id="seat-status-input",
+                type="text",
+                value=(
+                    ", ".join(map(str, seat_status_ids)) if seat_status_ids else "0"
+                ),
+                style={"width": "80px", "marginLeft": "auto", "marginRight": "auto"},
+            ),
+        ],
+        style={
+            "textAlign": "left",
+            "marginLeft": "20px",
+            "position": "absolute",
+        },
+    )
 
     event_info_box = html.Div(
         [
@@ -418,8 +468,11 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
         },
     )
     event_info_container = html.Div(
-        [event_info_box, event_urls, next_previous_buttons], style=box_style
+        [event_info_box, event_urls, next_previous_buttons, seat_status_input],
+        style=box_style,
     )
+    fig = get_seats_map(performance_id, available_seat_status_ids=seat_status_ids)
+    visible_style = {"visibility": "visible", "display": "block"}
 
     return fig, visible_style, event_info_container, performance_id
 
@@ -461,6 +514,7 @@ def display_seat_view_image(clickData):
     [
         State("current-performance-id", "data"),
         State("theme-store", "data"),
+        State("seat-status-store", "data"),
     ],
     prevent_initial_call=True,
 )
@@ -469,6 +523,7 @@ def update_performance_id(
     prev_clicks,
     current_id,
     theme_data,
+    seat_status_ids,
 ):
     ctx = dash.callback_context
     if not ctx.triggered:
@@ -487,7 +542,9 @@ def update_performance_id(
         raise PreventUpdate
     print(f"Updated performance ID: {updated_id}")
     fig, visible_style, event_info_container, _ = display_seats_map(
-        performance_id=updated_id, theme_data=theme_data
+        performance_id=updated_id,
+        theme_data=theme_data,
+        seat_status_ids=seat_status_ids,
     )
     return updated_id, fig, visible_style, event_info_container
 
@@ -499,16 +556,17 @@ def update_performance_id(
         State("refresh-toggle-store", "data"),
         State("current-performance-id", "data"),
         State("theme-store", "data"),
+        State("seat-status-store", "data"),
     ],
     prevent_initial_call=True,
 )
 def refresh_seats_map_auto(
-    refresh_intervals, refresh_toggle, performance_id, theme_data
+    refresh_intervals, refresh_toggle, performance_id, theme_data, seat_status_ids
 ):
     refresh_enabled = refresh_toggle["refresh_enabled"]
     if refresh_intervals == 0 or not refresh_enabled:
         return dash.no_update
-    fig = get_seats_map(performance_id)
+    fig = get_seats_map(performance_id, available_seat_status_ids=seat_status_ids)
     return fig
 
 
@@ -518,13 +576,16 @@ def refresh_seats_map_auto(
     [
         State("current-performance-id", "data"),
         State("theme-store", "data"),
+        State("seat-status-store", "data"),
     ],
     prevent_initial_call=True,
 )
-def refresh_seats_map_manual(refresh_clicks, performance_id, theme_data):
+def refresh_seats_map_manual(
+    refresh_clicks, performance_id, theme_data, seat_status_ids
+):
     if refresh_clicks == 0:
         return dash.no_update
-    fig = get_seats_map(performance_id)
+    fig = get_seats_map(performance_id, available_seat_status_ids=seat_status_ids)
     return fig
 
 
@@ -535,7 +596,7 @@ def get_event_title(performance_id):
 
 
 # Call to get the seats map
-def get_seats_map(performance_id):
+def get_seats_map(performance_id, available_seat_status_ids=None):
     event_title = get_event_title(performance_id)
     mos_override = {}
     if event_title == "Friends Rehearsals":
@@ -546,6 +607,8 @@ def get_seats_map(performance_id):
         **DASH_PAYLOAD_DEFAULTS,
         **mos_override,
     }
+    if available_seat_status_ids is not None:
+        payload["available_seat_status_ids"] = available_seat_status_ids
     _, _, _, _, fig = main_entry(payload, return_output=True)
     return fig
 
