@@ -6,7 +6,6 @@ from python_roh.src.config import *
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output, State, ClientsideFunction
 
-
 from main import main_entry
 from python_roh.dash.assets.vars import GITHUB_LOGO_SVG_PATH
 
@@ -25,7 +24,6 @@ TOGGLE_BUTTON_STYLE = {
 AUTO_MARGIN = {"marginLeft": "auto", "marginRight": "auto"}
 FONT_FAMILY = {"font-family": "Gotham SSm, Futura, Roboto, Arial, Lucida Sans"}
 
-global DASH_PAYLOAD_DEFAULTS
 DASH_PAYLOAD_DEFAULTS = {
     "dont_save": True,  # don't save the plot?
     "save_both": False,  # save both light and dark mode?
@@ -38,7 +36,6 @@ DASH_PAYLOAD_DEFAULTS = {
     "font_family": "Gotham SSm",  # font family
     "available_seat_status_ids": [0, 4],  # available seat status IDs
 }
-global EVENTS_DF
 EVENTS_DF = pd.DataFrame()
 
 
@@ -70,11 +67,10 @@ app.layout = html.Div(
         dcc.Interval(
             id="interval-component-refresh",
             interval=10 * 60 * 1000,
-            n_intervals=0,  # every 1 minute
+            n_intervals=0,  # every 10 minutes
         ),
     ]
 )
-
 
 # JavaScript clientside callbacks (.js files within assets folder)
 app.clientside_callback(
@@ -91,11 +87,7 @@ app.clientside_callback(
 
 @app.callback(Output("dynamic-content", "children"), [Input("theme-store", "data")])
 def update_dynamic_content(theme_data):
-    if theme_data is None:
-        dark_mode = True
-    else:
-        dark_mode = theme_data["dark_mode"]
-    global DASH_PAYLOAD_DEFAULTS
+    dark_mode = theme_data["dark_mode"] if theme_data else True
     DASH_PAYLOAD_DEFAULTS["dark_mode"] = dark_mode
     return serve_layout(dark_mode)
 
@@ -110,9 +102,7 @@ def toggle_dark_mode(n_clicks, current_state):
     if n_clicks is None:
         raise PreventUpdate
     is_dark_mode = not current_state["dark_mode"]
-    global DASH_PAYLOAD_DEFAULTS
     DASH_PAYLOAD_DEFAULTS["dark_mode"] = is_dark_mode
-
     return {"dark_mode": is_dark_mode}
 
 
@@ -126,10 +116,10 @@ def toggle_dark_mode(n_clicks, current_state):
     prevent_initial_call=True,
 )
 def toggle_refresh(n_clicks, current_state):
-    print("Toggling refresh")
     if n_clicks is None:
         raise PreventUpdate
     refresh_enabled = not current_state["refresh_enabled"]
+    # Set interval to 10 seconds when enabled, 10 minutes when disabled
     new_interval = 10 * 1000 if refresh_enabled else 10 * 60 * 1000
     return {"refresh_enabled": refresh_enabled}, new_interval
 
@@ -299,7 +289,7 @@ def update_seat_status_ids(input_value):
             try:
                 s = int(s)
             except ValueError:
-                pass  # Skip invalid entries
+                continue  # Skip invalid entries
             if s < 0:
                 negative = True
                 s = -s
@@ -321,13 +311,12 @@ def update_seat_status_ids(input_value):
 def load_events_calendar(n_intervals, theme_data, screen_width):
     if n_intervals == 0:
         raise PreventUpdate
-    global DASH_PAYLOAD_DEFAULTS
-    global EVENTS_DF
     print(f"Screen width: {screen_width}")
     DASH_PAYLOAD_DEFAULTS["dark_mode"] = theme_data["dark_mode"]
     payload = {"task_name": "events", **DASH_PAYLOAD_DEFAULTS}
     events_df, _, _, fig = main_entry(payload, return_output=True)
     visible_style = {"visibility": "visible", "display": "block"}
+    global EVENTS_DF
     EVENTS_DF = events_df
     return fig, visible_style
 
@@ -484,7 +473,6 @@ def display_seats_map(
 def display_seat_view_image(clickData):
     if clickData is None:
         raise PreventUpdate
-    print(clickData)
     point = clickData["points"][0]
     image_url = point["customdata"][5]
     image = html.Img(src=image_url, style={"maxWidth": "70%", "maxHeight": "70%"})
@@ -531,11 +519,11 @@ def update_performance_id(
     if next_clicks == 0 and prev_clicks == 0:
         raise PreventUpdate
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    _, next_perf, prev_perf = get_all_title_events(performance_id=current_id)
+    _, next_perf, previous_perf = get_all_title_events(performance_id=current_id)
     if button_id == "next-performance-btn":
         updated_id = next_perf
     elif button_id == "prev-performance-btn":
-        updated_id = prev_perf
+        updated_id = previous_perf
     else:
         raise PreventUpdate
     if updated_id is None:
@@ -622,12 +610,11 @@ def get_all_title_events(performance_id, event_title=None):
     all_performances = list(title_events.performanceId)
     print("All performances:", all_performances)
     print("Current performance:", performance_id)
-    next_perf = all_performances.index(performance_id) + 1
-    previous_perf = all_performances.index(performance_id) - 1
+    index = all_performances.index(performance_id)
     next_perf = (
-        all_performances[next_perf] if next_perf < len(all_performances) else None
+        all_performances[index + 1] if index + 1 < len(all_performances) else None
     )
-    previous_perf = all_performances[previous_perf] if previous_perf >= 0 else None
+    previous_perf = all_performances[index - 1] if index - 1 >= 0 else None
     title_events = title_events.loc[:, ["timestamp", "time", "performanceId"]]
     title_events["date_str"] = title_events["timestamp"].dt.strftime(
         "%a %B %-d, %-I:%M%p"
