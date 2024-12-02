@@ -6,9 +6,8 @@ from python_roh.src.config import *
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output, State, ClientsideFunction
 
-
 from main import main_entry
-from .assets.vars import GITHUB_LOGO_SVG_PATH
+from python_roh.dash.assets.vars import GITHUB_LOGO_SVG_PATH
 
 app = dash.Dash(__name__)
 
@@ -25,7 +24,6 @@ TOGGLE_BUTTON_STYLE = {
 AUTO_MARGIN = {"marginLeft": "auto", "marginRight": "auto"}
 FONT_FAMILY = {"font-family": "Gotham SSm, Futura, Roboto, Arial, Lucida Sans"}
 
-global DASH_PAYLOAD_DEFAULTS
 DASH_PAYLOAD_DEFAULTS = {
     "dont_save": True,  # don't save the plot?
     "save_both": False,  # save both light and dark mode?
@@ -36,8 +34,8 @@ DASH_PAYLOAD_DEFAULTS = {
     "print_performance_info": False,  # print performance info?
     "autosize": True,  # autosize parameter
     "font_family": "Gotham SSm",  # font family
+    "available_seat_status_ids": [0, 4],  # available seat status IDs
 }
-global EVENTS_DF
 EVENTS_DF = pd.DataFrame()
 
 
@@ -61,6 +59,7 @@ app.layout = html.Div(
         dcc.Store(id="theme-store"),
         dcc.Store(id="screen-width-store"),
         dcc.Store(id="refresh-toggle-store", data={"refresh_enabled": False}),
+        dcc.Store(id="seat-status-store", data=[0]),  # Store for seat status IDs
         html.Div(id="dynamic-content"),
         dcc.Interval(
             id="interval-component-init", interval=100, n_intervals=0, max_intervals=1
@@ -68,11 +67,10 @@ app.layout = html.Div(
         dcc.Interval(
             id="interval-component-refresh",
             interval=10 * 60 * 1000,
-            n_intervals=0,  # every 1 minute
+            n_intervals=0,  # every 10 minutes
         ),
     ]
 )
-
 
 # JavaScript clientside callbacks (.js files within assets folder)
 app.clientside_callback(
@@ -89,11 +87,7 @@ app.clientside_callback(
 
 @app.callback(Output("dynamic-content", "children"), [Input("theme-store", "data")])
 def update_dynamic_content(theme_data):
-    if theme_data is None:
-        dark_mode = True
-    else:
-        dark_mode = theme_data["dark_mode"]
-    global DASH_PAYLOAD_DEFAULTS
+    dark_mode = theme_data["dark_mode"] if theme_data else True
     DASH_PAYLOAD_DEFAULTS["dark_mode"] = dark_mode
     return serve_layout(dark_mode)
 
@@ -108,9 +102,7 @@ def toggle_dark_mode(n_clicks, current_state):
     if n_clicks is None:
         raise PreventUpdate
     is_dark_mode = not current_state["dark_mode"]
-    global DASH_PAYLOAD_DEFAULTS
     DASH_PAYLOAD_DEFAULTS["dark_mode"] = is_dark_mode
-
     return {"dark_mode": is_dark_mode}
 
 
@@ -124,10 +116,10 @@ def toggle_dark_mode(n_clicks, current_state):
     prevent_initial_call=True,
 )
 def toggle_refresh(n_clicks, current_state):
-    print("Toggling refresh")
     if n_clicks is None:
         raise PreventUpdate
     refresh_enabled = not current_state["refresh_enabled"]
+    # Set interval to 10 seconds when enabled, 10 minutes when disabled
     new_interval = 10 * 1000 if refresh_enabled else 10 * 60 * 1000
     return {"refresh_enabled": refresh_enabled}, new_interval
 
@@ -285,6 +277,33 @@ def update_layout(theme_data):
 
 
 @app.callback(
+    Output("seat-status-store", "data"),
+    [Input("seat-status-input", "value")],
+)
+def update_seat_status_ids(input_value):
+    status_ids = []
+    negative = False
+    for s in input_value.split(","):
+        s = s.strip()
+        if s:
+            try:
+                s = int(s)
+            except ValueError:
+                continue  # Skip invalid entries
+            if s < 0:
+                negative = True
+                s = -s
+            status_ids.append(s)
+    if not status_ids:
+        # Handle case where no valid entries were found
+        status_ids = [0, 4]  # Default value
+    if negative:
+        full_array = list(range(0, 20))
+        status_ids = [x for x in full_array if x not in status_ids]
+    return status_ids
+
+
+@app.callback(
     [Output("events-graph", "figure"), Output("events-graph", "style")],
     [Input("interval-component", "n_intervals")],
     [State("theme-store", "data"), State("screen-width-store", "data")],
@@ -292,13 +311,12 @@ def update_layout(theme_data):
 def load_events_calendar(n_intervals, theme_data, screen_width):
     if n_intervals == 0:
         raise PreventUpdate
-    global DASH_PAYLOAD_DEFAULTS
-    global EVENTS_DF
     print(f"Screen width: {screen_width}")
     DASH_PAYLOAD_DEFAULTS["dark_mode"] = theme_data["dark_mode"]
     payload = {"task_name": "events", **DASH_PAYLOAD_DEFAULTS}
     events_df, _, _, fig = main_entry(payload, return_output=True)
     visible_style = {"visibility": "visible", "display": "block"}
+    global EVENTS_DF
     EVENTS_DF = events_df
     return fig, visible_style
 
@@ -311,10 +329,16 @@ def load_events_calendar(n_intervals, theme_data, screen_width):
         Output("current-performance-id", "data"),
     ],
     [Input("events-graph", "clickData")],
-    [State("theme-store", "data")],
+    [State("theme-store", "data"), State("seat-status-store", "data")],
     prevent_initial_call=False,
 )
-def display_seats_map(clickData=None, theme_data=None, point=None, performance_id=None):
+def display_seats_map(
+    clickData=None,
+    theme_data=None,
+    seat_status_ids=None,
+    point=None,
+    performance_id=None,
+):
     if clickData is None and point is None and performance_id is None:
         raise PreventUpdate
     if point is None and clickData is not None:
@@ -346,13 +370,28 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
         "flexDirection": "column",
         "alignItems": "right",
     }
-
     all_events, next_event, previous_event = get_all_title_events(
         performance_id=performance_id, event_title=event_title
     )
-
-    fig = get_seats_map(performance_id)
-    visible_style = {"visibility": "visible", "display": "block"}
+    seat_status_input = html.Div(
+        [
+            html.Label("Seat Status Filter:"),
+            html.Br(),
+            dcc.Input(
+                id="seat-status-input",
+                type="text",
+                value=(
+                    ", ".join(map(str, seat_status_ids)) if seat_status_ids else "0"
+                ),
+                style={"width": "80px", "marginLeft": "auto", "marginRight": "auto"},
+            ),
+        ],
+        style={
+            "textAlign": "left",
+            "marginLeft": "20px",
+            "position": "absolute",
+        },
+    )
 
     event_info_box = html.Div(
         [
@@ -418,8 +457,11 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
         },
     )
     event_info_container = html.Div(
-        [event_info_box, event_urls, next_previous_buttons], style=box_style
+        [event_info_box, event_urls, next_previous_buttons, seat_status_input],
+        style=box_style,
     )
+    fig = get_seats_map(performance_id, available_seat_status_ids=seat_status_ids)
+    visible_style = {"visibility": "visible", "display": "block"}
 
     return fig, visible_style, event_info_container, performance_id
 
@@ -431,7 +473,6 @@ def display_seats_map(clickData=None, theme_data=None, point=None, performance_i
 def display_seat_view_image(clickData):
     if clickData is None:
         raise PreventUpdate
-    print(clickData)
     point = clickData["points"][0]
     image_url = point["customdata"][5]
     image = html.Img(src=image_url, style={"maxWidth": "70%", "maxHeight": "70%"})
@@ -461,6 +502,7 @@ def display_seat_view_image(clickData):
     [
         State("current-performance-id", "data"),
         State("theme-store", "data"),
+        State("seat-status-store", "data"),
     ],
     prevent_initial_call=True,
 )
@@ -469,6 +511,7 @@ def update_performance_id(
     prev_clicks,
     current_id,
     theme_data,
+    seat_status_ids,
 ):
     ctx = dash.callback_context
     if not ctx.triggered:
@@ -476,18 +519,20 @@ def update_performance_id(
     if next_clicks == 0 and prev_clicks == 0:
         raise PreventUpdate
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    _, next_perf, prev_perf = get_all_title_events(performance_id=current_id)
+    _, next_perf, previous_perf = get_all_title_events(performance_id=current_id)
     if button_id == "next-performance-btn":
         updated_id = next_perf
     elif button_id == "prev-performance-btn":
-        updated_id = prev_perf
+        updated_id = previous_perf
     else:
         raise PreventUpdate
     if updated_id is None:
         raise PreventUpdate
     print(f"Updated performance ID: {updated_id}")
     fig, visible_style, event_info_container, _ = display_seats_map(
-        performance_id=updated_id, theme_data=theme_data
+        performance_id=updated_id,
+        theme_data=theme_data,
+        seat_status_ids=seat_status_ids,
     )
     return updated_id, fig, visible_style, event_info_container
 
@@ -499,16 +544,17 @@ def update_performance_id(
         State("refresh-toggle-store", "data"),
         State("current-performance-id", "data"),
         State("theme-store", "data"),
+        State("seat-status-store", "data"),
     ],
     prevent_initial_call=True,
 )
 def refresh_seats_map_auto(
-    refresh_intervals, refresh_toggle, performance_id, theme_data
+    refresh_intervals, refresh_toggle, performance_id, theme_data, seat_status_ids
 ):
     refresh_enabled = refresh_toggle["refresh_enabled"]
     if refresh_intervals == 0 or not refresh_enabled:
         return dash.no_update
-    fig = get_seats_map(performance_id)
+    fig = get_seats_map(performance_id, available_seat_status_ids=seat_status_ids)
     return fig
 
 
@@ -518,43 +564,57 @@ def refresh_seats_map_auto(
     [
         State("current-performance-id", "data"),
         State("theme-store", "data"),
+        State("seat-status-store", "data"),
     ],
     prevent_initial_call=True,
 )
-def refresh_seats_map_manual(refresh_clicks, performance_id, theme_data):
+def refresh_seats_map_manual(
+    refresh_clicks, performance_id, theme_data, seat_status_ids
+):
     if refresh_clicks == 0:
         return dash.no_update
-    fig = get_seats_map(performance_id)
+    fig = get_seats_map(performance_id, available_seat_status_ids=seat_status_ids)
     return fig
 
 
+def get_event_title(performance_id):
+    event_title = EVENTS_DF.query(f"performanceId == @performance_id").title
+    event_title = event_title.iloc[0]
+    return event_title
+
+
 # Call to get the seats map
-def get_seats_map(performance_id):
+def get_seats_map(performance_id, available_seat_status_ids=None):
+    event_title = get_event_title(performance_id)
+    mos_override = {}
+    if event_title == "Friends Rehearsals":
+        mos_override["mode_of_sale_id"] = 8
     payload = {
         "task_name": "seats",
         "performance_id": performance_id,
         **DASH_PAYLOAD_DEFAULTS,
+        **mos_override,
     }
+    if available_seat_status_ids is not None:
+        payload["available_seat_status_ids"] = available_seat_status_ids
     _, _, _, _, fig = main_entry(payload, return_output=True)
     return fig
 
 
 def get_all_title_events(performance_id, event_title=None):
     if event_title is None:
-        event_title = EVENTS_DF.query(f"performanceId == @performance_id").title
-        event_title = event_title.iloc[0]
+        event_title = get_event_title(performance_id)
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=3.5)
     title_events = EVENTS_DF.query(f"title == @event_title and timestamp >= @today")
     title_events = title_events.sort_values(by=["date", "time"])
     all_performances = list(title_events.performanceId)
     print("All performances:", all_performances)
     print("Current performance:", performance_id)
-    next_perf = all_performances.index(performance_id) + 1
-    previous_perf = all_performances.index(performance_id) - 1
+    index = all_performances.index(performance_id)
     next_perf = (
-        all_performances[next_perf] if next_perf < len(all_performances) else None
+        all_performances[index + 1] if index + 1 < len(all_performances) else None
     )
-    previous_perf = all_performances[previous_perf] if previous_perf >= 0 else None
+    previous_perf = all_performances[index - 1] if index - 1 >= 0 else None
     title_events = title_events.loc[:, ["timestamp", "time", "performanceId"]]
     title_events["date_str"] = title_events["timestamp"].dt.strftime(
         "%a %B %-d, %-I:%M%p"
