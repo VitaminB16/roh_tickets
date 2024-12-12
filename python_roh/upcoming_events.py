@@ -151,6 +151,8 @@ def enrich_events_df(events_df):
     events_df["url"] = events_df.slug.apply(
         lambda x: f"{TICKETS_AND_EVENTS_URL}/{x}-dates"
     )
+    # Remove entries that can't be converted to int
+    events_df = events_df.query("productionId.str.isdigit()")
     events_df["productionId"] = events_df.productionId.astype(int)
     events_df, added_productions_df = enrich_events_with_productions(events_df)
     events_df.reset_index(drop=True, inplace=True)
