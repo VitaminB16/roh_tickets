@@ -16,3 +16,4 @@ fonts/
 .vscode
 _includes/
 output/**.py
+*.zip
