@@ -22,3 +22,5 @@ secrets.txt
 *.parquet
 *.env*
 payload.json
+**.zip
+**.venv/
