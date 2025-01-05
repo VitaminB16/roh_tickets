@@ -86,4 +86,5 @@ def handle_new_past_casts(events_df):
 
     new_existing_casts = pd.concat([existing_casts, cast_df], ignore_index=True)
     Parquet(CASTS_PARQUET_LOCATION).write(new_existing_casts)
+    print(f"Saved {len(cast_df)} new cast entries to parquet: {cast_df.title.unique()}")
     return cast_df
