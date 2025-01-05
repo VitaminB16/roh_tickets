@@ -182,6 +182,8 @@ def enforce_schema(df, schema={}, dtypes={}, errors="raise"):
     """
     Enforce a schema on a dataframe or dictionary
     """
+    if schema is None:
+        schema = {}
     schema = {**dtypes, **schema}  # schema takes precedence over dtypes
     if schema == {}:
         return df

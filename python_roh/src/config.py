@@ -1,8 +1,13 @@
-import os
+import json
 import argparse
 import pandas as pd
+import pyarrow as pa
 
 from cloud.platform import PLATFORM
+
+
+def jprint(x):
+    return print(json.dumps(x, indent=3))
 
 
 ZONE_HIERARCHY = {
@@ -124,12 +129,135 @@ TEXT_MAP_POSITIONS_CSV = PREFIX + "metadata/text_positions.csv"
 TITLE_COLOURS_LOCATION = PREFIX + "metadata/titles_colour.json"
 SEAT_STATUSES_PATH = PREFIX + "metadata/seat_statuses.json"
 SEAT_POSITIONS_JSON_LOCATION = PREFIX + "metadata/seat_positions.json"
+SOONEST_PERFORMANCES_LOCATION = PREFIX + "metadata/soonest_performances.json"
+MISSING_CASTS_LOCATION = PREFIX + "metadata/missing_casts.json"
 EVENTS_PARQUET_LOCATION = PREFIX + "output/roh_events.parquet"
 PRODUCTIONS_PARQUET_LOCATION = PREFIX + "output/roh_productions.parquet"
-SOONEST_PERFORMANCES_LOCATION = PREFIX + "metadata/soonest_performances.json"
+HISTORIC_CASTS_PARQUET_LOCATION = PREFIX + "output/historic_cast_performances.parquet"
+CURRENT_CASTS_PARQUET_LOCATION = PREFIX + "output/current_cast_performances.parquet"
+CASTS_PARQUET_LOCATION = PREFIX + "output/cast_performances.parquet"
 # Public  --------------------------------
 HALL_IMAGE_LOCATION = PREFIX_PUBLIC + "output/images/ROH_hall.png"
 EVENTS_IMAGE_LOCATION = PREFIX_PUBLIC + "output/images/ROH_events.png"
+
+EVENTS_PYARROW_SCHEMA = pa.schema(
+    [
+        pa.field("type", pa.string()),
+        pa.field("productionId", pa.int64()),
+        pa.field("sourceType", pa.string()),
+        pa.field("carouselDescription", pa.string()),
+        pa.field("slug", pa.string()),
+        pa.field("startTime", pa.string()),
+        pa.field("endTime", pa.string()),
+        pa.field("isHiddenFromTicketsAndEvents", pa.bool_()),
+        # Example of a struct column with a list of structs inside
+        pa.field(
+            "tags",
+            pa.struct(
+                [
+                    pa.field(
+                        "data",
+                        pa.list_(
+                            pa.struct(
+                                [
+                                    pa.field("id", pa.string()),
+                                    pa.field("type", pa.string()),
+                                ]
+                            )
+                        ),
+                    )
+                ]
+            ),
+        ),
+        pa.field(
+            "bookingSeasons",
+            pa.struct(
+                [
+                    pa.field(
+                        "data",
+                        pa.list_(
+                            pa.struct(
+                                [
+                                    pa.field("id", pa.string()),
+                                    pa.field("type", pa.string()),
+                                ]
+                            )
+                        ),
+                    )
+                ]
+            ),
+        ),
+        pa.field("locationId", pa.string()),
+        pa.field(
+            "performanceTimes",
+            pa.struct(
+                [
+                    pa.field(
+                        "data",
+                        pa.list_(
+                            pa.struct(
+                                [
+                                    pa.field("id", pa.string()),
+                                    pa.field("type", pa.string()),
+                                ]
+                            )
+                        ),
+                    )
+                ]
+            ),
+        ),
+        pa.field(
+            "onSaleDates",
+            pa.struct(
+                [
+                    pa.field(
+                        "data",
+                        pa.list_(
+                            pa.struct(
+                                [
+                                    pa.field("id", pa.string()),
+                                    pa.field("type", pa.string()),
+                                ]
+                            )
+                        ),
+                    )
+                ]
+            ),
+        ),
+        pa.field(
+            "runs",
+            pa.struct(
+                [
+                    pa.field(
+                        "data",
+                        pa.list_(
+                            pa.struct(
+                                [
+                                    pa.field("id", pa.string()),
+                                    pa.field("type", pa.string()),
+                                ]
+                            )
+                        ),
+                    )
+                ]
+            ),
+        ),
+        # This example assumes the festival "data" is consistently None or empty
+        # pa.field("festival", pa.struct([pa.field("data", pa.null(), nullable=True)])),
+        pa.field("performanceType", pa.string()),
+        pa.field("timestamp", pa.int64()),
+        pa.field("day", pa.string()),
+        pa.field("url", pa.string()),
+        pa.field("performanceId", pa.string()),
+        # This field often comes from auto-generated Pandas indices
+        # pa.field("__index_level_0__", pa.int64()),
+        # Partition columns
+        pa.field("location", pa.string()),
+        pa.field("date", pa.string()),
+        pa.field("time", pa.string()),
+        pa.field("title", pa.string()),
+    ]
+)
 
 EVENTS_PARQUET_SCHEMA = {
     "date": [
@@ -171,6 +299,9 @@ PRODUCTIONS_PARQUET_SCHEMA = {
 PARQUET_SCHEMAS = {
     EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
     PRODUCTIONS_PARQUET_LOCATION: PRODUCTIONS_PARQUET_SCHEMA,
+}
+PYARROW_SCHEMAS = {
+    EVENTS_PARQUET_LOCATION: EVENTS_PYARROW_SCHEMA,
 }
 FIRESTORE_SCHEMAS = {k.replace(PREFIX, ""): v for k, v in PARQUET_SCHEMAS.items()}
 

@@ -11,7 +11,12 @@ from concurrent.futures import ThreadPoolExecutor
 
 from cloud.utils import log
 from python_roh.src.utils import force_list, async_retry, enforce_schema
-from python_roh.src.config import PARQUET_SCHEMAS, PLATFORM, PARQUET_TABLE_RELATIONS
+from python_roh.src.config import (
+    PARQUET_SCHEMAS,
+    PYARROW_SCHEMAS,
+    PLATFORM,
+    PARQUET_TABLE_RELATIONS,
+)
 
 
 class Parquet:
@@ -145,6 +150,7 @@ class Parquet:
             df = self.get_partitions_df()
         else:
             # Actually reads the Parquet file from storage
+            schema = PYARROW_SCHEMAS.get(self.path, schema)
             try:
                 df = pq.read_table(
                     self.path,
