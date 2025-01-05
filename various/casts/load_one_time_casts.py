@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from python_roh.src.config import *
 from tools import Parquet, Firestore
 from python_roh.src.api import get_query_dict
+from python_roh.casts import try_get_cast_for_current_performance
 
 
 def try_get_cast_for_performance(
@@ -131,50 +132,6 @@ def get_historic_casts(refresh=False):
 
     # cast_list_href == f"..../{slug}/..."
     return casts
-
-
-def try_get_cast_for_current_performance(performance_id):
-    url = f"https://www.rbo.org.uk/api/account-activities?ids={performance_id}"
-    cast_page = requests.get(url)
-    try:
-        cast_page_json = cast_page.json()
-    except ValueError:
-        return None
-    data = cast_page_json.get("data")
-    if not data:
-        return None
-    included = cast_page_json.get("included")
-    cast_df_og = pd.DataFrame(included)
-    attributes = cast_df_og.attributes.apply(pd.Series)
-    cast_df_og = pd.concat([cast_df_og, attributes], axis=1)
-    cast_df = cast_df_og.query("type == 'accountCast'")
-    if cast_df.empty:
-        return None
-    cols_to_drop = ["type", "relationships", "title", "image"]
-    cast_df = cast_df.drop(columns=cols_to_drop, errors="ignore")
-    cast_df = cast_df.drop(columns=["attributes", "slug"], errors="ignore")
-    cast_df = cast_df.assign(is_replacing=cast_df.id.str.contains("replaced"))
-    cast_df = cast_df.assign(replaced_name=None)
-    replaced_df = cast_df.query("is_replacing")
-    replacement_df = cast_df.query("id.str.contains('-replacement')")
-    cast_df = cast_df.query("~id.str.contains('-replacement')")
-    cast_df = cast_df.query("~is_replacing")
-    roles = replacement_df.role.str.replace("R ", "")
-    replacement_df = replacement_df.assign(role=roles)
-    replacement_df = replacement_df[["role", "name"]]
-    replaced_df = replaced_df.merge(replacement_df, on="role", how="left")
-    replaced_df = replaced_df.rename(columns={"name_y": "name"})
-    replaced_df = replaced_df.assign(replaced_name=replaced_df.name_x)
-    replaced_df = replaced_df.drop(columns=["name_x"], errors="ignore")
-    cast_df = pd.concat([cast_df, replaced_df], ignore_index=True)
-    cast_df = cast_df.drop(columns=["id"], errors="ignore")
-    cast_df = cast_df.assign(url=url, performance_id=performance_id)
-    try:
-        slug = cast_df_og.query("type == 'accountEvent'").iloc[0].slug
-    except Exception:
-        slug = None
-    cast_df = cast_df.assign(slug=slug, season_id=None)
-    return cast_df
 
 
 def get_current_casts(uncast_events_df, refresh=False):

@@ -5,6 +5,7 @@ from cloud.utils import log
 from python_roh.src.config import *
 from tools import Parquet, Firestore
 from python_roh.src.graphics import Graphics
+from python_roh.casts import handle_new_past_casts
 from python_roh.src.src import API, print_performance_info
 from python_roh.upcoming_events import handle_upcoming_events
 from python_roh.src.api import get_query_dict, configure_query_dict
@@ -39,6 +40,7 @@ def upcoming_events_entry(dont_save=True, **kwargs):
             columns=partition_cols
             + ["performanceId", "productionId", "timestamp", "url"],
         )
+        handle_new_past_casts(events_df)
     return events_df, today_tomorrow_events_df, next_week_events_df, fig
 
 
