@@ -1,4 +1,6 @@
 import requests
+
+from cloud.utils import log
 from python_roh.src.config import *
 from tools import Parquet, Firestore
 
@@ -48,6 +50,7 @@ def try_get_cast_for_current_performance(performance_id):
 
 
 def handle_new_past_casts(events_df):
+    log("Processing new past casts")
     existing_casts = Parquet(CASTS_PARQUET_LOCATION).read(use_bigquery=False)
     known_uncast_events = Firestore(MISSING_CASTS_LOCATION).read()
     time_now = pd.Timestamp.now(tz="Europe/London") - pd.Timedelta("2D")
@@ -64,10 +67,10 @@ def handle_new_past_casts(events_df):
         "performanceId in @new_past_performance_ids"
     )
     if new_past_events_df.empty:
-        print("No new past events to process")
+        log("No new past events to process")
         return
 
-    print(
+    log(
         f"Processing {len(new_past_events_df)} new past events: {new_past_events_df.title.unique()}"
     )
 
@@ -79,12 +82,12 @@ def handle_new_past_casts(events_df):
         cast_dfs.append(cast_df)
 
     if not cast_dfs:
-        print("No new cast data to process")
+        log("No new cast data to process")
         return
 
     cast_df = pd.concat(cast_dfs, ignore_index=True)
 
     new_existing_casts = pd.concat([existing_casts, cast_df], ignore_index=True)
     Parquet(CASTS_PARQUET_LOCATION).write(new_existing_casts)
-    print(f"Saved {len(cast_df)} new cast entries to parquet: {cast_df.slug.unique()}")
+    log(f"Saved {len(cast_df)} new cast entries to parquet: {cast_df.slug.unique()}")
     return cast_df
