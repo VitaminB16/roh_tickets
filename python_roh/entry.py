@@ -21,6 +21,35 @@ except ImportError:
 global QUERY_DICT
 
 
+def save_new_events(new_events_df, partition_cols):
+    if not new_events_df.empty:
+        log(f"Saving to events parquet: {new_events_df.title.unique()}")
+        Parquet(EVENTS_PARQUET_LOCATION).write(
+            new_events_df, partition_cols=partition_cols
+        )
+    else:
+        log("No new events to save")
+    return
+
+
+def save_unseen_events(events_df, new_events_df, partition_cols):
+    existing_events_df = Parquet(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
+    existimng_ids = existing_events_df.performanceId.unique()
+    new_ids = new_events_df.performanceId.unique()
+    unseen_events_df = events_df.query(
+        "(performanceId not in @existimng_ids)"
+        + "and (performanceId not in @new_ids)"
+        + "and (performanceId.notnull())"
+    )
+    if not unseen_events_df.empty:
+        log(f"Saving to events parquet: {unseen_events_df.title.unique()}")
+        Parquet(EVENTS_PARQUET_LOCATION).write(
+            unseen_events_df, partition_cols=partition_cols
+        )
+    else:
+        log("No unseen events to save")
+
+
 def upcoming_events_entry(dont_save=True, **kwargs):
     """
     Entry point for the upcoming events task and the events timeline plot
@@ -30,11 +59,9 @@ def upcoming_events_entry(dont_save=True, **kwargs):
     fig = Graphics("events").plot(events_df, dont_save=dont_save, **kwargs)
     if not dont_save:
         partition_cols = ["location", "date", "time", "title"]
-        if not new_events_df.empty:
-            log(f"Saving to events parquet: {new_events_df.title.unique()}")
-            Parquet(EVENTS_PARQUET_LOCATION).write(
-                new_events_df, partition_cols=partition_cols
-            )
+        save_new_events(new_events_df, partition_cols)
+        save_unseen_events(events_df, new_events_df, partition_cols)
+
         Firestore(EVENTS_PARQUET_LOCATION).write(
             events_df,
             columns=partition_cols

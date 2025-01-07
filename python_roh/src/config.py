@@ -1,3 +1,4 @@
+import os
 import json
 import argparse
 import pandas as pd
@@ -5,6 +6,9 @@ import pyarrow as pa
 
 from cloud.platform import PLATFORM
 
+PROJECT = os.environ.get("PROJECT")
+if not PROJECT:
+    raise ValueError("$PROJECT environment variable is not set")
 
 def jprint(x):
     return print(json.dumps(x, indent=3))
@@ -115,9 +119,8 @@ def parse_args(args):
     output = {k: v for k, v in output.items() if v is not None}
     return output
 
-
-CLOUD_BUCKET = "vitaminb16-clean/"
-PUBLIC_BUCKET = "vitaminb16-public/"
+CLOUD_BUCKET = f"{PROJECT}-clean/"
+PUBLIC_BUCKET = f"{PROJECT}-public/"
 PREFIX = PLATFORM.fs_prefix
 PREFIX_PUBLIC = PLATFORM.fs_prefix
 if PLATFORM.name != "Local":
@@ -131,6 +134,7 @@ SEAT_STATUSES_PATH = PREFIX + "metadata/seat_statuses.json"
 SEAT_POSITIONS_JSON_LOCATION = PREFIX + "metadata/seat_positions.json"
 SOONEST_PERFORMANCES_LOCATION = PREFIX + "metadata/soonest_performances.json"
 MISSING_CASTS_LOCATION = PREFIX + "metadata/missing_casts.json"
+SEEN_PERFORMANCES_LOCATION = PREFIX + "metadata/seen_performances.json"
 EVENTS_PARQUET_LOCATION = PREFIX + "output/roh_events.parquet"
 PRODUCTIONS_PARQUET_LOCATION = PREFIX + "output/roh_productions.parquet"
 HISTORIC_CASTS_PARQUET_LOCATION = PREFIX + "output/historic_cast_performances.parquet"
@@ -306,6 +310,6 @@ PYARROW_SCHEMAS = {
 FIRESTORE_SCHEMAS = {k.replace(PREFIX, ""): v for k, v in PARQUET_SCHEMAS.items()}
 
 PARQUET_TABLE_RELATIONS = {
-    EVENTS_PARQUET_LOCATION: "clean.v_roh_events",
-    PRODUCTIONS_PARQUET_LOCATION: "clean.v_roh_productions",
+    EVENTS_PARQUET_LOCATION: f"{PROJECT}.clean.v_roh_events",
+    PRODUCTIONS_PARQUET_LOCATION: f"{PROJECT}.clean.v_roh_productions",
 }
