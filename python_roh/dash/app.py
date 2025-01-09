@@ -494,40 +494,49 @@ def display_seats_map(
     fig = get_seats_map(performance_id, available_seat_status_ids=seat_status_ids)
 
     # Get the casts data
-    casts = try_get_cast_for_current_performance(performance_id)
-    casts = casts.loc[:, ["role", "name"]]
-    casts = casts.to_dict("records")
+    try:
+        casts = try_get_cast_for_current_performance(performance_id)
+        casts = casts.loc[:, ["role", "name"]]
+        casts = casts.to_dict("records")
 
-    # Create a "Casts" section (table) with:
-    #   - The role in the left column, right-aligned
-    #   - The separator in the middle, centered
-    #   - The name in the right column, left-aligned
-    casts_html = html.Div(
-        [
-            html.H3("Cast sheet", style=line_style),
-            html.Table(
-                [
-                    html.Tr(
-                        [
-                            html.Td(
-                                cast["role"],
-                                style={"textAlign": "right", "width": "40%"},
-                            ),
-                            html.Td("|", style={"textAlign": "center", "width": "2%"}),
-                            html.Td(
-                                cast["name"],
-                                style={"textAlign": "left", "width": "40%"},
-                            ),
-                        ],
-                        style=line_style,
-                    )
-                    for cast in casts
-                ],
-                style={"margin": "0 auto"},  # Center the table horizontally
-            ),
-        ],
-        style=line_style,
-    )
+        # Create a "Casts" section (table) with:
+        #   - The role in the left column, right-aligned
+        #   - The separator in the middle, centered
+        #   - The name in the right column, left-aligned
+        casts_html = html.Div(
+            [
+                html.H3("Cast sheet", style=line_style),
+                html.Table(
+                    [
+                        html.Tr(
+                            [
+                                html.Td(
+                                    cast["role"],
+                                    style={"textAlign": "right", "width": "40%"},
+                                ),
+                                html.Td("|", style={"textAlign": "center", "width": "2%"}),
+                                html.Td(
+                                    cast["name"],
+                                    style={"textAlign": "left", "width": "40%"},
+                                ),
+                            ],
+                            style=line_style,
+                        )
+                        for cast in casts
+                    ],
+                    style={"margin": "0 auto"},  # Center the table horizontally
+                ),
+            ],
+            style=line_style,
+        )
+    except Exception as e:
+        casts_html = html.Div(
+            [
+                html.H3("Cast sheet", style=line_style),
+                html.P("Cast sheet not available", style=line_style),
+            ],
+            style=line_style,
+        )
 
     visible_style = {"visibility": "visible", "display": "block"}
 
