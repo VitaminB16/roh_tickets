@@ -154,7 +154,7 @@ def enrich_events_df(events_df):
     )
     # Remove entries that can't be converted to int
     events_df = events_df.query("productionId.str.isdigit()")
-    events_df["productionId"] = events_df.productionId.astype(int)
+    events_df = events_df.assign(productionId=events_df.productionId.astype(int))
     events_df, added_productions_df = enrich_events_with_productions(events_df)
     events_df.reset_index(drop=True, inplace=True)
     return events_df, added_productions_df
