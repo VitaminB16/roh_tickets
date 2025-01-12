@@ -10,6 +10,7 @@ PROJECT = os.environ.get("PROJECT")
 if not PROJECT:
     raise ValueError("$PROJECT environment variable is not set")
 
+
 def jprint(x):
     return print(json.dumps(x, indent=3))
 
@@ -119,6 +120,7 @@ def parse_args(args):
     output = {k: v for k, v in output.items() if v is not None}
     return output
 
+
 CLOUD_BUCKET = f"{PROJECT}-clean/"
 PUBLIC_BUCKET = f"{PROJECT}-public/"
 PREFIX = PLATFORM.fs_prefix
@@ -139,8 +141,9 @@ PRODUCTIONS_PARQUET_LOCATION = PREFIX + "output/roh_productions.parquet"
 HISTORIC_CASTS_PARQUET_LOCATION = PREFIX + "output/historic_cast_performances.parquet"
 CURRENT_CASTS_PARQUET_LOCATION = PREFIX + "output/current_cast_performances.parquet"
 CASTS_PARQUET_LOCATION = PREFIX + "output/cast_performances.parquet"
+SEEN_CASTS_PARQUET_LOCATION = PREFIX + "output/seen_cast_performances.parquet"
 SEEN_PERFORMANCES_LOCATION = PREFIX + "metadata/seen_performances.json"
-SEEN_EVENTS_LOCATION = PREFIX + "metadata/seen_events.json"
+SEEN_EVENTS_PARQUET_LOCATION = PREFIX + "metadata/seen_events.parquet"
 # Public  --------------------------------
 HALL_IMAGE_LOCATION = PREFIX_PUBLIC + "output/images/ROH_hall.png"
 EVENTS_IMAGE_LOCATION = PREFIX_PUBLIC + "output/images/ROH_events.png"
@@ -303,10 +306,12 @@ PRODUCTIONS_PARQUET_SCHEMA = {
 
 PARQUET_SCHEMAS = {
     EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
+    SEEN_EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
     PRODUCTIONS_PARQUET_LOCATION: PRODUCTIONS_PARQUET_SCHEMA,
 }
 PYARROW_SCHEMAS = {
     EVENTS_PARQUET_LOCATION: EVENTS_PYARROW_SCHEMA,
+    SEEN_EVENTS_PARQUET_LOCATION: EVENTS_PYARROW_SCHEMA,
 }
 FIRESTORE_SCHEMAS = {k.replace(PREFIX, ""): v for k, v in PARQUET_SCHEMAS.items()}
 
