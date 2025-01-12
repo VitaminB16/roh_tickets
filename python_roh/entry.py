@@ -5,10 +5,10 @@ from cloud.utils import log
 from python_roh.src.config import *
 from tools import Parquet, Firestore
 from python_roh.src.graphics import Graphics
-from python_roh.casts import handle_new_past_casts
 from python_roh.src.src import API, print_performance_info
 from python_roh.upcoming_events import handle_upcoming_events
 from python_roh.src.api import get_query_dict, configure_query_dict
+from python_roh.casts import handle_new_past_casts, handle_seen_performances
 
 try:
     from python_roh.src.src_secret import secret_function
@@ -68,6 +68,7 @@ def upcoming_events_entry(dont_save=True, **kwargs):
             + ["performanceId", "productionId", "timestamp", "url"],
         )
         handle_new_past_casts(events_df)
+        handle_seen_performances()
     return events_df, today_tomorrow_events_df, next_week_events_df, fig
 
 

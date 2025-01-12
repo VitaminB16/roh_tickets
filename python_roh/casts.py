@@ -91,3 +91,15 @@ def handle_new_past_casts(events_df):
     Parquet(CASTS_PARQUET_LOCATION).write(new_existing_casts)
     log(f"Saved {len(cast_df)} new cast entries to parquet: {cast_df.slug.unique()}")
     return cast_df
+
+
+def handle_seen_performances():
+    full_events_df = Parquet(EVENTS_PARQUET_LOCATION).read()
+    seen_performances = Firestore(SEEN_PERFORMANCES_LOCATION).read()
+    e_df = full_events_df.query("location == 'Main Stage'")
+    e_df = e_df.assign(timestamp_str=e_df.timestamp.dt.strftime("%Y-%m-%d %H:%M"))
+
+    seen_df = e_df.query("timestamp_str in @seen_performances")
+    d = seen_df[["timestamp_str", "performanceId"]].set_index("timestamp_str").to_dict()
+    Firestore(SEEN_EVENTS_LOCATION).write(d)
+    return full_events_df
