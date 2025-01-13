@@ -8,7 +8,11 @@ from dash.dependencies import Input, Output, State, ClientsideFunction
 
 from main import main_entry
 from python_roh.dash.assets.vars import GITHUB_LOGO_SVG_PATH
-from python_roh.casts import try_get_cast_for_current_performance
+from python_roh.casts import (
+    try_get_cast_for_current_performance,
+    get_previously_seen_casts,
+)
+from tools import Firestore
 
 app = dash.Dash(__name__)
 
@@ -38,6 +42,8 @@ DASH_PAYLOAD_DEFAULTS = {
     "available_seat_status_ids": [0, 4],  # available seat status IDs
 }
 EVENTS_DF = pd.DataFrame()
+SEEN_CASTS_DF = pd.DataFrame()
+SEEN_EVENTS_DF = pd.DataFrame()
 
 
 # Helper Functions
@@ -334,9 +340,17 @@ def load_events_calendar(n_intervals, theme_data, screen_width):
     payload = {"task_name": "events", **DASH_PAYLOAD_DEFAULTS}
     events_df, _, _, fig = main_entry(payload, return_output=True)
     visible_style = {"visibility": "visible", "display": "block"}
+    global SEEN_EVENTS_DF
+    SEEN_EVENTS_DF = Firestore(SEEN_EVENTS_PARQUET_LOCATION).read(apply_schema=True)
+    global SEEN_CASTS_DF
+    SEEN_CASTS_DF = Firestore(SEEN_CASTS_PARQUET_LOCATION).read(apply_schema=True)
     global EVENTS_DF
     EVENTS_DF = events_df
     return fig, visible_style
+
+
+def compute_seen_suffix(name, seen_casts_df):
+    return f"(seen)"
 
 
 @app.callback(
@@ -496,6 +510,8 @@ def display_seats_map(
     # Get the casts data
     try:
         casts = try_get_cast_for_current_performance(performance_id)
+        seen_casts_df = SEEN_CASTS_DF
+        seen_casts_df = get_previously_seen_casts(casts, seen_casts_df)
         casts = casts.loc[:, ["role", "name"]]
         casts = casts.to_dict("records")
 
@@ -503,27 +519,27 @@ def display_seats_map(
         #   - The role in the left column, right-aligned
         #   - The separator in the middle, centered
         #   - The name in the right column, left-aligned
+        casts_list_html = []
+        for cast in casts:
+            name = cast["name"]
+            role = cast["role"]
+            if name in seen_casts_df.name.values:
+                seen_suffix = compute_seen_suffix(name, seen_casts_df)
+                name = f"{name} {seen_suffix}"
+            casts_one_html = html.Tr(
+                [
+                    html.Td(role, style={"textAlign": "right", "width": "40%"}),
+                    html.Td("|", style={"textAlign": "center", "width": "2%"}),
+                    html.Td(name, style={"textAlign": "left", "width": "40%"}),
+                ],
+                style=line_style,
+            )
+            casts_list_html.append(casts_one_html)
         casts_html = html.Div(
             [
                 html.H3("Cast sheet", style=line_style),
                 html.Table(
-                    [
-                        html.Tr(
-                            [
-                                html.Td(
-                                    cast["role"],
-                                    style={"textAlign": "right", "width": "40%"},
-                                ),
-                                html.Td("|", style={"textAlign": "center", "width": "2%"}),
-                                html.Td(
-                                    cast["name"],
-                                    style={"textAlign": "left", "width": "40%"},
-                                ),
-                            ],
-                            style=line_style,
-                        )
-                        for cast in casts
-                    ],
+                    casts_list_html,
                     style={"margin": "0 auto"},  # Center the table horizontally
                 ),
             ],
@@ -571,6 +587,7 @@ def display_seat_view_image(clickData):
         Output("seats-graph", "figure", allow_duplicate=True),
         Output("seats-graph", "style", allow_duplicate=True),
         Output("event-info-container", "children", allow_duplicate=True),
+        Output("casts-container", "children", allow_duplicate=True),
     ],
     [
         Input("next-performance-btn", "n_clicks"),
