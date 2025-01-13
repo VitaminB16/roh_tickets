@@ -23,6 +23,7 @@ def try_get_cast_for_current_performance(performance_id):
     if cast_df.empty:
         return None
     cols_to_drop = ["type", "relationships", "title", "image"]
+    cast_df.name = cast_df.name.str.strip()
     cast_df = cast_df.drop(columns=cols_to_drop, errors="ignore")
     cast_df = cast_df.drop(columns=["attributes", "slug"], errors="ignore")
     cast_df = cast_df.assign(is_replacing=cast_df.id.str.contains("replaced"))
@@ -88,6 +89,7 @@ def handle_new_past_casts(events_df):
     cast_df = pd.concat(cast_dfs, ignore_index=True)
 
     new_existing_casts = pd.concat([existing_casts, cast_df], ignore_index=True)
+    new_existing_casts.name = new_existing_casts.name.str.strip()
     Parquet(CASTS_PARQUET_LOCATION).write(new_existing_casts)
     log(f"Saved {len(cast_df)} new cast entries to parquet: {cast_df.slug.unique()}")
     return cast_df
@@ -134,3 +136,18 @@ def get_seen_casts(seen_casts_df, seen_events_df):
     seen_casts = Parquet(CASTS_PARQUET_LOCATION).read()
     seen_casts = seen_casts_df.query("performance_id in @seen_events_df.performanceId")
     return seen_casts
+
+
+def get_previously_seen_casts(casts_df, seen_casts_df):
+    seen_casts_df = seen_casts_df.merge(
+        casts_df, on="name", how="inner", suffixes=("_seen", "")
+    )
+    common_names = [
+        "Orchestra of the Royal Opera House",
+        "Royal Opera Chorus",
+        "William Spaulding",
+        "Vasko Vassilev",
+    ]
+    seen_casts_df = seen_casts_df.query("name not in @common_names")
+    seen_casts_df = seen_casts_df[["name", "performance_id_seen"]]
+    return seen_casts_df
