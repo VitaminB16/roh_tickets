@@ -8,6 +8,11 @@ from dash.dependencies import Input, Output, State, ClientsideFunction
 
 from main import main_entry
 from python_roh.dash.assets.vars import GITHUB_LOGO_SVG_PATH
+from python_roh.casts import (
+    try_get_cast_for_current_performance,
+    get_previously_seen_casts,
+)
+from tools import Firestore
 
 app = dash.Dash(__name__)
 
@@ -37,6 +42,8 @@ DASH_PAYLOAD_DEFAULTS = {
     "available_seat_status_ids": [0, 4],  # available seat status IDs
 }
 EVENTS_DF = pd.DataFrame()
+SEEN_CASTS_DF = pd.DataFrame()
+SEEN_EVENTS_DF = pd.DataFrame()
 
 
 # Helper Functions
@@ -203,7 +210,7 @@ def serve_layout(dark_mode):
                 max_intervals=1,  # It will fire only once
             ),
             html.Div(
-                [  # Upcoming events
+                [
                     dcc.Loading(
                         id="loading-events",
                         type="default",
@@ -243,6 +250,9 @@ def serve_layout(dark_mode):
                     **AUTO_MARGIN,
                 },
             ),
+            # -----------------------------
+            # Seats graph, then cast sheet, then seat-view image
+            # -----------------------------
             html.Div(
                 [
                     dcc.Loading(
@@ -255,15 +265,29 @@ def serve_layout(dark_mode):
                             )
                         ],
                     ),
-                    html.Div(id="seat-view-image-container"),
+                    # Cast sheet in the middle
+                    html.Div(
+                        id="casts-container",
+                        style={
+                            "margin-top": "20px",
+                            "marginBottom": "20px",
+                            "textAlign": "center",
+                            **FONT_FAMILY,
+                            **style,
+                            **AUTO_MARGIN,
+                        },
+                    ),
+                    # Seat image last
+                    html.Div(
+                        id="seat-view-image-container",
+                        style={"marginTop": "20px"},
+                    ),
                 ],
                 style={
                     "textAlign": "center",
                     **style,
                     **AUTO_MARGIN,
                     "maxWidth": "1400px",
-                    "maxHeight": "1000px",
-                    "position": "relative",
                 },
             ),
         ],
@@ -316,9 +340,17 @@ def load_events_calendar(n_intervals, theme_data, screen_width):
     payload = {"task_name": "events", **DASH_PAYLOAD_DEFAULTS}
     events_df, _, _, fig = main_entry(payload, return_output=True)
     visible_style = {"visibility": "visible", "display": "block"}
+    global SEEN_EVENTS_DF
+    SEEN_EVENTS_DF = Firestore(SEEN_EVENTS_PARQUET_LOCATION).read(apply_schema=True)
+    global SEEN_CASTS_DF
+    SEEN_CASTS_DF = Firestore(SEEN_CASTS_PARQUET_LOCATION).read(apply_schema=True)
     global EVENTS_DF
     EVENTS_DF = events_df
     return fig, visible_style
+
+
+def compute_seen_suffix(name, seen_casts_df):
+    return f"(seen)"
 
 
 @app.callback(
@@ -327,6 +359,7 @@ def load_events_calendar(n_intervals, theme_data, screen_width):
         Output("seats-graph", "style"),
         Output("event-info-container", "children"),
         Output("current-performance-id", "data"),
+        Output("casts-container", "children"),
     ],
     [Input("events-graph", "clickData")],
     [State("theme-store", "data"), State("seat-status-store", "data")],
@@ -339,6 +372,14 @@ def display_seats_map(
     point=None,
     performance_id=None,
 ):
+    """
+    Returns:
+    seats-graph.figure,
+    seats-graph.style,
+    event-info-container.children,
+    current-performance-id.data,
+    casts-container.children
+    """
     if clickData is None and point is None and performance_id is None:
         raise PreventUpdate
     if point is None and clickData is not None:
@@ -350,6 +391,7 @@ def display_seats_map(
     event_title = event["title"]
     event_time = event["timestamp"].strftime("%H:%M")
     event_date = event["timestamp"].strftime("%A, %B %-d, %Y")
+
     line_style = {"marginBottom": "0px", "marginTop": "0px"}
     box_style = {
         "display": "flex",
@@ -370,6 +412,7 @@ def display_seats_map(
         "flexDirection": "column",
         "alignItems": "right",
     }
+
     all_events, next_event, previous_event = get_all_title_events(
         performance_id=performance_id, event_title=event_title
     )
@@ -460,10 +503,60 @@ def display_seats_map(
         [event_info_box, event_urls, next_previous_buttons, seat_status_input],
         style=box_style,
     )
+
+    # Get seat map
     fig = get_seats_map(performance_id, available_seat_status_ids=seat_status_ids)
+
+    # Get the casts data
+    try:
+        casts = try_get_cast_for_current_performance(performance_id)
+        seen_casts_df = SEEN_CASTS_DF
+        seen_casts_df = get_previously_seen_casts(casts, seen_casts_df)
+        casts = casts.loc[:, ["role", "name"]]
+        casts = casts.to_dict("records")
+
+        # Create a "Casts" section (table) with:
+        #   - The role in the left column, right-aligned
+        #   - The separator in the middle, centered
+        #   - The name in the right column, left-aligned
+        casts_list_html = []
+        for cast in casts:
+            name = cast["name"]
+            role = cast["role"]
+            if name in seen_casts_df.name.values:
+                seen_suffix = compute_seen_suffix(name, seen_casts_df)
+                name = f"{name} {seen_suffix}"
+            casts_one_html = html.Tr(
+                [
+                    html.Td(role, style={"textAlign": "right", "width": "40%"}),
+                    html.Td("|", style={"textAlign": "center", "width": "2%"}),
+                    html.Td(name, style={"textAlign": "left", "width": "40%"}),
+                ],
+                style=line_style,
+            )
+            casts_list_html.append(casts_one_html)
+        casts_html = html.Div(
+            [
+                html.H3("Cast sheet", style=line_style),
+                html.Table(
+                    casts_list_html,
+                    style={"margin": "0 auto"},  # Center the table horizontally
+                ),
+            ],
+            style=line_style,
+        )
+    except Exception as e:
+        casts_html = html.Div(
+            [
+                html.H3("Cast sheet", style=line_style),
+                html.P("Cast sheet not available", style=line_style),
+            ],
+            style=line_style,
+        )
+
     visible_style = {"visibility": "visible", "display": "block"}
 
-    return fig, visible_style, event_info_container, performance_id
+    return fig, visible_style, event_info_container, performance_id, casts_html
 
 
 @app.callback(
@@ -494,6 +587,7 @@ def display_seat_view_image(clickData):
         Output("seats-graph", "figure", allow_duplicate=True),
         Output("seats-graph", "style", allow_duplicate=True),
         Output("event-info-container", "children", allow_duplicate=True),
+        Output("casts-container", "children", allow_duplicate=True),
     ],
     [
         Input("next-performance-btn", "n_clicks"),
@@ -529,12 +623,12 @@ def update_performance_id(
     if updated_id is None:
         raise PreventUpdate
     print(f"Updated performance ID: {updated_id}")
-    fig, visible_style, event_info_container, _ = display_seats_map(
+    fig, visible_style, event_info_container, _, casts = display_seats_map(
         performance_id=updated_id,
         theme_data=theme_data,
         seat_status_ids=seat_status_ids,
     )
-    return updated_id, fig, visible_style, event_info_container
+    return updated_id, fig, visible_style, event_info_container, casts
 
 
 @app.callback(

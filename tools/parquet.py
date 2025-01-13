@@ -16,6 +16,7 @@ from python_roh.src.config import (
     PYARROW_SCHEMAS,
     PLATFORM,
     PARQUET_TABLE_RELATIONS,
+    PRODUCTIONS_PARQUET_LOCATION,
 )
 
 
@@ -250,7 +251,7 @@ def to_parquet(
 
 
 if __name__ == "__main__":
-    Parquet("gs://vitaminb16-clean/output/roh_productions.parquet").read(
+    Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
         columns=["productionId", "title", "date", "time", "performanceId"],
         allow_empty=True,
         use_bigquery=False,

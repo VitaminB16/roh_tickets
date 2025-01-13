@@ -1,4 +1,6 @@
 import requests
+
+from cloud.utils import log
 from python_roh.src.config import *
 from tools import Parquet, Firestore
 
@@ -21,6 +23,7 @@ def try_get_cast_for_current_performance(performance_id):
     if cast_df.empty:
         return None
     cols_to_drop = ["type", "relationships", "title", "image"]
+    cast_df.name = cast_df.name.str.strip()
     cast_df = cast_df.drop(columns=cols_to_drop, errors="ignore")
     cast_df = cast_df.drop(columns=["attributes", "slug"], errors="ignore")
     cast_df = cast_df.assign(is_replacing=cast_df.id.str.contains("replaced"))
@@ -48,6 +51,7 @@ def try_get_cast_for_current_performance(performance_id):
 
 
 def handle_new_past_casts(events_df):
+    log("Processing new past casts")
     existing_casts = Parquet(CASTS_PARQUET_LOCATION).read(use_bigquery=False)
     known_uncast_events = Firestore(MISSING_CASTS_LOCATION).read()
     time_now = pd.Timestamp.now(tz="Europe/London") - pd.Timedelta("2D")
@@ -64,10 +68,10 @@ def handle_new_past_casts(events_df):
         "performanceId in @new_past_performance_ids"
     )
     if new_past_events_df.empty:
-        print("No new past events to process")
+        log("No new past events to process")
         return
 
-    print(
+    log(
         f"Processing {len(new_past_events_df)} new past events: {new_past_events_df.title.unique()}"
     )
 
@@ -79,12 +83,71 @@ def handle_new_past_casts(events_df):
         cast_dfs.append(cast_df)
 
     if not cast_dfs:
-        print("No new cast data to process")
+        log("No new cast data to process")
         return
 
     cast_df = pd.concat(cast_dfs, ignore_index=True)
 
     new_existing_casts = pd.concat([existing_casts, cast_df], ignore_index=True)
+    new_existing_casts.name = new_existing_casts.name.str.strip()
     Parquet(CASTS_PARQUET_LOCATION).write(new_existing_casts)
-    print(f"Saved {len(cast_df)} new cast entries to parquet: {cast_df.title.unique()}")
+    log(f"Saved {len(cast_df)} new cast entries to parquet: {cast_df.slug.unique()}")
     return cast_df
+
+
+def handle_seen_performances():
+    full_events_df = Parquet(EVENTS_PARQUET_LOCATION).read()
+    seen_performances = Firestore(SEEN_PERFORMANCES_LOCATION).read()
+    casts_df = Parquet(CASTS_PARQUET_LOCATION).read(use_bigquery=False)
+    e_df = full_events_df.query("location == 'Main Stage'")
+    e_df = e_df.assign(timestamp_str=e_df.timestamp.dt.strftime("%Y-%m-%d %H:%M"))
+
+    seen_df = e_df.query("timestamp_str in @seen_performances")
+    seen_df = seen_df[["timestamp_str", "performanceId"]]
+    di = seen_df.set_index("timestamp_str").to_dict()
+    di = di["performanceId"]
+
+    seen_performance_ids = list(di.values())
+    seen_events_df = load_seen_events_df(seen_performance_ids)
+    seen_casts_df = get_seen_casts(casts_df, seen_events_df)
+    Firestore(SEEN_EVENTS_PARQUET_LOCATION).write(seen_events_df)
+    Firestore(SEEN_CASTS_PARQUET_LOCATION).write(seen_casts_df)
+    return full_events_df
+
+
+def load_casts_df():
+    casts_df = Parquet(CASTS_PARQUET_LOCATION).read(use_bigquery=False)
+    return casts_df
+
+
+def load_seen_events_df(seen_performance_ids):
+    seen_events_df = Parquet(EVENTS_PARQUET_LOCATION).read(
+        filters=[
+            ("location", "=", "Main Stage"),
+            ("title", "!=", "Friends Rehearsals"),
+            ("performanceId", "in", seen_performance_ids),
+        ],
+        use_bigquery=True,
+    )
+    return seen_events_df
+
+
+def get_seen_casts(seen_casts_df, seen_events_df):
+    seen_casts = Parquet(CASTS_PARQUET_LOCATION).read()
+    seen_casts = seen_casts_df.query("performance_id in @seen_events_df.performanceId")
+    return seen_casts
+
+
+def get_previously_seen_casts(casts_df, seen_casts_df):
+    seen_casts_df = seen_casts_df.merge(
+        casts_df, on="name", how="inner", suffixes=("_seen", "")
+    )
+    common_names = [
+        "Orchestra of the Royal Opera House",
+        "Royal Opera Chorus",
+        "William Spaulding",
+        "Vasko Vassilev",
+    ]
+    seen_casts_df = seen_casts_df.query("name not in @common_names")
+    seen_casts_df = seen_casts_df[["name", "performance_id_seen"]]
+    return seen_casts_df
