@@ -350,7 +350,17 @@ def load_events_calendar(n_intervals, theme_data, screen_width):
 
 
 def compute_seen_suffix(name, seen_casts_df):
-    return f"(seen)"
+    """
+    Return a string containing all of the performances where 'name' has been seen before,
+    in a single comma-separated list. This string will be used as a hover tooltip.
+    """
+    seen_cast = seen_casts_df.query(f"name == @name")
+    title_timestamps = seen_cast.apply(
+        lambda x: f"{x.title} ({x.timestamp.strftime('%b %Y')})", axis=1
+    )
+    title_timestamps = title_timestamps.unique()
+    output = "\n".join(title_timestamps)
+    return output
 
 
 @app.callback(
@@ -515,36 +525,61 @@ def display_seats_map(
         casts = casts.loc[:, ["role", "name"]]
         casts = casts.to_dict("records")
 
-        # Create a "Casts" section (table) with:
-        #   - The role in the left column, right-aligned
-        #   - The separator in the middle, centered
-        #   - The name in the right column, left-aligned
+        line_style = {"marginBottom": "0px", "marginTop": "0px"}
         casts_list_html = []
-        for cast in casts:
-            name = cast["name"]
-            role = cast["role"]
-            if name in seen_casts_df.name.values:
-                seen_suffix = compute_seen_suffix(name, seen_casts_df)
-                name = f"{name} {seen_suffix}"
+        line_style = {"marginBottom": "0px", "marginTop": "0px"}
+
+        for cast_row in casts:
+            person_name = cast_row["name"]
+            role = cast_row["role"]
+
+            if person_name in seen_casts_df.name.values:
+                tooltip_text = compute_seen_suffix(person_name, seen_casts_df)
+
+                # Create a parent span for "(seen)" plus a hidden child with tooltip text
+                person_name_element = html.Span(
+                    [
+                        person_name,  # e.g. "James Cleverton"
+                        " ",          # Add a space before "(seen)"
+                        html.Span(
+                            [
+                                # The text the user sees
+                                "(seen)",
+                                # A hidden span that will show on hover
+                                html.Span(
+                                    tooltip_text,
+                                    className="tooltip-text",
+                                )
+                            ],
+                            className="seen-tooltip",
+                        ),
+                    ]
+                )
+            else:
+                person_name_element = html.Span(person_name)
             casts_one_html = html.Tr(
                 [
                     html.Td(role, style={"textAlign": "right", "width": "40%"}),
                     html.Td("|", style={"textAlign": "center", "width": "2%"}),
-                    html.Td(name, style={"textAlign": "left", "width": "40%"}),
+                    html.Td(person_name_element, style={"textAlign": "left", "width": "40%"}),
                 ],
                 style=line_style,
             )
             casts_list_html.append(casts_one_html)
+
         casts_html = html.Div(
             [
                 html.H3("Cast sheet", style=line_style),
                 html.Table(
                     casts_list_html,
-                    style={"margin": "0 auto"},  # Center the table horizontally
+                    style={"margin": "0 auto"},  # Center horizontally
                 ),
             ],
             style=line_style,
         )
+
+    except KeyboardInterrupt:
+        raise
     except Exception as e:
         casts_html = html.Div(
             [

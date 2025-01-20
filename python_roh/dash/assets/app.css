@@ -82,3 +82,40 @@ a:active,
     color: #ff4500;
   }
 }
+
+.seen-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.seen-tooltip .tooltip-text {
+  position: absolute;
+  /* Position the tooltip to the right of the "seen" text */
+  left: 105%;
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* Style the tooltip */
+  background-color: #333;
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  z-index: 9999;
+
+  /* KEY: preserve newlines exactly, no automatic wrapping */
+  white-space: pre;
+
+  /* Hidden by default */
+  visibility: hidden;
+  opacity: 0;
+  transition: none;  /* Show immediately on hover (no delay) */
+}
+
+.seen-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+

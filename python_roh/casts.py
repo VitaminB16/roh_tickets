@@ -111,6 +111,7 @@ def handle_seen_performances():
     seen_events_df = load_seen_events_df(seen_performance_ids)
     seen_casts_df = get_seen_casts(casts_df, seen_events_df)
 
+    # Add title and timestamp to seen casts
     performances_df = seen_events_df.loc[:, ["title", "timestamp", "performanceId"]]
     performances_df = performances_df.drop_duplicates()
     seen_casts_df = seen_casts_df.merge(
@@ -144,11 +145,12 @@ def load_seen_events_df(seen_performance_ids):
 def get_seen_casts(seen_casts_df, seen_events_df):
     seen_casts = Parquet(CASTS_PARQUET_LOCATION).read()
     seen_casts = seen_casts_df.query("performance_id in @seen_events_df.performanceId")
+    # This column doesn't exist in the parquet, only in the "seen" casts in Firestore
+    seen_casts = seen_casts.drop(columns=["timestamp"], errors="ignore")
     return seen_casts
 
 
 def get_previously_seen_casts(casts_df, seen_casts_df):
-    breakpoint()
     seen_casts_df = seen_casts_df.merge(
         casts_df, on="name", how="inner", suffixes=("_seen", "")
     )
