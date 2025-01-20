@@ -355,6 +355,7 @@ def compute_seen_suffix(name, seen_casts_df):
     in a single comma-separated list. This string will be used as a hover tooltip.
     """
     seen_cast = seen_casts_df.query(f"name == @name")
+    seen_cast = seen_cast.sort_values(by="timestamp", ascending=False)
     title_timestamps = seen_cast.apply(
         lambda x: f"{x.title} ({x.timestamp.strftime('%b %Y')})", axis=1
     )
@@ -540,7 +541,7 @@ def display_seats_map(
                 person_name_element = html.Span(
                     [
                         person_name,  # e.g. "James Cleverton"
-                        " ",          # Add a space before "(seen)"
+                        " ",  # Add a space before "(seen)"
                         html.Span(
                             [
                                 # The text the user sees
@@ -549,7 +550,7 @@ def display_seats_map(
                                 html.Span(
                                     tooltip_text,
                                     className="tooltip-text",
-                                )
+                                ),
                             ],
                             className="seen-tooltip",
                         ),
@@ -561,7 +562,9 @@ def display_seats_map(
                 [
                     html.Td(role, style={"textAlign": "right", "width": "40%"}),
                     html.Td("|", style={"textAlign": "center", "width": "2%"}),
-                    html.Td(person_name_element, style={"textAlign": "left", "width": "40%"}),
+                    html.Td(
+                        person_name_element, style={"textAlign": "left", "width": "40%"}
+                    ),
                 ],
                 style=line_style,
             )
