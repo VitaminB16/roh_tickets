@@ -110,8 +110,17 @@ def handle_seen_performances():
     seen_performance_ids = list(di.values())
     seen_events_df = load_seen_events_df(seen_performance_ids)
     seen_casts_df = get_seen_casts(casts_df, seen_events_df)
+
+    performances_df = seen_events_df.loc[:, ["title", "timestamp", "performanceId"]]
+    performances_df = performances_df.drop_duplicates()
+    seen_casts_df = seen_casts_df.merge(
+        performances_df, left_on="performance_id", right_on="performanceId", how="inner"
+    )
+    seen_casts_df = seen_casts_df.drop(columns=["performanceId"], errors="ignore")
+
     Firestore(SEEN_EVENTS_PARQUET_LOCATION).write(seen_events_df)
     Firestore(SEEN_CASTS_PARQUET_LOCATION).write(seen_casts_df)
+
     return full_events_df
 
 
@@ -139,6 +148,7 @@ def get_seen_casts(seen_casts_df, seen_events_df):
 
 
 def get_previously_seen_casts(casts_df, seen_casts_df):
+    breakpoint()
     seen_casts_df = seen_casts_df.merge(
         casts_df, on="name", how="inner", suffixes=("_seen", "")
     )
@@ -149,5 +159,5 @@ def get_previously_seen_casts(casts_df, seen_casts_df):
         "Vasko Vassilev",
     ]
     seen_casts_df = seen_casts_df.query("name not in @common_names")
-    seen_casts_df = seen_casts_df[["name", "performance_id_seen"]]
+    seen_casts_df = seen_casts_df[["name", "performance_id_seen", "title", "timestamp"]]
     return seen_casts_df
