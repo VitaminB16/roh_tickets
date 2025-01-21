@@ -303,11 +303,20 @@ PRODUCTIONS_PARQUET_SCHEMA = {
     "performanceId": lambda x: x.astype(str),
     "productionId": lambda x: x.astype(int),
 }
+CASTS_PARQUET_SCHEMA = {
+    "timestamp": [
+        lambda x: pd.to_datetime(x, unit="ms", utc=True).dt.tz_convert("Europe/London"),
+        lambda x: pd.to_datetime(x, unit="ms", utc=True).tz_convert("Europe/London"),
+    ],
+    "performance_id": lambda x: x.astype(str),
+}
 
 PARQUET_SCHEMAS = {
     EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
     SEEN_EVENTS_PARQUET_LOCATION: EVENTS_PARQUET_SCHEMA,
     PRODUCTIONS_PARQUET_LOCATION: PRODUCTIONS_PARQUET_SCHEMA,
+    CASTS_PARQUET_LOCATION: CASTS_PARQUET_SCHEMA,
+    SEEN_CASTS_PARQUET_LOCATION: CASTS_PARQUET_SCHEMA,
 }
 PYARROW_SCHEMAS = {
     EVENTS_PARQUET_LOCATION: EVENTS_PYARROW_SCHEMA,

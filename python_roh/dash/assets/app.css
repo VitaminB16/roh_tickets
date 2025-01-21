@@ -62,6 +62,53 @@ a:active,
   font-family: 'Gotham SSm', sans-serif;
 }
 
+.seen-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  color: #226db4;
+  text-align: right;
+}
+
+.seen-tooltip:hover {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  color: salmon;
+}
+
+.seen-tooltip .tooltip-text {
+  position: absolute;
+  /* Position the tooltip to the right of the "seen" text */
+  left: 105%;
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* Style the tooltip */
+  background-color: #C7102E;
+  color: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  z-index: 9999;
+
+  /* KEY: preserve newlines exactly, no automatic wrapping */
+  white-space: pre;
+
+  /* Hidden by default */
+  visibility: hidden;
+  opacity: 0;
+  transition: none;
+  /* Show immediately on hover (no delay) */
+}
+
+.seen-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+
 @media (prefers-color-scheme: dark) {
 
   /* Dark mode CSS for links and link-button class */
@@ -81,4 +128,51 @@ a:active,
   .link-button:active {
     color: #ff4500;
   }
+
+
+  .seen-tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    color: #5193ff;
+  }
+
+  .seen-tooltip:hover {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffa07a;
+  }
+
+  .seen-tooltip .tooltip-text {
+    position: absolute;
+    /* Position the tooltip to the right of the "seen" text */
+    left: 105%;
+    top: 50%;
+    transform: translateY(-50%);
+
+    /* Style the tooltip */
+    background-color: #C7102E;
+    color: white;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    z-index: 9999;
+
+    /* KEY: preserve newlines exactly, no automatic wrapping */
+    white-space: pre;
+
+    /* Hidden by default */
+    visibility: hidden;
+    opacity: 0;
+    transition: none;
+    /* Show immediately on hover (no delay) */
+  }
+
+  .seen-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
 }

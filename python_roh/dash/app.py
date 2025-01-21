@@ -350,7 +350,94 @@ def load_events_calendar(n_intervals, theme_data, screen_width):
 
 
 def compute_seen_suffix(name, seen_casts_df):
-    return f"(seen)"
+    """
+    For a given artist 'name', return lines of 'title (role_seen) (YYYY/MM)'.
+    - If role_seen > 20 characters, truncate and add '...'.
+    - Skip consecutive months for the same (title, role_seen).
+      That is, if we have a run of N consecutive months for the same
+      title+role, keep only the first (the latest).
+    - Join them with '\n' to preserve line breaks in the tooltip.
+    """
+    # Filter to just this one artist
+    sc = seen_casts_df.query(f"name == @name").copy()
+    if sc.empty:
+        return ""  # No data means no suffix at all
+
+    # Truncate roles to 20 chars
+    sc["role_seen"] = sc["role_seen"].apply(
+        lambda x: x[:20] + "..." if len(x) > 20 else x
+    )
+
+    # Sort descending by timestamp
+    sc = sc.sort_values(by="timestamp", ascending=False)
+
+    # Pre-compute an integer "year_month" to detect consecutive months easily
+    sc["year_month_int"] = sc["timestamp"].dt.year * 12 + sc["timestamp"].dt.month
+
+    def skip_consecutive_months(group_df):
+        """
+        For each (title, role_seen) group, keep only the "first" row of any consecutive
+        month run, scanning from newest to oldest.
+        """
+        # Sort descending by timestamp within this group
+        g = group_df.sort_values(by="timestamp", ascending=False)
+        kept_rows = []
+        last_kept_ym = None
+
+        for idx, row in g.iterrows():
+            current_ym = row["year_month_int"]
+            if last_kept_ym is None:
+                # Keep the very first row (latest)
+                kept_rows.append(idx)
+                last_kept_ym = current_ym
+            else:
+                # If this month is exactly one less than the last kept month => skip
+                if current_ym == last_kept_ym - 1:
+                    pass  # skip consecutive month
+                else:
+                    kept_rows.append(idx)
+                    last_kept_ym = current_ym
+
+        return g.loc[kept_rows]
+
+    # Group by (title, role_seen) and apply the skipping logic
+    sc = sc.groupby(["title", "role_seen"], group_keys=False).apply(
+        skip_consecutive_months
+    )
+
+    # Build the final line for each row: "TITLE (ROLE) (YYYY/MM)"
+    sc["title_timestamp_str"] = sc.apply(
+        lambda x: f"{x.title} ({x.role_seen}) ({x.timestamp.strftime('%Y/%m')})",
+        axis=1,
+    )
+
+    # Keep them in descending order again (optional, but often preferred)
+    sc = sc.sort_values(by="timestamp", ascending=False)
+
+    # Eliminate duplicates and join with newline so each retained row is on its own line
+    lines = sc["title_timestamp_str"].unique()
+    output = "\n".join(lines)
+
+    return output
+
+
+# def compute_seen_suffix(name, seen_casts_df):
+#     """
+#     Return a string containing all of the performances where 'name' has been seen before,
+#     in a single comma-separated list. This string will be used as a hover tooltip.
+#     """
+#     seen_cast = seen_casts_df.query(f"name == @name")
+#     seen_cast = seen_cast.sort_values(by="timestamp", ascending=False)
+#     # If role_seen is over 20 characters, truncate it and add ellipsis
+#     seen_cast["role_seen"] = seen_cast["role_seen"].apply(
+#         lambda x: x[:20] + "..." if len(x) > 20 else x
+#     )
+#     title_timestamps = seen_cast.apply(
+#         lambda x: f"{x.title} ({x.role_seen}) ({x.timestamp.strftime('%Y/%m')})", axis=1
+#     )
+#     title_timestamps = title_timestamps.unique()
+#     output = "\n".join(title_timestamps)
+#     return output
 
 
 @app.callback(
@@ -515,36 +602,63 @@ def display_seats_map(
         casts = casts.loc[:, ["role", "name"]]
         casts = casts.to_dict("records")
 
-        # Create a "Casts" section (table) with:
-        #   - The role in the left column, right-aligned
-        #   - The separator in the middle, centered
-        #   - The name in the right column, left-aligned
+        line_style = {"marginBottom": "0px", "marginTop": "0px"}
         casts_list_html = []
-        for cast in casts:
-            name = cast["name"]
-            role = cast["role"]
-            if name in seen_casts_df.name.values:
-                seen_suffix = compute_seen_suffix(name, seen_casts_df)
-                name = f"{name} {seen_suffix}"
+        line_style = {"marginBottom": "0px", "marginTop": "0px"}
+
+        for cast_row in casts:
+            person_name = cast_row["name"]
+            role = cast_row["role"]
+
+            if person_name in seen_casts_df.name.values:
+                tooltip_text = compute_seen_suffix(person_name, seen_casts_df)
+
+                # Create a parent span for "(seen)" plus a hidden child with tooltip text
+                person_name_element = html.Span(
+                    [
+                        person_name,  # e.g. "James Cleverton"
+                        " ",  # Add a space before "(seen)"
+                        html.Span(
+                            [
+                                # The text the user sees
+                                "(seen)",
+                                # A hidden span that will show on hover
+                                html.Span(
+                                    tooltip_text,
+                                    className="tooltip-text",
+                                ),
+                            ],
+                            className="seen-tooltip",
+                        ),
+                    ]
+                )
+            else:
+                person_name_element = html.Span(person_name)
             casts_one_html = html.Tr(
                 [
                     html.Td(role, style={"textAlign": "right", "width": "40%"}),
                     html.Td("|", style={"textAlign": "center", "width": "2%"}),
-                    html.Td(name, style={"textAlign": "left", "width": "40%"}),
+                    html.Td(
+                        person_name_element, style={"textAlign": "left", "width": "40%"}
+                    ),
                 ],
                 style=line_style,
             )
             casts_list_html.append(casts_one_html)
+
         casts_html = html.Div(
             [
                 html.H3("Cast sheet", style=line_style),
                 html.Table(
                     casts_list_html,
-                    style={"margin": "0 auto"},  # Center the table horizontally
+                    style={"margin": "0 auto"},  # Center horizontally
                 ),
             ],
             style=line_style,
         )
+
+    except KeyboardInterrupt:
+        raise
     except Exception as e:
         casts_html = html.Div(
             [
