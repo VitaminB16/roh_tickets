@@ -161,5 +161,14 @@ def get_previously_seen_casts(casts_df, seen_casts_df):
         "Vasko Vassilev",
     ]
     seen_casts_df = seen_casts_df.query("name not in @common_names")
-    seen_casts_df = seen_casts_df[["name", "performance_id_seen", "title", "timestamp"]]
+    seen_casts_df = seen_casts_df[
+        [
+            "name",
+            "performance_id_seen",
+            "title",
+            "timestamp",
+            "role_seen",
+            "is_replacing_seen",
+        ]
+    ]
     return seen_casts_df

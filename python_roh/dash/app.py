@@ -356,8 +356,12 @@ def compute_seen_suffix(name, seen_casts_df):
     """
     seen_cast = seen_casts_df.query(f"name == @name")
     seen_cast = seen_cast.sort_values(by="timestamp", ascending=False)
+    # If role_seen is over 20 characters, truncate it and add ellipsis
+    seen_cast["role_seen"] = seen_cast["role_seen"].apply(
+        lambda x: x[:20] + "..." if len(x) > 20 else x
+    )
     title_timestamps = seen_cast.apply(
-        lambda x: f"{x.title} ({x.timestamp.strftime('%b %Y')})", axis=1
+        lambda x: f"{x.title} ({x.role_seen}) ({x.timestamp.strftime('%Y/%m')})", axis=1
     )
     title_timestamps = title_timestamps.unique()
     output = "\n".join(title_timestamps)
