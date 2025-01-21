@@ -157,8 +157,8 @@ def get_previously_seen_casts(casts_df, seen_casts_df):
     common_names = [
         "Orchestra of the Royal Opera House",
         "Royal Opera Chorus",
-        "William Spaulding",
-        "Vasko Vassilev",
+        # "William Spaulding",
+        # "Vasko Vassilev",
     ]
     seen_casts_df = seen_casts_df.query("name not in @common_names")
     seen_casts_df = seen_casts_df[
