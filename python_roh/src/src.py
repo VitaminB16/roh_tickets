@@ -342,7 +342,7 @@ def print_performance_info(
     performance_id = [int(x) for x in force_list(performance_id)]
     performance_df = (
         Parquet(PRODUCTIONS_PARQUET_LOCATION)
-        .read(filters={"performanceId": performance_id})
+        .read(filters={"performanceId": performance_id}, use_bigquery=True)
         .sort_values(by=["date", "time"], ascending=True)
     )
     if not print_info:

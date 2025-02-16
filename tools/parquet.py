@@ -127,7 +127,7 @@ class Parquet:
         allow_empty=True,
         schema=None,
         filters=None,
-        use_bigquery=True,
+        use_bigquery=False,
         columns=None,
         read_partitions_only=False,
         **kwargs,
@@ -254,6 +254,5 @@ if __name__ == "__main__":
     Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
         columns=["productionId", "title", "date", "time", "performanceId"],
         allow_empty=True,
-        use_bigquery=False,
         read_partitions_only=True,
     )

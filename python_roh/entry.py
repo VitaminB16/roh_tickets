@@ -33,7 +33,9 @@ def save_new_events(new_events_df, partition_cols):
 
 
 def save_unseen_events(events_df, new_events_df, partition_cols):
-    existing_events_df = Parquet(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
+    existing_events_df = Parquet(EVENTS_PARQUET_LOCATION).read(
+        allow_empty=True, use_bigquery=True
+    )
     existimng_ids = existing_events_df.performanceId.unique()
     new_ids = new_events_df.performanceId.unique()
     unseen_events_df = events_df.query(
@@ -57,6 +59,7 @@ def upcoming_events_entry(dont_save=True, **kwargs):
     df_bundle = handle_upcoming_events(QUERY_DICT, **kwargs)
     events_df, today_tomorrow_events_df, next_week_events_df, new_events_df = df_bundle
     fig = Graphics("events").plot(events_df, dont_save=dont_save, **kwargs)
+    # fig = None
     if not dont_save:
         partition_cols = ["location", "date", "time", "title"]
         save_new_events(new_events_df, partition_cols)
