@@ -96,9 +96,9 @@ def handle_new_past_casts(events_df):
 
 
 def handle_seen_performances():
-    full_events_df = Parquet(EVENTS_PARQUET_LOCATION).read()
+    full_events_df = Parquet(EVENTS_PARQUET_LOCATION).read(use_bigquery=True)
     seen_performances = Firestore(SEEN_PERFORMANCES_LOCATION).read()
-    casts_df = Parquet(CASTS_PARQUET_LOCATION).read(use_bigquery=False)
+    casts_df = Parquet(CASTS_PARQUET_LOCATION).read()
     e_df = full_events_df.query("location == 'Main Stage'")
     e_df = e_df.assign(timestamp_str=e_df.timestamp.dt.strftime("%Y-%m-%d %H:%M"))
 
@@ -126,7 +126,7 @@ def handle_seen_performances():
 
 
 def load_casts_df():
-    casts_df = Parquet(CASTS_PARQUET_LOCATION).read(use_bigquery=False)
+    casts_df = Parquet(CASTS_PARQUET_LOCATION).read()
     return casts_df
 
 
@@ -172,3 +172,18 @@ def get_previously_seen_casts(casts_df, seen_casts_df):
         ]
     ]
     return seen_casts_df
+
+
+# def get_missing_seen_casts():
+#     breakpoint()
+#     casts_df = Parquet(CASTS_PARQUET_LOCATION).read()
+#     cast_ids = set(casts_df.performance_id)
+#     events_df = Parquet(EVENTS_PARQUET_LOCATION).read(use_bigquery=True)
+#     events_df = events_df.query("location == 'Main Stage' and title != 'Friends Rehearsals'")
+#     time_now = pd.Timestamp.now(tz="Europe/London") - pd.Timedelta("2D")
+#     events_df = events_df.query("timestamp < @time_now")
+#     return seen_casts_df
+
+
+# if __name__ == "__main__":
+#     get_missing_seen_casts()

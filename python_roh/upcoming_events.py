@@ -87,7 +87,9 @@ def get_events_from_parquet(parquet_location):
     """
     Get the entire events data from a Parquet (slow and expensive)
     """
-    events_df = Parquet(EVENTS_PARQUET_LOCATION).read(allow_empty=True)
+    events_df = Parquet(EVENTS_PARQUET_LOCATION).read(
+        allow_empty=True, use_bigquery=True
+    )
     today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=1)
     today_tomorrow_events_df, next_week_events_df = get_next_weeks_events(
         events_df, today
@@ -188,7 +190,9 @@ def enrich_events_with_productions(events_df, dont_read_from_storage=True):
         existing_prod_ids = set([int(x.split("-")[0]) for x in existing_performances])
     else:
         # Get the existing productions from the Parquet
-        existing_prods = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(allow_empty=True)
+        existing_prods = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
+            allow_empty=True, use_bigquery=True
+        )
         existing_prod_ids = existing_prods.productionId.unique()
         existing_performances = existing_prods.apply(
             lambda x: f"{x.productionId}-{x.date}-{x.time}", axis=1
@@ -267,7 +271,6 @@ def merge_prouctions_into_events(events_df, dont_read_from_storage=True):
     all_productions = Parquet(PRODUCTIONS_PARQUET_LOCATION).read(
         columns=production_cols,
         allow_empty=True,
-        use_bigquery=False,
         read_partitions_only=dont_read_from_storage,
     )
     events_df = events_df.merge(

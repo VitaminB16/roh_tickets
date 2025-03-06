@@ -255,6 +255,7 @@ class API:
         url = self.query_dict[data_type]["url"]
         params = self.query_dict[data_type]["params"]
         json_response = requests.get(url, params=params).json()
+        print(url, params)
         return pre_process_df(json_response, data_type)
 
 
@@ -293,10 +294,17 @@ def _query_production_activities(production_url):
 
     # __INTIIAL_STATE__ is a JSON object containing all the data we need
     scripts = soup.find_all("script")
+    found_initial_state = False
     for script in scripts:
-        if "__INITIAL_STATE__" in script.string:
-            initial_state = script.string
-            break
+        try:
+            if "__INITIAL_STATE__" in script.string:
+                initial_state = script.string
+                found_initial_state = True
+                break
+        except TypeError:
+            pass
+    if not found_initial_state:
+        return pd.DataFrame()
     initial_state = initial_state.replace("__INITIAL_STATE__=", "")[1:-1]
     initial_state = unquote(initial_state)
     initial_state = json.loads(initial_state)
@@ -342,7 +350,7 @@ def print_performance_info(
     performance_id = [int(x) for x in force_list(performance_id)]
     performance_df = (
         Parquet(PRODUCTIONS_PARQUET_LOCATION)
-        .read(filters={"performanceId": performance_id})
+        .read(filters={"performanceId": performance_id}, use_bigquery=True)
         .sort_values(by=["date", "time"], ascending=True)
     )
     if not print_info:

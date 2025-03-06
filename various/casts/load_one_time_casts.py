@@ -78,7 +78,7 @@ def try_get_cast_for_performance(
 
 def get_historic_casts(refresh=False):
     if not refresh:
-        casts_df = Parquet(HISTORIC_CASTS_PARQUET_LOCATION).read(use_bigquery=False)
+        casts_df = Parquet(HISTORIC_CASTS_PARQUET_LOCATION).read()
         return casts_df
 
     productions_df = Parquet(PRODUCTIONS_PARQUET_LOCATION).read()
