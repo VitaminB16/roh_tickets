@@ -812,7 +812,7 @@ def get_seats_map(performance_id, available_seat_status_ids=None):
 def get_all_title_events(performance_id, event_title=None):
     if event_title is None:
         event_title = get_event_title(performance_id)
-    today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=3.5)
+    today = pd.Timestamp.today(tz="Europe/London") - pd.Timedelta(hours=48)
     title_events = EVENTS_DF.query(f"title == @event_title and timestamp >= @today")
     title_events = title_events.sort_values(by=["date", "time"])
     all_performances = list(title_events.performanceId)
