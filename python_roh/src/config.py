@@ -34,15 +34,15 @@ ZONE_MAPPING = {
 }
 
 
-SEATS_BASE_URL = f"https://www.rbo.org.uk/api/proxy/TXN/Performances/0/Seats"
-PRICE_BASE_URL = f"https://www.rbo.org.uk/api/proxy/TXN/Performances/Prices"
-PRICE_TYPES_BASE_URL = "https://www.rbo.org.uk/api/proxy/TXN/PriceTypes/Details"
+SEATS_BASE_URL = f"https://www.rbo.org.uk/api/v2-proxy/TXN/Performances/0/Seats"
+PRICE_BASE_URL = f"https://www.rbo.org.uk/api/v2-proxy/TXN/Performances/Prices"
+PRICE_TYPES_BASE_URL = "https://www.rbo.org.uk/api/v2-proxy/TXN/PriceTypes/Details"
 ZONE_ID_BASE_URL = (
-    f"https://www.rbo.org.uk/api/proxy/TXN/Performances/ZoneAvailabilities"
+    f"https://www.rbo.org.uk/api/v2-proxy/TXN/Performances/ZoneAvailabilities"
 )
 ALL_EVENTS_URL = "https://www.rbo.org.uk/api/events"
 TICKETS_AND_EVENTS_URL = "https://www.rbo.org.uk/tickets-and-events"
-SEAT_STATUSES_URL = "https://www.rbo.org.uk/api/proxy/ReferenceData/SeatStatuses"
+SEAT_STATUSES_URL = "https://www.rbo.org.uk/api/v2-proxy/ReferenceData/SeatStatuses"
 VIEW_FROM_SEAT_URL = "https://static.roh.org.uk/view-from-seat/910"
 INTERSTITIAL_URL = "https://www.rbo.org.uk/checkout/interstitial"
 SEATMAP_URL = "https://www.rbo.org.uk/seatmap"
