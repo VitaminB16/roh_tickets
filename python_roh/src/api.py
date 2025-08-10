@@ -51,7 +51,7 @@ def get_query_dict(
 
     query_dict = {
         "seats": {
-            "url": SEATS_BASE_URL,
+            "url": SEATS_BASE_URL.replace("/0/", f"/{performance_id}/"),
             "params": {
                 "constituentId": constituent_id,
                 "modeOfSaleId": mode_of_sale_id,
