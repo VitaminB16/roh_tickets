@@ -12,7 +12,7 @@ from python_roh.casts import (
     try_get_cast_for_current_performance,
     get_previously_seen_casts,
 )
-from tools import Firestore
+from tools import Firestore, Parquet
 
 app = dash.Dash(__name__)
 
@@ -341,9 +341,19 @@ def load_events_calendar(n_intervals, theme_data, screen_width):
     events_df, _, _, fig = main_entry(payload, return_output=True)
     visible_style = {"visibility": "visible", "display": "block"}
     global SEEN_EVENTS_DF
-    SEEN_EVENTS_DF = Firestore(SEEN_EVENTS_PARQUET_LOCATION).read(apply_schema=True)
+    if SEEN_EVENTS_DF.empty:
+        SEEN_EVENTS_DF = Firestore(SEEN_EVENTS_PARQUET_LOCATION).read(apply_schema=True)
     global SEEN_CASTS_DF
-    SEEN_CASTS_DF = Firestore(SEEN_CASTS_PARQUET_LOCATION).read(apply_schema=True)
+    if SEEN_CASTS_DF.empty:
+        SEEN_CASTS_DF = Firestore(SEEN_CASTS_PARQUET_LOCATION).read(apply_schema=True)
+    if SEEN_CASTS_DF.empty:
+        print("Seen casts DF is empty")
+        print("Seen casts DF is empty")
+        print("Seen casts DF is empty")
+        print("Seen casts DF is empty")
+        print("Seen casts DF is empty")
+        SEEN_CASTS_DF = Parquet(SEEN_CASTS_PARQUET_LOCATION).read()
+
     global EVENTS_DF
     EVENTS_DF = events_df
     return fig, visible_style

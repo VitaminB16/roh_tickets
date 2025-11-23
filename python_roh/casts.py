@@ -121,6 +121,7 @@ def handle_seen_performances():
 
     Firestore(SEEN_EVENTS_PARQUET_LOCATION).write(seen_events_df)
     Firestore(SEEN_CASTS_PARQUET_LOCATION).write(seen_casts_df)
+    Parquet(SEEN_CASTS_PARQUET_LOCATION).write(seen_casts_df)
 
     return full_events_df
 
