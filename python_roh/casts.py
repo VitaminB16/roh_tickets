@@ -120,7 +120,10 @@ def handle_seen_performances():
     seen_casts_df = seen_casts_df.drop(columns=["performanceId"], errors="ignore")
 
     Firestore(SEEN_EVENTS_PARQUET_LOCATION).write(seen_events_df)
-    Firestore(SEEN_CASTS_PARQUET_LOCATION).write(seen_casts_df)
+    try:
+        Firestore(SEEN_CASTS_PARQUET_LOCATION).write(seen_casts_df)
+    except Exception:
+        pass
     Parquet(SEEN_CASTS_PARQUET_LOCATION).write(seen_casts_df)
 
     return full_events_df

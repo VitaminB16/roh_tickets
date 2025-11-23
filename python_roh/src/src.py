@@ -3,6 +3,7 @@ import json
 import time
 import requests
 import pandas as pd
+import concurrent.futures
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
 
@@ -19,6 +20,12 @@ from cloud.utils import log
 from cloud.platform import PLATFORM
 from tools import Parquet, Firestore
 from python_roh.src.utils import force_list
+
+
+if "SEAT_MAP_POSITIONS" not in globals():
+    SEAT_MAP_POSITIONS = pd.DataFrame()
+if "SEAT_STATUSES" not in globals():
+    SEAT_STATUSES = {}
 
 
 def _pre_process_zone_df(input_json):
@@ -200,8 +207,11 @@ def load_statuses_df(errors="ignore"):
     """
     Load the seat statuses from Firestore
     """
+    global SEAT_STATUSES
     try:
-        seat_statuses_df = Firestore(SEAT_STATUSES_PATH).read(allow_empty=False)
+        if not SEAT_STATUSES:
+            SEAT_STATUSES = Firestore(SEAT_STATUSES_PATH).read(allow_empty=False)
+        seat_statuses_df = SEAT_STATUSES.copy()
     except Exception as e:
         if errors == "raise":
             raise e
@@ -229,7 +239,7 @@ class API:
         **kwargs,
     ):
         """
-        Query all data from the query_dict
+        Query all data from the query_dict asynchronously using threads.
         Args:
         query_dict: dict, keys are data types and values are dicts with keys "url" and "params"
         data_types: list, data types to query
@@ -238,14 +248,35 @@ class API:
         """
         if data_types is None:
             data_types = self.query_dict.keys()
-        for data_type in force_list(data_types):
-            self.all_data[data_type] = self.query_one_data(data_type)
-            time.sleep(0.01)
-        log(f"Queried the following from the API: {data_types}")
+
+        target_data_types = force_list(data_types)
+
+        # We use a ThreadPoolExecutor to run query_one_data in parallel
+        # Adjust max_workers based on your API limits or CPU core count
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            # Submit all tasks to the pool
+            # We map the future object back to the data_type so we know which one finished
+            future_to_dtype = {
+                executor.submit(self.query_one_data, dtype): dtype
+                for dtype in target_data_types
+            }
+
+            # Process results as they complete
+            for future in concurrent.futures.as_completed(future_to_dtype):
+                dtype = future_to_dtype[future]
+                try:
+                    result = future.result()
+                    self.all_data[dtype] = result
+                except Exception as e:
+                    log(f"An error occurred while querying {dtype}: {e}")
+
+        log(f"Queried the following from the API: {target_data_types}")
+
         if post_process:
             self.all_data = post_process_all_data(
                 self.all_data, available_seat_status_ids=available_seat_status_ids
             )
+
         return self.all_data
 
     def query_one_data(self, data_type=None):
@@ -280,7 +311,11 @@ def _fix_xy_positions(df):
         from various.seat_map_positions.load_positions import load_positions
 
         load_positions()
-    seat_positions = Firestore(SEAT_MAP_POSITIONS_CSV).read(apply_schema=True)
+
+    global SEAT_MAP_POSITIONS
+    if SEAT_MAP_POSITIONS.empty:
+        SEAT_MAP_POSITIONS = Firestore(SEAT_MAP_POSITIONS_CSV).read(apply_schema=True)
+    seat_positions = SEAT_MAP_POSITIONS.copy()
     seat_positions.rename(columns={"ZoneName": "ZoneNameGeneral"}, inplace=True)
     log(f"Seat positions: {seat_positions.shape}")
     df_zones = df.ZoneNameGeneral.unique()
