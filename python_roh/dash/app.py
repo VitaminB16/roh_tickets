@@ -41,9 +41,12 @@ DASH_PAYLOAD_DEFAULTS = {
     "font_family": "Gotham SSm",  # font family
     "available_seat_status_ids": [0, 4],  # available seat status IDs
 }
-EVENTS_DF = pd.DataFrame()
-SEEN_CASTS_DF = pd.DataFrame()
-SEEN_EVENTS_DF = pd.DataFrame()
+if "EVENTS_DF" not in globals():
+    EVENTS_DF = pd.DataFrame()
+if "SEEN_CASTS_DF" not in globals():
+    SEEN_CASTS_DF = pd.DataFrame()
+if "SEEN_EVENTS_DF" not in globals():
+    SEEN_EVENTS_DF = pd.DataFrame()
 
 
 # Helper Functions
@@ -327,35 +330,89 @@ def update_seat_status_ids(input_value):
     return status_ids
 
 
+from concurrent.futures import ThreadPoolExecutor
+from dash import Output, Input, State
+from dash.exceptions import PreventUpdate
+
+# Assuming app, main_entry, DASH_PAYLOAD_DEFAULTS, Firestore, Parquet,
+# SEEN_EVENTS_PARQUET_LOCATION, SEEN_CASTS_PARQUET_LOCATION are defined globally
+# as per your snippet.
+
+
 @app.callback(
     [Output("events-graph", "figure"), Output("events-graph", "style")],
     [Input("interval-component", "n_intervals")],
     [State("theme-store", "data"), State("screen-width-store", "data")],
+    prevent_initial_call=True,
 )
 def load_events_calendar(n_intervals, theme_data, screen_width):
     if n_intervals == 0:
         raise PreventUpdate
+
     print(f"Screen width: {screen_width}")
+
+    # 1. Prepare Payload and run the main entry (Synchronous)
     DASH_PAYLOAD_DEFAULTS["dark_mode"] = theme_data["dark_mode"]
     payload = {"task_name": "events", **DASH_PAYLOAD_DEFAULTS}
     events_df, _, _, fig = main_entry(payload, return_output=True)
     visible_style = {"visibility": "visible", "display": "block"}
-    global SEEN_EVENTS_DF
-    if SEEN_EVENTS_DF.empty:
-        SEEN_EVENTS_DF = Firestore(SEEN_EVENTS_PARQUET_LOCATION).read(apply_schema=True)
-    global SEEN_CASTS_DF
-    if SEEN_CASTS_DF.empty:
-        SEEN_CASTS_DF = Firestore(SEEN_CASTS_PARQUET_LOCATION).read(apply_schema=True)
-    if SEEN_CASTS_DF.empty:
-        print("Seen casts DF is empty")
-        print("Seen casts DF is empty")
-        print("Seen casts DF is empty")
-        print("Seen casts DF is empty")
-        print("Seen casts DF is empty")
-        SEEN_CASTS_DF = Parquet(SEEN_CASTS_PARQUET_LOCATION).read()
 
+    # 2. Define helper functions for the IO-bound tasks
+    def fetch_seen_events():
+        if SEEN_EVENTS_DF.empty:
+            return Firestore(SEEN_EVENTS_PARQUET_LOCATION).read(apply_schema=True)
+        else:
+            return SEEN_EVENTS_DF.copy()
+
+    def fetch_seen_casts():
+        # Attempt to read from Firestore
+        if SEEN_CASTS_DF.empty:
+            df = Firestore(SEEN_CASTS_PARQUET_LOCATION).read(apply_schema=True)
+        else:
+            df = SEEN_CASTS_DF.copy()
+
+        # If empty, trigger the fallback logic (Parquet)
+        if df.empty:
+            print("Seen casts DF is empty")
+            print("Seen casts DF is empty")
+            print("Seen casts DF is empty")
+            print("Seen casts DF is empty")
+            print("Seen casts DF is empty")
+            df = Parquet(SEEN_CASTS_PARQUET_LOCATION).read()
+        return df
+
+    # 3. Execute the loads in parallel using a ThreadPool
+    global SEEN_EVENTS_DF
+    global SEEN_CASTS_DF
+
+    # We check emptiness first to avoid spinning up threads unnecessarily
+    events_needed = SEEN_EVENTS_DF.empty
+    casts_needed = SEEN_CASTS_DF.empty
+
+    if events_needed or casts_needed:
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_events = None
+            future_casts = None
+
+            # Submit tasks only if needed
+            if events_needed:
+                future_events = executor.submit(fetch_seen_events)
+
+            if casts_needed:
+                future_casts = executor.submit(fetch_seen_casts)
+
+            # Wait for results and update globals
+            # .result() blocks until the thread finishes
+            if future_events:
+                SEEN_EVENTS_DF = future_events.result()
+
+            if future_casts:
+                SEEN_CASTS_DF = future_casts.result()
+
+    # 4. Finalize
     global EVENTS_DF
     EVENTS_DF = events_df
+
     return fig, visible_style
 
 
