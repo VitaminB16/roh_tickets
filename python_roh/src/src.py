@@ -253,7 +253,13 @@ class API:
         Query one type of data from the query_dict
         """
         url = self.query_dict[data_type]["url"]
+
         params = self.query_dict[data_type]["params"]
+        if url.endswith("/0/Seats"):
+            performance_id = params.get("performanceId", None)
+            if performance_id is None:
+                raise ValueError("performanceId is required for Seats")
+            url = url.replace("/0/Seats", f"/{performance_id}/Seats")
         json_response = requests.get(url, params=params).json()
         print(url, params)
         return pre_process_df(json_response, data_type)
