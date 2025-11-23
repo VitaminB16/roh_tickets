@@ -21,6 +21,12 @@ from tools import Parquet, Firestore
 from python_roh.src.utils import force_list
 
 
+if "SEAT_MAP_POSITIONS" not in globals():
+    SEAT_MAP_POSITIONS = pd.DataFrame()
+if "SEAT_STATUSES" not in globals():
+    SEAT_STATUSES = {}
+
+
 def _pre_process_zone_df(input_json):
     zones_df = pd.DataFrame(input_json)
     zones_df = zones_df["Zone"]
@@ -200,8 +206,11 @@ def load_statuses_df(errors="ignore"):
     """
     Load the seat statuses from Firestore
     """
+    global SEAT_STATUSES
     try:
-        seat_statuses_df = Firestore(SEAT_STATUSES_PATH).read(allow_empty=False)
+        if not SEAT_STATUSES:
+            SEAT_STATUSES = Firestore(SEAT_STATUSES_PATH).read(allow_empty=False)
+        seat_statuses_df = SEAT_STATUSES.copy()
     except Exception as e:
         if errors == "raise":
             raise e
@@ -280,7 +289,11 @@ def _fix_xy_positions(df):
         from various.seat_map_positions.load_positions import load_positions
 
         load_positions()
-    seat_positions = Firestore(SEAT_MAP_POSITIONS_CSV).read(apply_schema=True)
+
+    global SEAT_MAP_POSITIONS
+    if SEAT_MAP_POSITIONS.empty:
+        SEAT_MAP_POSITIONS = Firestore(SEAT_MAP_POSITIONS_CSV).read(apply_schema=True)
+    seat_positions = SEAT_MAP_POSITIONS.copy()
     seat_positions.rename(columns={"ZoneName": "ZoneNameGeneral"}, inplace=True)
     log(f"Seat positions: {seat_positions.shape}")
     df_zones = df.ZoneNameGeneral.unique()

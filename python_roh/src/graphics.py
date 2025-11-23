@@ -7,6 +7,9 @@ from cloud.utils import log
 from python_roh.src.config import *
 from python_roh.src.utils import JSON, purge_image_cache
 
+if "TEXT_DF" not in globals():
+    TEXT_DF = pd.DataFrame()
+
 
 class Graphics:
     def __init__(self, plot_type, **kwargs):
@@ -54,12 +57,14 @@ def process_hall_plot_df(seats_price_df, prices_df):
 
 
 def process_text_df():
-    text_df = Firestore(TEXT_MAP_POSITIONS_CSV).read(
-        allow_empty=True, apply_schema=True
-    )
-    text_df.x = text_df.x
-    text_df.y = text_df.y - 1.5
-    return text_df
+    global TEXT_DF
+    if TEXT_DF.empty:
+        TEXT_DF = Firestore(TEXT_MAP_POSITIONS_CSV).read(
+            allow_empty=True, apply_schema=True
+        )
+        TEXT_DF.x = TEXT_DF.x
+        TEXT_DF.y = TEXT_DF.y - 1.5
+    return TEXT_DF
 
 
 def plot_hall(
