@@ -1,4 +1,4 @@
-A data engineering project for ROH using their REST API.
+A little data engineering project for ROH using their REST API :)
 
 It is deployed to Google Cloud as a Cloud Function, and a Cloud Run service via Docker container. Cloud Scheduler service is set up to call the Cloud Run several times a day to check for updated data from the API and store it in a Google Cloud Storage bucket. It also updates the **Upcoming events** plot below.
 
